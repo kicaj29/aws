@@ -15,6 +15,18 @@
 ![aws-10-budget.png](images/fundamentals/aws-10-budget.png)
 ![aws-11-budget.png](images/fundamentals/aws-11-budget.png)
 
+# Root user vs IAM account
+
+There are 2 types of users:
+
+* root: user that was used to initially created aws account, it special permissions which are not available for IAM users like: selecting support plan, deleting the account.
+  
+* IAM: normal user
+
+
+![aws-19-root-user.png](images/fundamentals/aws-19-root-user.png)
+
+
 # Regions and Availability Zones and Edge Locations
 
 ## Regions
