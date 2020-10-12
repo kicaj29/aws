@@ -10,6 +10,15 @@
   - [Launching EC2 instances](#launching-ec2-instances)
 - [AWS Elastic Beanstalk](#aws-elastic-beanstalk)
   - [Launching an App on Elastic Beanstalk](#launching-an-app-on-elastic-beanstalk)
+- [AWS Lambda](#aws-lambda)
+- [Content and Network Delivery Services](#content-and-network-delivery-services)
+  - [Amazon VPS](#amazon-vps)
+  - [Direct Connect](#direct-connect)
+  - [Amazon Route 53](#amazon-route-53)
+  - [Elastic load balancing](#elastic-load-balancing)
+    - [Scaling on Amazon EC2](#scaling-on-amazon-ec2)
+  - [Amazon CloudFront](#amazon-cloudfront)
+  - [API Gateway](#api-gateway)
 - [resources](#resources)
 
 # Interacting with AWS
@@ -171,6 +180,97 @@ Use Cases:
 * Few EC2 customizations are required
 
 ## Launching an App on Elastic Beanstalk
+
+From https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/tutorials.html download sample nodejs application.
+
+![aws-18-elastic-beanstalk-launch.png](images/core-services/aws-18-elastic-beanstalk-launch.png)
+
+![aws-19-elastic-beanstalk-launch.png](images/core-services/aws-19-elastic-beanstalk-launch.png)
+
+![aws-20-elastic-beanstalk-launch.png](images/core-services/aws-20-elastic-beanstalk-launch.png)
+
+![aws-21-elastic-beanstalk-launch.png](images/core-services/aws-21-elastic-beanstalk-launch.png)
+
+![aws-22-elastic-beanstalk-launch.png](images/core-services/aws-22-elastic-beanstalk-launch.png)
+
+![aws-23-elastic-beanstalk-launch.png](images/core-services/aws-23-elastic-beanstalk-launch.png)
+
+![aws-24-elastic-beanstalk-launch.png](images/core-services/aws-24-elastic-beanstalk-launch.png)
+
+![aws-25-elastic-beanstalk-launch.png](images/core-services/aws-25-elastic-beanstalk-launch.png)
+
+![aws-26-elastic-beanstalk-launch.png](images/core-services/aws-26-elastic-beanstalk-launch.png)
+
+![aws-27-elastic-beanstalk-launch.png](images/core-services/aws-27-elastic-beanstalk-launch.png)
+
+# AWS Lambda
+
+AWS Lambda lets you run code without provisioning or managing servers. You pay only for the compute time you consume. You can run code for virtually any type of application or backend service - all with zero administration.
+
+* Enables the running of code **without provisioning infrastructure**.
+* Can configure available memory from 128 MB to 3008 MB.   
+* It is integrated with many AWS services.
+* Enables event-driven workflows.
+* Primary service for serverless architecture.
+  
+
+Advantages:
+* Reduced maintenance requirements
+* Enables fault tolerance without additional work - **multiple availability zones is done automatically**
+* Scales based on demand
+* Pricing is based on usage
+
+# Content and Network Delivery Services
+
+## Amazon VPS
+Amazon Virtual Private Cloud (VPC) - is logically isolated section of the AWS Cloud where you can launch AWS resources in a virtual network that you define.
+
+* it supports public and private subnets
+* can utilize NA|T for private subnets
+* enabled a connection to your data center
+* can connect to other VPC
+* supports private connections to many AWS services
+
+## Direct Connect
+A cloud service solution that makes it easy to establish a dedicated network connection from your data center to AWS.
+
+## Amazon Route 53
+
+* DNS: DNS changes are not instantaneous. Changes have to be propagated to all server over the globe and it can take even couple of hours.
+* Global AWS service (not regional) - all changes are saved globally
+* HA: we can route users to different region in main region is not available
+* enables global resource routing: send request to specific server based on what country they coming from or send request to the server that responds the fastest.
+
+## Elastic load balancing
+
+Elasticity: the ability for the infrastructure supporting an application to grow and contract based on how much it is used at a point in time.
+
+* distributes traffic across multiple targets
+* integrated with EC2, ECS and Lambda
+* **supports one or more AZ`s (Availability Zones) in a region**
+* types:
+  * application load balancer (ALB)
+  * network load balancer (NLB)
+  * classic load balancer
+
+### Scaling on Amazon EC2
+* vertical - scale up (e.g. adding faster CPU), system has to be shutted down to do the change.
+* horizontal - scale out (e.g. adding more the same CPUs), system does not have to be shutted down to do the change.
+
+## Amazon CloudFront
+* CDN
+* enables users to get content from the server closest to them
+* supports static and dynamic content
+* utilizes AWS edge locations
+* includes advanced security features
+  * AWS Shield for DDoS
+  * AWS WAF
+
+## API Gateway
+* fully managed API management service
+* directly integrates with multiple AWS services
+* provides monitoring & metrics on API calls
+* supports VPC and on-premise private applications
 
 # resources
 https://app.pluralsight.com/library/courses/understanding-aws-core-services/table-of-contents
