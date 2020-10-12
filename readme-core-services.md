@@ -1,3 +1,17 @@
+- [Interacting with AWS](#interacting-with-aws)
+  - [AWS Console](#aws-console)
+  - [AWS CLI](#aws-cli)
+  - [AWS SDK](#aws-sdk)
+- [EC2 (Elastic Compute)](#ec2-elastic-compute)
+  - [EC2 instance types](#ec2-instance-types)
+  - [Root device type](#root-device-type)
+  - [Amazon Machine Image (AMI)](#amazon-machine-image-ami)
+  - [Amazon EC2 purchase options](#amazon-ec2-purchase-options)
+  - [Launching EC2 instances](#launching-ec2-instances)
+- [AWS Elastic Beanstalk](#aws-elastic-beanstalk)
+  - [Launching an App on Elastic Beanstalk](#launching-an-app-on-elastic-beanstalk)
+- [resources](#resources)
+
 # Interacting with AWS
 
 ## AWS Console
