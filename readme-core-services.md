@@ -19,6 +19,17 @@
     - [Scaling on Amazon EC2](#scaling-on-amazon-ec2)
   - [Amazon CloudFront](#amazon-cloudfront)
   - [API Gateway](#api-gateway)
+- [File Storage Services](#file-storage-services)
+  - [S3](#s3)
+  - [S3 Non-archival Storage Classes](#s3-non-archival-storage-classes)
+  - [S3 Lifecycle policies](#s3-lifecycle-policies)
+  - [S3 Transfer Acceleration](#s3-transfer-acceleration)
+  - [Hosting static web site on S3](#hosting-static-web-site-on-s3)
+  - [S3 Glacier](#s3-glacier)
+  - [Elastic Block Store](#elastic-block-store)
+  - [Elastic File System](#elastic-file-system)
+  - [Snowball](#snowball)
+  - [Snowmobile](#snowmobile)
 - [resources](#resources)
 
 # Interacting with AWS
@@ -233,10 +244,11 @@ Amazon Virtual Private Cloud (VPC) - is logically isolated section of the AWS Cl
 
 ## Direct Connect
 A cloud service solution that makes it easy to establish a dedicated network connection from your data center to AWS.
+It means that the traffic does not have to go through the public Internet.
 
 ## Amazon Route 53
 
-* DNS: DNS changes are not instantaneous. Changes have to be propagated to all server over the globe and it can take even couple of hours.
+* DNS: DNS changes are not instantaneous. Changes have to be propagated to all server over the globe and it can take even couple of hours. It manages public DNS records.
 * Global AWS service (not regional) - all changes are saved globally
 * HA: we can route users to different region in main region is not available
 * enables global resource routing: send request to specific server based on what country they coming from or send request to the server that responds the fastest.
@@ -255,7 +267,7 @@ Elasticity: the ability for the infrastructure supporting an application to grow
 
 ### Scaling on Amazon EC2
 * vertical - scale up (e.g. adding faster CPU), system has to be shutted down to do the change.
-* horizontal - scale out (e.g. adding more the same CPUs), system does not have to be shutted down to do the change.
+* horizontal - scale out (e.g. adding more the same CPUs), system does not have to be shutted down to do the change. 
 
 ## Amazon CloudFront
 * CDN
@@ -271,6 +283,65 @@ Elasticity: the ability for the infrastructure supporting an application to grow
 * directly integrates with multiple AWS services
 * provides monitoring & metrics on API calls
 * supports VPC and on-premise private applications
+
+# File Storage Services
+
+## S3
+* store files as objects in buckets. Bucket is unit of organization in S3.
+* provides different storage classes for different use cases.
+* stores data across multiple availability zones
+* enabled URL access for files
+* configurable rules for data lifecycle
+* can serve as a static website host
+
+## S3 Non-archival Storage Classes
+* S3 Standard: default storage class and is for frequently accessed data
+* S3 Intelligent-Tiering: automatically will move your data to the correct storage class based on usage
+  * moves between frequent and infrequent access
+  * same performance as S3-Standard
+* S3 Standard-IA (infrequent access):  infrequently accessed data with the standard resilience
+* S3 One Zone-IA is for infrequently access data that is only stored in one AZ
+
+## S3 Lifecycle policies
+* objects in a bucket can transition or expire based on your criteria
+* transitions can enable objects to move to another storage class **based on time** (but you cannot move something based on usage - it is only available in *S3 Intelligent-Tiering*)
+* expiration can delete object based on age
+* policies can also factor in versions of a specific object in the bucket (for example delete all versions that are not current version and are older then 7 days)
+
+## S3 Transfer Acceleration
+Feature the can be enabled per bucket that allows for optimized uploading of data using AWS Edge Locations as a part of Amazon CloudFront.
+
+## Hosting static web site on S3
+
+![aws-28-s3-hosting-website.png](images/core-services/aws-28-s3-hosting-website.png)
+![aws-29-s3-hosting-website.png](images/core-services/aws-29-s3-hosting-website.png)
+![aws-30-s3-hosting-website.png](images/core-services/aws-30-s3-hosting-website.png)
+![aws-31-s3-hosting-website.png](images/core-services/aws-31-s3-hosting-website.png)
+![aws-32-s3-hosting-website.png](images/core-services/aws-32-s3-hosting-website.png)
+Upload sample index.html file:
+![aws-33-s3-hosting-website.png](images/core-services/aws-33-s3-hosting-website.png)
+![aws-34-s3-hosting-website.png](images/core-services/aws-34-s3-hosting-website.png)
+![aws-35-s3-hosting-website.png](images/core-services/aws-35-s3-hosting-website.png)
+Use encryption to make sure that during uploading to S3 data is encrypted:
+![aws-36-s3-hosting-website.png](images/core-services/aws-36-s3-hosting-website.png)
+![aws-37-s3-hosting-website.png](images/core-services/aws-37-s3-hosting-website.png)
+![aws-38-s3-hosting-website.png](images/core-services/aws-38-s3-hosting-website.png)
+Try to open logo.png, it will fail. We have to configure permissions.
+![aws-39-s3-hosting-website.png](images/core-services/aws-39-s3-hosting-website.png)
+![aws-40-s3-hosting-website.png](images/core-services/aws-40-s3-hosting-website.png)
+![aws-41-s3-hosting-website.png](images/core-services/aws-41-s3-hosting-website.png)
+![aws-42-s3-hosting-website.png](images/core-services/aws-42-s3-hosting-website.png)
+![aws-43-s3-hosting-website.png](images/core-services/aws-43-s3-hosting-website.png)
+![aws-44-s3-hosting-website.png](images/core-services/aws-44-s3-hosting-website.png)
+Add missing permissions for index.html:
+![aws-45-s3-hosting-website.png](images/core-services/aws-45-s3-hosting-website.png)
+![aws-46-s3-hosting-website.png](images/core-services/aws-46-s3-hosting-website.png)
+
+## S3 Glacier
+## Elastic Block Store
+## Elastic File System
+## Snowball
+## Snowmobile
 
 # resources
 https://app.pluralsight.com/library/courses/understanding-aws-core-services/table-of-contents
