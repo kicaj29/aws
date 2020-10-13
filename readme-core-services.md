@@ -26,8 +26,9 @@
   - [S3 Transfer Acceleration](#s3-transfer-acceleration)
   - [Hosting static web site on S3](#hosting-static-web-site-on-s3)
   - [S3 Glacier](#s3-glacier)
-  - [Elastic Block Store](#elastic-block-store)
-  - [Elastic File System](#elastic-file-system)
+  - [Elastic Block Store (EBS)](#elastic-block-store-ebs)
+  - [Elastic File System (EFS)](#elastic-file-system-efs)
+  - [FSx for Windows File Server](#fsx-for-windows-file-server)
   - [Snowball](#snowball)
   - [Snowmobile](#snowmobile)
 - [resources](#resources)
@@ -338,8 +339,55 @@ Add missing permissions for index.html:
 ![aws-46-s3-hosting-website.png](images/core-services/aws-46-s3-hosting-website.png)
 
 ## S3 Glacier
-## Elastic Block Store
-## Elastic File System
+* designed for archiving of data within S3 as separate storage classes: for example we need to hold on payment information for 3 years to be able to produce these data for legal and compliance reasons but you will not access these data on regular basis
+* offers configurable retrieval times: more often or less often
+* can send files directly or through lifecycle rules in S3
+* provides 2 different storage classes:
+  * S3 Glacier
+    * designed for archival data
+    * 90 day minimum storage duration change (data must be stored at least 90 days)
+    * can be retrieved in either minutes or hours
+    * you pay a retrieval fee per GB retrieved
+    * over 5 times less expensive than S3 Standard Storage Class
+  * S3 Glacier Deep Archive
+    * designed for archival data
+    * 180 day minimum storage duration change (data must be stored at least 180 days)
+    * can be retrieved in hours
+    * you pay a retrieval fee per GB retrieved
+    * over 23 times less expensive than S3 Standard Storage Class  
+  
+## Elastic Block Store (EBS)
+Block storage designed **to be connected to a single EC2 instance** that can scale to support petabytes of data and supports multiple volume types based on need.
+
+* enables redundancy within AZ
+* allows users to take snapshots of its data
+* offers encryptions of is volumes
+* provide multiple volume types
+  * general purpose SSD: is a cost effective type designed for general workloads
+  * provisioned IOPS SSD: high performance volume for low latency applications
+  * throughput optimized HDD: is designed for frequently accessed data
+  * cold HDD: is designed for less frequently accessed workloads
+
+## Elastic File System (EFS)
+* fully managed NFS file system
+* **designed for linux workloads**
+* supports up to petabyte scale
+* stores data across multiple AZ`s
+* provide 2 different storage classes:
+  * standard
+  * infrequent access
+* provides configurable lifecycle data rules (you can transition between *standard* and *infrequent access*)
+* can be network file system that can be attached to multiple instances at the same time
+![aws-47-s3-efs.png](/images/core-services/aws-47-s3-efs.png)
+
+## FSx for Windows File Server
+* fully managed native Windows File system
+* includes native Windows features like:
+  * SMB
+  * Active Directory Integration
+  * Windows NTFS
+* utilizes SSD drives for low latency
+
 ## Snowball
 ## Snowmobile
 
