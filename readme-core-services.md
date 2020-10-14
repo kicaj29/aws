@@ -31,13 +31,14 @@
   - [FSx for Windows File Server](#fsx-for-windows-file-server)
   - [Snowball](#snowball)
   - [Snowmobile](#snowmobile)
-  - [Database Services and Utilities](#database-services-and-utilities)
-    - [Amazon Relational Database Service (RDS)](#amazon-relational-database-service-rds)
-    - [Amazon Aurora](#amazon-aurora)
-    - [Amazon DynamoDB](#amazon-dynamodb)
-    - [Amazon Redshift](#amazon-redshift)
-    - [Amazon Elasticache](#amazon-elasticache)
-    - [AWS Database Migration Service (DMS)](#aws-database-migration-service-dms)
+- [Database Services and Utilities](#database-services-and-utilities)
+  - [Amazon Relational Database Service (RDS)](#amazon-relational-database-service-rds)
+  - [Amazon Aurora](#amazon-aurora)
+  - [Amazon DynamoDB](#amazon-dynamodb)
+  - [Amazon Redshift](#amazon-redshift)
+  - [Amazon Elasticache](#amazon-elasticache)
+  - [AWS Database Migration Service (DMS)](#aws-database-migration-service-dms)
+- [App Integration Services](#app-integration-services)
 - [resources](#resources)
 
 # Interacting with AWS
@@ -409,11 +410,11 @@ Block storage designed **to be connected to a single EC2 instance** that can sca
 * you load your data on the snowmobile
 * AWS will load data into S3 when the container is received at an AWS location
 
-## Database Services and Utilities
+# Database Services and Utilities
 
 ![aws-48-databases.png](images/core-services/aws-48-databases.png)
 
-### Amazon Relational Database Service (RDS)
+## Amazon Relational Database Service (RDS)
 * fully managed service for relational databases
 * handles provisioning, patching, backup and recovery of your databases
 * supports deployment across multiple availability zones
@@ -430,10 +431,10 @@ Block storage designed **to be connected to a single EC2 instance** that can sca
   * SQL Server
   * Amazon Aurora
 
-### Amazon Aurora
+## Amazon Aurora
 Amazon Aurora (first supported RDS DB). It is a MySQL and PostgresSQL-compatible relational database built for the cloud, that combines the performance and availability of traditional enterprise databases with the simplicity and cost-effectiveness of open source databases.
 
-### Amazon DynamoDB
+## Amazon DynamoDB
 * fully managed (SaaS) NoSQL database service
 * provides both key-value and document databases
 * enables extremely low latency at virtually any scale
@@ -447,14 +448,14 @@ Use cases:
 * good for serverless applications - because it is fully managed (SaaS)
 * implementations where low latency is key
 * data models without BLOB storage
-### Amazon Redshift
+## Amazon Redshift
 * scalable data warehouse service (user behavior data, analytics data)
 * supports petabyte scale warehousing of data
 * leverages high performance disks and column storage
 * offers the ability to fully encrypt contents
 * provides isolation with a VPC
 * enables querying of exabytes of data in Amazone S3 using Redshift Spectrum
-### Amazon Elasticache
+## Amazon Elasticache
 * fully managed (SaaS) in-memory data stores
 * supports both Memcached and Redis
 * provides low latency in response times
@@ -462,11 +463,13 @@ Use cases:
 * handles common use cases including
   * database layer caching
   * session storage
-### AWS Database Migration Service (DMS)
+## AWS Database Migration Service (DMS)
 * enables you to move data into AWS from existing databases
 * supports both one time and continual migration of data
 * supports many popular commercial and open source databases
 * only pay for compute leveraged in the migration process
+
+# App Integration Services
 
 # resources
 https://app.pluralsight.com/library/courses/understanding-aws-core-services/table-of-contents
