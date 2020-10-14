@@ -31,6 +31,13 @@
   - [FSx for Windows File Server](#fsx-for-windows-file-server)
   - [Snowball](#snowball)
   - [Snowmobile](#snowmobile)
+  - [Database Services and Utilities](#database-services-and-utilities)
+    - [Amazon Relational Database Service (RDS)](#amazon-relational-database-service-rds)
+    - [Amazon Aurora](#amazon-aurora)
+    - [Amazon DynamoDB](#amazon-dynamodb)
+    - [Amazon Redshift](#amazon-redshift)
+    - [Amazon Elasticache](#amazon-elasticache)
+    - [AWS Database Migration Service (DMS)](#aws-database-migration-service-dms)
 - [resources](#resources)
 
 # Interacting with AWS
@@ -389,7 +396,77 @@ Block storage designed **to be connected to a single EC2 instance** that can sca
 * utilizes SSD drives for low latency
 
 ## Snowball
+* service to physically migrate petabyte scale data to AWS.
+* physical device is delivered by AWS
+* you connect the snowball to your network and upload your data
+* device is returned by local carrier
+* AWS receives device and loads your data into S3
+
 ## Snowmobile
+* service to physically migrate exabyte scale data onto AWS.
+* ruggedized shipping container is delivered to your location
+* AWS sets up a connection to your network
+* you load your data on the snowmobile
+* AWS will load data into S3 when the container is received at an AWS location
+
+## Database Services and Utilities
+
+![aws-48-databases.png](images/core-services/aws-48-databases.png)
+
+### Amazon Relational Database Service (RDS)
+* fully managed service for relational databases
+* handles provisioning, patching, backup and recovery of your databases
+* supports deployment across multiple availability zones
+* some platforms support read replicas
+* launches into a VPC
+* two volume types:
+  * general purpose SSD
+  * provisioned IOPS SSD
+* supported platforms
+  * my sql
+  * postgres SQL
+  * MariaDB
+  * Oracle DB
+  * SQL Server
+  * Amazon Aurora
+
+### Amazon Aurora
+Amazon Aurora (first supported RDS DB). It is a MySQL and PostgresSQL-compatible relational database built for the cloud, that combines the performance and availability of traditional enterprise databases with the simplicity and cost-effectiveness of open source databases.
+
+### Amazon DynamoDB
+* fully managed (SaaS) NoSQL database service
+* provides both key-value and document databases
+* enables extremely low latency at virtually any scale
+* supports automated scaling based on configuration
+* offers in-memory cache with the DynamoDB Accelerator (DAX)   
+  
+  >NOTE: "DynamoDB can handle more than 10 trillion requests per day and can support peaks of more than 20 million requests per second"
+
+Use cases:
+* scale without excessive maintenance
+* good for serverless applications - because it is fully managed (SaaS)
+* implementations where low latency is key
+* data models without BLOB storage
+### Amazon Redshift
+* scalable data warehouse service (user behavior data, analytics data)
+* supports petabyte scale warehousing of data
+* leverages high performance disks and column storage
+* offers the ability to fully encrypt contents
+* provides isolation with a VPC
+* enables querying of exabytes of data in Amazone S3 using Redshift Spectrum
+### Amazon Elasticache
+* fully managed (SaaS) in-memory data stores
+* supports both Memcached and Redis
+* provides low latency in response times
+* enables scaling and replicas to meet application demand
+* handles common use cases including
+  * database layer caching
+  * session storage
+### AWS Database Migration Service (DMS)
+* enables you to move data into AWS from existing databases
+* supports both one time and continual migration of data
+* supports many popular commercial and open source databases
+* only pay for compute leveraged in the migration process
 
 # resources
 https://app.pluralsight.com/library/courses/understanding-aws-core-services/table-of-contents
