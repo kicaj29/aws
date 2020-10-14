@@ -44,6 +44,12 @@
     - [Amazon Simple Queue Service (SQS)](#amazon-simple-queue-service-sqs)
   - [AWS Step Functions](#aws-step-functions)
 - [Management and Governance Services](#management-and-governance-services)
+  - [AWS CloudTrail](#aws-cloudtrail)
+  - [AWS CloudFormation](#aws-cloudformation)
+  - [Amazon CloudWatch](#amazon-cloudwatch)
+  - [AWS Config](#aws-config)
+  - [AWS Systems Manager](#aws-systems-manager)
+  - [AWS Control Tower](#aws-control-tower)
 - [resources](#resources)
 
 # Interacting with AWS
@@ -508,5 +514,54 @@ Use cases:
 
 # Management and Governance Services
 
+## AWS CloudTrail
+>"With CloudTrail, you can log, continuously monitor, and retain **account activity** related to actions across your AWS infrastructure. CloudTrail provides event history of your AWS account activity, including actions taken through the AWS Management Console, AWS SDKs, command line tools, and other AWS services."
+* inserts audit trail in an S3 bucket or into CloudWatch Logs
+* logs events in the regions in which they occur
+* meets many compliance requirements for infrastructure auditing
+* as a best practice, it should be enabled on every AWS account
+* can be consolidated into an Organizational trail using AWS Organizations
+
+Use cases:
+* compliance requirement
+* forensic analysis
+* operational analysis
+* troubleshooting
+
+## AWS CloudFormation
+* managed service for provisioning infrastructure based on templates
+* no additional charge
+* templates in YAML or JSON
+* enables infrastructure as code
+* manages dependencies between resources
+* provides drift detection to find changes in infrastructure
+## Amazon CloudWatch
+* **monitoring and management service**
+* provides metrics, logs and alarms for infrastructure
+* enables alarms based on metrics
+* provides visualization capabilities for metrics
+* allows for custom dashboards based on collected metrics
+## AWS Config
+>"AWS Config continuously monitors and records your AWS resource configurations and allows you to automate the evaluation of recorded configurations against desired configurations."
+* continually evaluates infrastructure against a set of rules
+* provides configuration history for infrastructure
+* works against rules that you can customize or even create custom validations
+* includes conformance packs for compliance standards including PCI-DSS
+* can work with AWS Organizations for both cross-region and cross-account setup
+* provides remediation steps for infrastructure not meeting criteria
+## AWS Systems Manager
+>"Provides a unified user interface so you can view operational data from multiple AWS services and allows you to automate operations tasks across your AWS resources"
+* provides operational data and automation across infrastructure
+* provides multiple tools that make it easier to manage your AWS infrastructure
+* enables automation tasks for common maintenance actions
+* gives a secure way to access servers using only AWS credentials
+* stores commonly used parameters securely for operational use
+
+## AWS Control Tower
+>"A service to create a multi-account environment on AWS that follows the recommended best practices in operational efficiency, security, and governance."
+* centralized user across all AWS accounts
+* provides a way to create new AWS accounts based on templates
+* integrates Guardrials for accounts
+* includes a dashboard to gain operational insights from a single view
 # resources
 https://app.pluralsight.com/library/courses/understanding-aws-core-services/table-of-contents
