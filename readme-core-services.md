@@ -39,6 +39,11 @@
   - [Amazon Elasticache](#amazon-elasticache)
   - [AWS Database Migration Service (DMS)](#aws-database-migration-service-dms)
 - [App Integration Services](#app-integration-services)
+  - [AWS Messaging Services](#aws-messaging-services)
+    - [Amazon Simple Notification Service (SNS)](#amazon-simple-notification-service-sns)
+    - [Amazon Simple Queue Service (SQS)](#amazon-simple-queue-service-sqs)
+  - [AWS Step Functions](#aws-step-functions)
+- [Management and Governance Services](#management-and-governance-services)
 - [resources](#resources)
 
 # Interacting with AWS
@@ -470,6 +475,38 @@ Use cases:
 * only pay for compute leveraged in the migration process
 
 # App Integration Services
+
+## AWS Messaging Services
+
+### Amazon Simple Notification Service (SNS)
+* fully managed pub/sub messaging services
+* enables you to create decoupled applications
+* organized according to **topics**
+* integrates with multiple AWS services
+* provides end user notifications across SMS, email, and push notifications   
+  
+![aws-49-SNS.png](images/core-services/aws-49-SNS.png)
+### Amazon Simple Queue Service (SQS)
+* fully managed message queue service
+* enables you to build decoupled and fault tolerant applications
+* supports up to 256KB data payload
+* allows messages to be stored up to 14 days (in case of topic we do not have access to historical messages in case new subscriber appears)
+* two types of queues
+  * standard queue
+  * FIFO
+
+![aws-50-SNS-SQS.png](images/core-services/aws-50-SNS-SQS.png)
+## AWS Step Functions
+* serverless workflow management service
+* enables orchestration of workflows through a fully managed service
+* supports serverless architecture
+* can support complex workflows including error handling
+* charged per state transition along with the other AWS services leveraged
+* workflows are defined using Amazon States Language
+
+![aws-51-StatesLanguageWorkflow.png](images/core-services/aws-51-StatesLanguageWorkflow.png)
+
+# Management and Governance Services
 
 # resources
 https://app.pluralsight.com/library/courses/understanding-aws-core-services/table-of-contents
