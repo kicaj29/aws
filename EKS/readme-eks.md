@@ -236,7 +236,7 @@ ip-192-168-57-232.us-east-2.compute.internal   Ready    <none>   4h12m   v1.17.1
 ip-192-168-89-85.us-east-2.compute.internal    Ready    <none>   4h12m   v1.17.11-eks-cfdc40
 ```
 
-Scale down nodes to one instance. In this command we use also params ```--nodes-min=1 --nodes-max=3``` because default values were 2 and 2. We can see that one pod has been started (age 45) because this pod was working on stopped node.
+Scale down nodes to one instance. In this command we use also params ```--nodes-min=1 --nodes-max=3``` because default values were 2 and 2. We can see that one pod has been started (age 45) because this pod was working on stopped node. We can see it also after opening web app http://a39fa2989f2844819afc562c06ec9531-602045787.us-east-2.elb.amazonaws.com:5001/ in case it is handled by the new pod that counter starts from zero.
 ```
 PS C:\Windows\system32> eksctl get nodegroup --cluster=demo-cluster-jacek-ec2
 CLUSTER                 NODEGROUP       CREATED                 MIN SIZE        MAX SIZE        DESIRED CAPACITY        INSTANCE TYPE   IMAGE ID
