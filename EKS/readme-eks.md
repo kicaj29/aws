@@ -1,0 +1,271 @@
+- [Create ECR via AWS CLI](#create-ecr-via-aws-cli)
+- [Create docker image](#create-docker-image)
+- [Publish image to ECR](#publish-image-to-ecr)
+- [Create AWS EKS](#create-aws-eks)
+  - [Install eksctl](#install-eksctl)
+  - [Create EKS cluster](#create-eks-cluster)
+- [Deploy image do EKS cluster](#deploy-image-do-eks-cluster)
+  - [Create deployment](#create-deployment)
+  - [Expose app to the outside world - create K8s service](#expose-app-to-the-outside-world---create-k8s-service)
+- [Scale Pods and Nodes](#scale-pods-and-nodes)
+  - [Scale Pods](#scale-pods)
+  - [Scale Nodes](#scale-nodes)
+- [resources](#resources)
+
+# Create ECR via AWS CLI
+
+* create ECR:
+
+```
+PS C:\> aws ecr create-repository --repository-name ecr-tmp-jacek
+{
+    "repository": {
+        "repositoryArn": "arn:aws:ecr:us-east-2:633883526719:repository/ecr-tmp-jacek",
+        "registryId": "633883526719",
+        "repositoryName": "ecr-tmp-jacek",
+        "repositoryUri": "633883526719.dkr.ecr.us-east-2.amazonaws.com/ecr-tmp-jacek",
+        "createdAt": "2020-10-20T09:48:53+02:00",
+        "imageTagMutability": "MUTABLE",
+        "imageScanningConfiguration": {
+            "scanOnPush": false
+        },
+        "encryptionConfiguration": {
+            "encryptionType": "AES256"
+        }
+    }
+}
+```
+
+* get password to ECR and use it docker login
+
+```
+PS D:\> aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 633883526719.dkr.ecr.us-east-2.amazonaws.com/ecr-tmp-jacek
+Login Succeeded
+```
+
+>NOTE: "The generated token is valid for 12 hours, which means developers running and managing container images have to re-authenticate every 12 hours manually, or script it to generate a new token, which can be somewhat cumbersome in a CI/CD environment." **Based on information from this [article](https://aws.amazon.com/blogs/compute/authenticating-amazon-ecr-repositories-for-docker-cli-with-credential-helper/)**.
+
+# Create docker image
+
+To publish an image to ECR it has to follow this syntax:
+
+```
+<registryId>.dkr.ecr.<region>.amazonaws.com/<image-name>:<tag>
+```
+
+>NOTE: image-name must be the same name as name of the repository, in this case it is **ecr-tmp-jacek**.
+
+```
+PS D:\GitHub\kicaj29\aws\EKS\app> docker build -t 633883526719.dkr.ecr.us-east-2.amazonaws.com/ecr-tmp-jacek:1.0 .
+Sending build context to Docker daemon   5.12kB
+Step 1/7 : FROM python:3.8-slim-buster
+ ---> 53f4b6d54ed7
+...
+...
+Successfully built 94d09468e70a
+Successfully tagged 633883526719.dkr.ecr.us-east-2.amazonaws.com/ecr-tmp-jacek:1.0
+SECURITY WARNING: You are building a Docker image from Windows against a non-Windows Docker host. All files and directories added to build context will have '-rwxr-xr-x' permissions. It is recommended to double check and reset permissions for sensitive files and directories.
+```
+
+Next we can check that this image is available in local docker repo:
+
+```
+PS D:\GitHub\kicaj29\aws\EKS\app> docker images
+REPOSITORY                                                   TAG                                              IMAGE ID            CREATED             SIZE
+633883526719.dkr.ecr.us-east-2.amazonaws.com/ecr-tmp-jacek   1.0                                              94d09468e70a        12 minutes ago      123MB
+...
+...
+```
+
+# Publish image to ECR
+
+```
+PS D:\GitHub\kicaj29\aws\EKS\app> docker push 633883526719.dkr.ecr.us-east-2.amazonaws.com/ecr-tmp-jacek:1.0
+The push refers to repository [633883526719.dkr.ecr.us-east-2.amazonaws.com/ecr-tmp-jacek]
+0876cd9f1c57: Pushed
+9d4e91530c11: Pushed
+9e268f0e9561: Pushed
+06eeb6988749: Pushed
+06b60c6e6ffd: Pushed
+322c3996a80b: Pushed
+225ef82ca30a: Pushed
+d0fe97fa8b8c: Pushed
+1.0: digest: sha256:acb20595014dd3322b2bb5320f612143a45d0b616ead7eebb665408e96f52424 size: 1995
+```
+
+# Create AWS EKS
+
+## Install eksctl
+
+```
+chocolatey install -y eksctl 
+```
+
+```
+PS C:\Windows\system32> eksctl version
+0.30.0
+```
+
+## Create EKS cluster
+
+```
+PS C:\Windows\system32> eksctl create cluster --name demo-cluster-jacek-ec2 --region us-east-2
+[ℹ]  eksctl version 0.30.0
+[ℹ]  using region us-east-2
+[ℹ]  setting availability zones to [us-east-2c us-east-2a us-east-2b]
+[ℹ]  subnets for us-east-2c - public:192.168.0.0/19 private:192.168.96.0/19
+[ℹ]  subnets for us-east-2a - public:192.168.32.0/19 private:192.168.128.0/19
+[ℹ]  subnets for us-east-2b - public:192.168.64.0/19 private:192.168.160.0/19
+[ℹ]  nodegroup "ng-c828caa6" will use "ami-0135903686f192ffe" [AmazonLinux2/1.17]
+[ℹ]  using Kubernetes version 1.17
+[ℹ]  creating EKS cluster "demo-cluster-jacek-ec2" in "us-east-2" region with un-managed nodes
+[ℹ]  will create 2 separate CloudFormation stacks for cluster itself and the initial nodegroup
+[ℹ]  if you encounter any issues, check CloudFormation console or try 'eksctl utils describe-stacks --region=us-east-2 --cluster=demo-cluster-jacek-ec2'
+[ℹ]  CloudWatch logging will not be enabled for cluster "demo-cluster-jacek-ec2" in "us-east-2"
+[ℹ]  you can enable it with 'eksctl utils update-cluster-logging --enable-types={SPECIFY-YOUR-LOG-TYPES-HERE (e.g. all)} --region=us-east-2 --cluster=demo-cluster-jacek-ec2'
+[ℹ]  Kubernetes API endpoint access will use default of {publicAccess=true, privateAccess=false} for cluster "demo-cluster-jacek-ec2" in "us-east-2"
+[ℹ]  2 sequential tasks: { create cluster control plane "demo-cluster-jacek-ec2", 2 sequential sub-tasks: { no tasks, create nodegroup "ng-c828caa6" } }
+[ℹ]  building cluster stack "eksctl-demo-cluster-jacek-ec2-cluster"
+[ℹ]  deploying stack "eksctl-demo-cluster-jacek-ec2-cluster"
+[ℹ]  building nodegroup stack "eksctl-demo-cluster-jacek-ec2-nodegroup-ng-c828caa6"
+[ℹ]  --nodes-min=2 was set automatically for nodegroup ng-c828caa6
+[ℹ]  --nodes-max=2 was set automatically for nodegroup ng-c828caa6
+[ℹ]  deploying stack "eksctl-demo-cluster-jacek-ec2-nodegroup-ng-c828caa6"
+[ℹ]  waiting for the control plane availability...
+[✔]  saved kubeconfig as "C:\\Users\\jkowalski/.kube/config"
+[ℹ]  no tasks
+[✔]  all EKS cluster resources for "demo-cluster-jacek-ec2" have been created
+[ℹ]  adding identity "arn:aws:iam::633883526719:role/eksctl-demo-cluster-jacek-ec2-nod-NodeInstanceRole-1P7GHVUEK4MRE" to auth ConfigMap
+[ℹ]  nodegroup "ng-c828caa6" has 0 node(s)
+[ℹ]  waiting for at least 2 node(s) to become ready in "ng-c828caa6"
+[ℹ]  nodegroup "ng-c828caa6" has 2 node(s)
+[ℹ]  node "ip-192-168-57-232.us-east-2.compute.internal" is ready
+[ℹ]  node "ip-192-168-89-85.us-east-2.compute.internal" is ready
+[ℹ]  kubectl command should work with "C:\\Users\\jkowalski/.kube/config", try 'kubectl get nodes'
+[✔]  EKS cluster "demo-cluster-jacek-ec2" in "us-east-2" region is ready
+PS C:\Windows\system32>
+```
+
+>NOTE: the above command will also add new connection string in %USERPROFILE%.kube\config and will set this connecting string as current. It means that since now ```kubectl``` is connected to EKS in AWS.
+
+```
+PS C:\Windows\system32> kubectl config get-contexts
+CURRENT   NAME                                                       CLUSTER                                      AUTHINFO                                                   NAMESPACE
+          docker-desktop                                             docker-desktop                               docker-desktop
+          docker-for-desktop                                         docker-desktop                               docker-desktop
+*         jkowalski-cli@demo-cluster-jacek-ec2.us-east-2.eksctl.io   demo-cluster-jacek-ec2.us-east-2.eksctl.io   jkowalski-cli@demo-cluster-jacek-ec2.us-east-2.eksctl.io
+PS C:\Windows\system32> kubectl get nodes
+NAME                                           STATUS   ROLES    AGE   VERSION
+ip-192-168-57-232.us-east-2.compute.internal   Ready    <none>   93m   v1.17.11-eks-cfdc40
+ip-192-168-89-85.us-east-2.compute.internal    Ready    <none>   93m   v1.17.11-eks-cfdc40
+PS C:\Windows\system32> kubectl get pods
+No resources found in default namespace.
+PS C:\Windows\system32> kubectl version
+Client Version: version.Info{Major:"1", Minor:"16+", GitVersion:"v1.16.6-beta.0", GitCommit:"e7f962ba86f4ce7033828210ca3556393c377bcc", GitTreeState:"clean", BuildDate:"2020-01-15T08:26:26Z", GoVersion:"go1.13.5", Compiler:"gc", Platform:"windows/amd64"}
+Server Version: version.Info{Major:"1", Minor:"17+", GitVersion:"v1.17.9-eks-4c6976", GitCommit:"4c6976793196d70bc5cd29d56ce5440c9473648e", GitTreeState:"clean", BuildDate:"2020-07-17T18:46:04Z", GoVersion:"go1.13.9", Compiler:"gc", Platform:"linux/amd64"}
+```
+
+# Deploy image do EKS cluster
+
+## Create deployment
+
+```
+PS C:\Windows\system32> kubectl get pods
+No resources found in default namespace.
+PS C:\Windows\system32> kubectl create deployment deploy-demo-app-ec2 --image=633883526719.dkr.ecr.us-east-2.amazonaws.com/ecr-tmp-jacek:1.0
+deployment.apps/deploy-demo-app-ec2 created
+PS C:\Windows\system32> kubectl get pods
+NAME                                  READY   STATUS    RESTARTS   AGE
+deploy-demo-app-ec2-d4866d9d4-ks95b   1/1     Running   0          6s
+```
+
+## Expose app to the outside world - create K8s service
+```
+PS C:\Windows\system32> kubectl expose deployment deploy-demo-app-ec2 --type=LoadBalancer --port 5001 --target-port 5000
+service/deploy-demo-app-ec2 exposed
+PS C:\Windows\system32> kubectl get service
+NAME                  TYPE           CLUSTER-IP      EXTERNAL-IP                                                              PORT(S)          AGE
+deploy-demo-app-ec2   LoadBalancer   10.100.174.73   a39fa2989f2844819afc562c06ec9531-602045787.us-east-2.elb.amazonaws.com   5001:30545/TCP   14s
+kubernetes            ClusterIP      10.100.0.1      <none>                                                                   443/TCP          117m
+```
+
+Next you can open the app in web browser:
+
+![eks-01-app.png](./images/../../images/eks/eks-01-app.png)
+
+# Scale Pods and Nodes
+
+## Scale Pods
+
+Use ```kubectl``` to scale pods.
+
+```
+PS C:\Windows\system32> kubectl get pods -o wide
+NAME                                  READY   STATUS    RESTARTS   AGE    IP               NODE                                           NOMINATED NODE   READINESS GATES
+deploy-demo-app-ec2-d4866d9d4-ks95b   1/1     Running   0          143m   192.168.39.154   ip-192-168-57-232.us-east-2.compute.internal   <none>           <none>
+PS C:\Windows\system32> kubectl scale deployment deploy-demo-app-ec2 --replicas=3
+deployment.apps/deploy-demo-app-ec2 scaled
+PS C:\Windows\system32> kubectl get pods -o wide
+NAME                                  READY   STATUS              RESTARTS   AGE    IP               NODE                                           NOMINATED NODE   READINESS GATES
+deploy-demo-app-ec2-d4866d9d4-5g65g   0/1     ContainerCreating   0          6s     <none>           ip-192-168-89-85.us-east-2.compute.internal    <none>           <none>
+deploy-demo-app-ec2-d4866d9d4-b2ghc   1/1     Running             0          6s     192.168.38.222   ip-192-168-57-232.us-east-2.compute.internal   <none>           <none>
+deploy-demo-app-ec2-d4866d9d4-ks95b   1/1     Running             0          144m   192.168.39.154   ip-192-168-57-232.us-east-2.compute.internal   <none>           <none>
+PS C:\Windows\system32> kubectl get pods -o wide
+NAME                                  READY   STATUS    RESTARTS   AGE    IP               NODE                                           NOMINATED NODE   READINESS GATES
+deploy-demo-app-ec2-d4866d9d4-5g65g   1/1     Running   0          17s    192.168.93.99    ip-192-168-89-85.us-east-2.compute.internal    <none>           <none>
+deploy-demo-app-ec2-d4866d9d4-b2ghc   1/1     Running   0          17s    192.168.38.222   ip-192-168-57-232.us-east-2.compute.internal   <none>           <none>
+deploy-demo-app-ec2-d4866d9d4-ks95b   1/1     Running   0          144m   192.168.39.154   ip-192-168-57-232.us-east-2.compute.internal   <none>           <none>
+```
+
+## Scale Nodes
+
+Use ```eksctl``` to scale nodes.
+
+Get node group:
+```
+PS C:\Windows\system32> eksctl get nodegroup --cluster=demo-cluster-jacek-ec2
+CLUSTER                 NODEGROUP       CREATED                 MIN SIZE        MAX SIZE        DESIRED CAPACITY        INSTANCE TYPE   IMAGE ID
+demo-cluster-jacek-ec2  ng-c828caa6     2020-10-20T10:02:45Z    2               2               0                       m5.large        ami-0135903686f192ffe
+```
+
+Check current nodes:
+```
+PS C:\Windows\system32> kubectl get nodes
+NAME                                           STATUS   ROLES    AGE     VERSION
+ip-192-168-57-232.us-east-2.compute.internal   Ready    <none>   4h12m   v1.17.11-eks-cfdc40
+ip-192-168-89-85.us-east-2.compute.internal    Ready    <none>   4h12m   v1.17.11-eks-cfdc40
+```
+
+Scale down nodes to one instance. In this command we use also params ```--nodes-min=1 --nodes-max=3``` because default values were 2 and 2. We can see that one pod has been started (age 45) because this pod was working on stopped node.
+```
+PS C:\Windows\system32> eksctl get nodegroup --cluster=demo-cluster-jacek-ec2
+CLUSTER                 NODEGROUP       CREATED                 MIN SIZE        MAX SIZE        DESIRED CAPACITY        INSTANCE TYPE   IMAGE ID
+demo-cluster-jacek-ec2  ng-c828caa6     2020-10-20T10:02:45Z    2               2               0                       m5.large        ami-0135903686f192ffe
+PS C:\Windows\system32> eksctl scale nodegroup --cluster=demo-cluster-jacek-ec2 --nodes=1 --name=ng-c828caa6 --nodes-min=1 --nodes-max=3
+[ℹ]  scaling nodegroup stack "eksctl-demo-cluster-jacek-ec2-nodegroup-ng-c828caa6" in cluster eksctl-demo-cluster-jacek-ec2-cluster
+[ℹ]  scaling nodegroup, desired capacity from 0 to 1, min size from 2 to 1, max size from 2 to 3
+PS C:\Windows\system32> kubectl get nodes
+NAME                                           STATUS     ROLES    AGE     VERSION
+ip-192-168-57-232.us-east-2.compute.internal   Ready      <none>   4h27m   v1.17.11-eks-cfdc40
+ip-192-168-89-85.us-east-2.compute.internal    NotReady   <none>   4h27m   v1.17.11-eks-cfdc40
+PS C:\Windows\system32> kubectl get nodes
+NAME                                           STATUS   ROLES    AGE     VERSION
+ip-192-168-57-232.us-east-2.compute.internal   Ready    <none>   4h27m   v1.17.11-eks-cfdc40
+PS C:\Windows\system32> kubectl get pods -o wide
+NAME                                  READY   STATUS    RESTARTS   AGE    IP               NODE                                           NOMINATED NODE   READINESS GATES
+deploy-demo-app-ec2-d4866d9d4-7qdpt   1/1     Running   0          45s    192.168.57.220   ip-192-168-57-232.us-east-2.compute.internal   <none>           <none>
+deploy-demo-app-ec2-d4866d9d4-b2ghc   1/1     Running   0          19m    192.168.38.222   ip-192-168-57-232.us-east-2.compute.internal   <none>           <none>
+deploy-demo-app-ec2-d4866d9d4-ks95b   1/1     Running   0          163m   192.168.39.154   ip-192-168-57-232.us-east-2.compute.internal   <none>           <none>
+```
+
+>NOTE: options ```nodes-min``` and ```nodes-max``` because by default the cluster is created with node group settings ```nodes-min=2``` and  ```nodes-max=2```.
+
+# resources
+
+https://awscli.amazonaws.com/v2/documentation/api/latest/reference/ecr/get-login-password.html
+
+https://aws.amazon.com/blogs/compute/authenticating-amazon-ecr-repositories-for-docker-cli-with-credential-helper/
+
+https://docs.aws.amazon.com/AmazonECR/latest/userguide/getting-started-cli.html#cli-authenticate-registry
+
+https://github.com/weaveworks/eksctl
