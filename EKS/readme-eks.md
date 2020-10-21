@@ -564,7 +564,7 @@ for example:
 aws ecr batch-delete-image --repository-name ecr-tmp-jacek --image-ids imageDigest-sha256:acb20595014dd3322b2bb5320f612143a45d0b616ead7eebb665408e96f52424
 ```
 
-To delete repository:
+* delete repository:
 
 ```
 aws ecr delete-repository --repository-name ecr-tmp-jacek --force
