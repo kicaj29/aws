@@ -19,6 +19,7 @@
   - [Create EKS cluster with Fargate nodepool](#create-eks-cluster-with-fargate-nodepool)
   - [Deploy first version of the image](#deploy-first-version-of-the-image)
   - [Create Load Balancer Service](#create-load-balancer-service)
+  - [Scale pods](#scale-pods-1)
 - [resources](#resources)
 
 # Create ECR via AWS CLI
@@ -493,7 +494,28 @@ deploy-demo-app-fg   LoadBalancer   10.100.101.125   af850c0558d7a45b78c48ee639d
 kubernetes           ClusterIP      10.100.0.1       <none>                                                                    443/TCP          30m
 ```
 
->NOTE: :warning: this load balancer service will not redirect traffic to correct pods because for not it is not supported by Farget: https://github.com/weaveworks/eksctl/issues/1640#issuecomment-562522430
+>NOTE: :warning: this load balancer service will not redirect traffic to correct pods because for not it is not supported by Fargate: https://github.com/weaveworks/eksctl/issues/1640#issuecomment-562522430
+
+## Scale pods
+
+We can see that in fargate every single pod runs in single node and this node is automatically created. In classic EKS new node is always created explicitly by dedicated command, in EKS Fargate it is created automatically.
+
+```
+PS D:\GitHub\kicaj29\aws\EKS\app> kubectl scale deployment deploy-demo-app-fg --replicas=3
+deployment.apps/deploy-demo-app-fg scaled
+PS D:\GitHub\kicaj29\aws\EKS\app> kubectl get pods -o wide
+NAME                                  READY   STATUS    RESTARTS   AGE     IP                NODE                                                    NOMINATED NODE   READINESS GATES
+deploy-demo-app-fg-75f9dc8c49-68fq5   1/1     Running   0          42m     192.168.100.100   fargate-ip-192-168-100-100.us-east-2.compute.internal   <none>           <none>
+deploy-demo-app-fg-75f9dc8c49-9fvpk   1/1     Running   0          2m26s   192.168.156.114   fargate-ip-192-168-156-114.us-east-2.compute.internal   <none>           <none>
+deploy-demo-app-fg-75f9dc8c49-g6prg   1/1     Running   0          2m26s   192.168.125.185   fargate-ip-192-168-125-185.us-east-2.compute.internal   <none>           <none>
+PS D:\GitHub\kicaj29\aws\EKS\app> kubectl get nodes -o wide
+NAME                                                    STATUS   ROLES    AGE     VERSION              INTERNAL-IP       EXTERNAL-IP   OS-IMAGE         KERNEL-VERSION                  CONTAINER-RUNTIME
+fargate-ip-192-168-100-100.us-east-2.compute.internal   Ready    <none>   42m     v1.17.9-eks-a84824   192.168.100.100   <none>        Amazon Linux 2   4.14.193-149.317.amzn2.x86_64   containerd://1.3.2
+fargate-ip-192-168-125-185.us-east-2.compute.internal   Ready    <none>   2m43s   v1.17.9-eks-a84824   192.168.125.185   <none>        Amazon Linux 2   4.14.193-149.317.amzn2.x86_64   containerd://1.3.2
+fargate-ip-192-168-156-114.us-east-2.compute.internal   Ready    <none>   2m9s    v1.17.9-eks-a84824   192.168.156.114   <none>        Amazon Linux 2   4.14.193-149.317.amzn2.x86_64   containerd://1.3.2
+fargate-ip-192-168-158-107.us-east-2.compute.internal   Ready    <none>   58m     v1.17.9-eks-a84824   192.168.158.107   <none>        Amazon Linux 2   4.14.193-149.317.amzn2.x86_64   containerd://1.3.2
+fargate-ip-192-168-96-207.us-east-2.compute.internal    Ready    <none>   59m     v1.17.9-eks-a84824   192.168.96.207    <none>        Amazon Linux 2   4.14.193-149.317.amzn2.x86_64   containerd://1.3.2
+```
 
 # resources
 
