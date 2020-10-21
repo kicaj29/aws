@@ -20,6 +20,7 @@
   - [Deploy first version of the image](#deploy-first-version-of-the-image)
   - [Create Load Balancer Service](#create-load-balancer-service)
   - [Scale pods](#scale-pods-1)
+- [Delete EKS cluster](#delete-eks-cluster)
 - [resources](#resources)
 
 # Create ECR via AWS CLI
@@ -515,6 +516,58 @@ fargate-ip-192-168-125-185.us-east-2.compute.internal   Ready    <none>   2m43s 
 fargate-ip-192-168-156-114.us-east-2.compute.internal   Ready    <none>   2m9s    v1.17.9-eks-a84824   192.168.156.114   <none>        Amazon Linux 2   4.14.193-149.317.amzn2.x86_64   containerd://1.3.2
 fargate-ip-192-168-158-107.us-east-2.compute.internal   Ready    <none>   58m     v1.17.9-eks-a84824   192.168.158.107   <none>        Amazon Linux 2   4.14.193-149.317.amzn2.x86_64   containerd://1.3.2
 fargate-ip-192-168-96-207.us-east-2.compute.internal    Ready    <none>   59m     v1.17.9-eks-a84824   192.168.96.207    <none>        Amazon Linux 2   4.14.193-149.317.amzn2.x86_64   containerd://1.3.2
+```
+
+# Delete EKS cluster
+
+* delete service
+  
+```
+kubectl delete service deploy-demo-app-ec2
+```
+
+* delete cluster
+  
+```
+eksctl delete cluster --name deploy-demo-app-ec2
+```
+
+* delete images
+
+To list all images:
+
+```
+PS D:\GitHub\kicaj29\aws\EKS\app> aws ecr list-images --repository-name ecr-tmp-jacek
+{
+    "imageIds": [
+        {
+            "imageDigest": "sha256:acb20595014dd3322b2bb5320f612143a45d0b616ead7eebb665408e96f52424",
+            "imageTag": "1.0"
+        },
+        {
+            "imageDigest": "sha256:b113b030ed47049777384d61ec02b4cf4f70569990e77d52990595b4aec2e18f",
+            "imageTag": "2.0"
+        }
+    ]
+}
+```
+
+To delete individual images:
+
+```
+aws ecr batch-delete-image --repository-name ecr-tmp-jacek --image-ids <image-id>
+```
+
+for example:
+
+```
+aws ecr batch-delete-image --repository-name ecr-tmp-jacek --image-ids imageDigest-sha256:acb20595014dd3322b2bb5320f612143a45d0b616ead7eebb665408e96f52424
+```
+
+To delete repository:
+
+```
+aws ecr delete-repository --repository-name ecr-tmp-jacek --force
 ```
 
 # resources
