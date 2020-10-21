@@ -12,6 +12,9 @@
   - [Scale Nodes](#scale-nodes)
     - [Scale down nodes (horizontally)](#scale-down-nodes-horizontally)
     - [Scale up nodes (horizontally)](#scale-up-nodes-horizontally)
+- [Update application](#update-application)
+  - [Create a new image and publish it to ECR](#create-a-new-image-and-publish-it-to-ecr)
+  - [Update deployment (use new image version)](#update-deployment-use-new-image-version)
 - [resources](#resources)
 
 # Create ECR via AWS CLI
@@ -281,6 +284,104 @@ NAME                                  READY   STATUS    RESTARTS   AGE   IP     
 deploy-demo-app-ec2-d4866d9d4-7qdpt   1/1     Running   0          15h   192.168.57.220   ip-192-168-57-232.us-east-2.compute.internal   <none>           <none>
 deploy-demo-app-ec2-d4866d9d4-b2ghc   1/1     Running   0          16h   192.168.38.222   ip-192-168-57-232.us-east-2.compute.internal   <none>           <none>
 deploy-demo-app-ec2-d4866d9d4-ks95b   1/1     Running   0          18h   192.168.39.154   ip-192-168-57-232.us-east-2.compute.internal   <none>           <none>
+```
+
+# Update application
+
+## Create a new image and publish it to ECR
+In [app.py](./app/app.py) change *hello* to *goodbye* and create a new image.
+
+```
+PS C:\Windows\system32> docker build -t 633883526719.dkr.ecr.us-east-2.amazonaws.com/ecr-tmp-jacek:2.0 .
+unable to prepare context: unable to evaluate symlinks in Dockerfile path: CreateFile C:\Windows\System32\Dockerfile: The system cannot find the file specified.
+PS C:\Windows\system32> cd D:\GitHub\kicaj29\aws\EKS\app
+PS D:\GitHub\kicaj29\aws\EKS\app> docker build -t 633883526719.dkr.ecr.us-east-2.amazonaws.com/ecr-tmp-jacek:2.0 .
+Sending build context to Docker daemon   5.12kB
+Step 1/7 : FROM python:3.8-slim-buster
+ ---> 53f4b6d54ed7
+Step 2/7 : COPY ./requirements.txt /app/requirements.txt
+ ---> Using cache
+ ---> 0a5b0ad94c28
+Step 3/7 : WORKDIR /app
+ ---> Using cache
+ ---> c79ff28d74c0
+Step 4/7 : RUN pip install -r requirements.txt
+ ---> Using cache
+ ---> 1d49ed3d2797
+Step 5/7 : COPY ./app.py /app
+ ---> 1d9d00333126
+Step 6/7 : ENTRYPOINT [ "python" ]
+ ---> Running in 70972eaaa704
+Removing intermediate container 70972eaaa704
+ ---> 94e5d5563c63
+Step 7/7 : CMD [ "app.py" ]
+ ---> Running in b0bfecf83b37
+Removing intermediate container b0bfecf83b37
+ ---> db792eef205e
+Successfully built db792eef205e
+Successfully tagged 633883526719.dkr.ecr.us-east-2.amazonaws.com/ecr-tmp-jacek:2.0
+SECURITY WARNING: You are building a Docker image from Windows against a non-Windows Docker host. All files and directories added to build context will have '-rwxr-xr-x' permissions. It is recommended to double check and reset permissions for sensitive files and directories.
+PS D:\GitHub\kicaj29\aws\EKS\app> docker push 633883526719.dkr.ecr.us-east-2.amazonaws.com/ecr-tmp-jacek:2.0
+The push refers to repository [633883526719.dkr.ecr.us-east-2.amazonaws.com/ecr-tmp-jacek]
+7e6eb50947f2: Preparing
+9d4e91530c11: Preparing
+9e268f0e9561: Preparing
+06eeb6988749: Preparing
+06b60c6e6ffd: Preparing
+322c3996a80b: Waiting
+225ef82ca30a: Waiting
+d0fe97fa8b8c: Waiting
+denied: Your authorization token has expired. Reauthenticate and try again.
+PS D:\GitHub\kicaj29\aws\EKS\app> aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 633883526719.dkr.ecr.us-east-2.amazonaws.com/ecr-tmp-jacek
+Login Succeeded
+PS D:\GitHub\kicaj29\aws\EKS\app> docker push 633883526719.dkr.ecr.us-east-2.amazonaws.com/ecr-tmp-jacek:2.0
+The push refers to repository [633883526719.dkr.ecr.us-east-2.amazonaws.com/ecr-tmp-jacek]
+7e6eb50947f2: Pushed
+9d4e91530c11: Layer already exists
+9e268f0e9561: Layer already exists
+06eeb6988749: Layer already exists
+06b60c6e6ffd: Layer already exists
+322c3996a80b: Layer already exists
+225ef82ca30a: Layer already exists
+d0fe97fa8b8c: Layer already exists
+2.0: digest: sha256:b113b030ed47049777384d61ec02b4cf4f70569990e77d52990595b4aec2e18f size: 1995
+PS D:\GitHub\kicaj29\aws\EKS\app>
+```
+
+## Update deployment (use new image version)
+
+To update deployment first we have to find name of the container that should be update to new image. This can be done for every pod using the following commands:
+
+```
+PS D:\GitHub\kicaj29\aws\EKS\app> kubectl get pods deploy-demo-app-ec2-d4866d9d4-7qdpt -o jsonpath='{.spec.containers[*].name}'
+ecr-tmp-jacek
+PS D:\GitHub\kicaj29\aws\EKS\app> kubectl get pods deploy-demo-app-ec2-d4866d9d4-b2ghc -o jsonpath='{.spec.containers[*].name}'
+ecr-tmp-jacek
+PS D:\GitHub\kicaj29\aws\EKS\app> kubectl get pods deploy-demo-app-ec2-d4866d9d4-ks95b -o jsonpath='{.spec.containers[*].name}'
+ecr-tmp-jacek
+```
+
+Based on this we can see that container name is equal image name (without tag) - it is default convention in EKS.
+
+Next we can update these containers in all pods. We can see that old pods are destroyed and new are created.
+
+```
+PS D:\GitHub\kicaj29\aws\EKS\app> kubectl set image deployment/deploy-demo-app-ec2 ecr-tmp-jacek=633883526719.dkr.ecr.us-east-2.amazonaws.com/ecr-tmp-jacek:2.0
+deployment.apps/deploy-demo-app-ec2 image updated
+PS D:\GitHub\kicaj29\aws\EKS\app> kubectl get pods -o wide
+NAME                                   READY   STATUS              RESTARTS   AGE   IP               NODE                                           NOMINATED NODE   READINESS GATES
+deploy-demo-app-ec2-7f69ffc7d9-45hbr   1/1     Running             0          7s    192.168.29.239   ip-192-168-22-42.us-east-2.compute.internal    <none>           <none>
+deploy-demo-app-ec2-7f69ffc7d9-fwhlp   0/1     ContainerCreating   0          1s    <none>           ip-192-168-57-232.us-east-2.compute.internal   <none>           <none>
+deploy-demo-app-ec2-7f69ffc7d9-mh7nj   1/1     Running             0          13s   192.168.65.142   ip-192-168-89-106.us-east-2.compute.internal   <none>           <none>
+deploy-demo-app-ec2-d4866d9d4-7qdpt    1/1     Terminating         0          16h   192.168.57.220   ip-192-168-57-232.us-east-2.compute.internal   <none>           <none>
+deploy-demo-app-ec2-d4866d9d4-b2ghc    1/1     Terminating         0          17h   192.168.38.222   ip-192-168-57-232.us-east-2.compute.internal   <none>           <none>
+deploy-demo-app-ec2-d4866d9d4-ks95b    1/1     Running             0          19h   192.168.39.154   ip-192-168-57-232.us-east-2.compute.internal   <none>           <none>
+PS D:\GitHub\kicaj29\aws\EKS\app> kubectl get pods -o wide
+NAME                                   READY   STATUS    RESTARTS   AGE   IP               NODE                                           NOMINATED NODE   READINESS GATES
+deploy-demo-app-ec2-7f69ffc7d9-45hbr   1/1     Running   0          71s   192.168.29.239   ip-192-168-22-42.us-east-2.compute.internal    <none>           <none>
+deploy-demo-app-ec2-7f69ffc7d9-fwhlp   1/1     Running   0          65s   192.168.53.80    ip-192-168-57-232.us-east-2.compute.internal   <none>           <none>
+deploy-demo-app-ec2-7f69ffc7d9-mh7nj   1/1     Running   0          77s   192.168.65.142   ip-192-168-89-106.us-east-2.compute.internal   <none>           <none>
+PS D:\GitHub\kicaj29\aws\EKS\app>
 ```
 
 # resources
