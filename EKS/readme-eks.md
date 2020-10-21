@@ -10,7 +10,8 @@
 - [Scale Pods and Nodes](#scale-pods-and-nodes)
   - [Scale Pods](#scale-pods)
   - [Scale Nodes](#scale-nodes)
-    - [Scale down nodes](#scale-down-nodes)
+    - [Scale down nodes (horizontally)](#scale-down-nodes-horizontally)
+    - [Scale up nodes (horizontally)](#scale-up-nodes-horizontally)
 - [resources](#resources)
 
 # Create ECR via AWS CLI
@@ -236,7 +237,7 @@ NAME                                           STATUS   ROLES    AGE     VERSION
 ip-192-168-57-232.us-east-2.compute.internal   Ready    <none>   4h12m   v1.17.11-eks-cfdc40
 ip-192-168-89-85.us-east-2.compute.internal    Ready    <none>   4h12m   v1.17.11-eks-cfdc40
 ```
-### Scale down nodes
+### Scale down nodes (horizontally)
 
 Scale down nodes to one instance. We can see that one pod has been started (age 45) because this pod was working on stopped node. We can see it also after opening web app http://a39fa2989f2844819afc562c06ec9531-602045787.us-east-2.elb.amazonaws.com:5001/ in case it is handled by the new pod that counter starts from zero.
 ```
@@ -261,6 +262,26 @@ deploy-demo-app-ec2-d4866d9d4-ks95b   1/1     Running   0          163m   192.16
 ```
 
 >NOTE: options ```nodes-min``` and ```nodes-max``` because by default the cluster is created with node group settings ```nodes-min=2``` and  ```nodes-max=2```.
+
+### Scale up nodes (horizontally)
+
+Below we can see that after adding 2 additional nodes all pods stay untouched - this still work on the same pod - it is default behavior of EKS in such case.
+
+```
+PS C:\Windows\system32> eksctl scale nodegroup --cluster=demo-cluster-jacek-ec2 --nodes=3 --name=ng-c828caa6
+[ℹ]  scaling nodegroup stack "eksctl-demo-cluster-jacek-ec2-nodegroup-ng-c828caa6" in cluster eksctl-demo-cluster-jacek-ec2-cluster
+[ℹ]  scaling nodegroup, desired capacity from 1 to 3
+PS C:\Windows\system32> kubectl get nodes -o wide
+NAME                                           STATUS   ROLES    AGE   VERSION               INTERNAL-IP      EXTERNAL-IP     OS-IMAGE         KERNEL-VERSION                  CONTAINER-RUNTIME
+ip-192-168-22-42.us-east-2.compute.internal    Ready    <none>   50s   v1.17.11-eks-cfdc40   192.168.22.42    3.17.63.225     Amazon Linux 2   4.14.198-152.320.amzn2.x86_64   docker://19.3.6
+ip-192-168-57-232.us-east-2.compute.internal   Ready    <none>   20h   v1.17.11-eks-cfdc40   192.168.57.232   3.14.134.70     Amazon Linux 2   4.14.198-152.320.amzn2.x86_64   docker://19.3.6
+ip-192-168-89-106.us-east-2.compute.internal   Ready    <none>   40s   v1.17.11-eks-cfdc40   192.168.89.106   3.128.181.135   Amazon Linux 2   4.14.198-152.320.amzn2.x86_64   docker://19.3.6
+PS C:\Windows\system32> kubectl get pods -o wide
+NAME                                  READY   STATUS    RESTARTS   AGE   IP               NODE                                           NOMINATED NODE   READINESS GATES
+deploy-demo-app-ec2-d4866d9d4-7qdpt   1/1     Running   0          15h   192.168.57.220   ip-192-168-57-232.us-east-2.compute.internal   <none>           <none>
+deploy-demo-app-ec2-d4866d9d4-b2ghc   1/1     Running   0          16h   192.168.38.222   ip-192-168-57-232.us-east-2.compute.internal   <none>           <none>
+deploy-demo-app-ec2-d4866d9d4-ks95b   1/1     Running   0          18h   192.168.39.154   ip-192-168-57-232.us-east-2.compute.internal   <none>           <none>
+```
 
 # resources
 
