@@ -15,6 +15,10 @@
 - [Update application](#update-application)
   - [Create a new image and publish it to ECR](#create-a-new-image-and-publish-it-to-ecr)
   - [Update deployment (use new image version)](#update-deployment-use-new-image-version)
+- [AWS Fargate - deploying serverless pods](#aws-fargate---deploying-serverless-pods)
+  - [Create EKS cluster with Fargate nodepool](#create-eks-cluster-with-fargate-nodepool)
+  - [Deploy first version of the image](#deploy-first-version-of-the-image)
+  - [Create Load Balancer Service](#create-load-balancer-service)
 - [resources](#resources)
 
 # Create ECR via AWS CLI
@@ -383,6 +387,113 @@ deploy-demo-app-ec2-7f69ffc7d9-fwhlp   1/1     Running   0          65s   192.16
 deploy-demo-app-ec2-7f69ffc7d9-mh7nj   1/1     Running   0          77s   192.168.65.142   ip-192-168-89-106.us-east-2.compute.internal   <none>           <none>
 PS D:\GitHub\kicaj29\aws\EKS\app>
 ```
+
+Next we can open new version of the app:
+
+![eks-02-app.png](./../images/eks/eks-02-app.png)
+
+# AWS Fargate - deploying serverless pods
+
+* no EC2 nodepool to manage
+* pods run of fargate resources
+* automatically scale
+
+There are some pod limitation for what can run on fargate so check documentation for the latest version before deciding to go with this approach.
+
+## Create EKS cluster with Fargate nodepool
+
+```
+PS D:\GitHub\kicaj29\aws\EKS\app> eksctl create cluster --name demo-cluster-jacek-fg --region us-east-2 --fargate
+[ℹ]  eksctl version 0.30.0
+[ℹ]  using region us-east-2
+[ℹ]  setting availability zones to [us-east-2a us-east-2b us-east-2c]
+[ℹ]  subnets for us-east-2a - public:192.168.0.0/19 private:192.168.96.0/19
+[ℹ]  subnets for us-east-2b - public:192.168.32.0/19 private:192.168.128.0/19
+[ℹ]  subnets for us-east-2c - public:192.168.64.0/19 private:192.168.160.0/19
+[ℹ]  using Kubernetes version 1.17
+[ℹ]  creating EKS cluster "demo-cluster-jacek-fg" in "us-east-2" region with Fargate profile
+[ℹ]  if you encounter any issues, check CloudFormation console or try 'eksctl utils describe-stacks --region=us-east-2 --cluster=demo-cluster-jacek-fg'
+[ℹ]  CloudWatch logging will not be enabled for cluster "demo-cluster-jacek-fg" in "us-east-2"
+[ℹ]  you can enable it with 'eksctl utils update-cluster-logging --enable-types={SPECIFY-YOUR-LOG-TYPES-HERE (e.g. all)} --region=us-east-2 --cluster=demo-cluster-jacek-fg'
+[ℹ]  Kubernetes API endpoint access will use default of {publicAccess=true, privateAccess=false} for cluster "demo-cluster-jacek-fg" in "us-east-2"
+[ℹ]  2 sequential tasks: { create cluster control plane "demo-cluster-jacek-fg", create fargate profiles }
+[ℹ]  building cluster stack "eksctl-demo-cluster-jacek-fg-cluster"
+[ℹ]  deploying stack "eksctl-demo-cluster-jacek-fg-cluster"
+[ℹ]  creating Fargate profile "fp-default" on EKS cluster "demo-cluster-jacek-fg"
+[ℹ]  created Fargate profile "fp-default" on EKS cluster "demo-cluster-jacek-fg"
+[ℹ]  "coredns" is now schedulable onto Fargate
+[ℹ]  "coredns" is now scheduled onto Fargate
+[ℹ]  "coredns" pods are now scheduled onto Fargate
+[ℹ]  waiting for the control plane availability...
+[✔]  saved kubeconfig as "C:\\Users\\jkowalski/.kube/config"
+[ℹ]  no tasks
+[✔]  all EKS cluster resources for "demo-cluster-jacek-fg" have been created
+[ℹ]  kubectl command should work with "C:\\Users\\jkowalski/.kube/config", try 'kubectl get nodes'
+[✔]  EKS cluster "demo-cluster-jacek-fg" in "us-east-2" region is ready
+PS D:\GitHub\kicaj29\aws\EKS\app>
+```
+
+Notice that during cluster creation fargate profile has been created:
+```
+[ℹ]  creating Fargate profile "fp-default" on EKS cluster "demo-cluster-jacek-fg"
+[ℹ]  created Fargate profile "fp-default" on EKS cluster "demo-cluster-jacek-fg"
+```
+
+Also since now local ```kubectl``` client is connected to the created cluster:
+```
+PS D:\GitHub\kicaj29\aws\EKS\app> kubectl config get-contexts
+CURRENT   NAME                                                       CLUSTER                                      AUTHINFO                                                   NAMESPACE
+          docker-desktop                                             docker-desktop                               docker-desktop
+          docker-for-desktop                                         docker-desktop                               docker-desktop
+          jkowalski-cli@demo-cluster-jacek-ec2.us-east-2.eksctl.io   demo-cluster-jacek-ec2.us-east-2.eksctl.io   jkowalski-cli@demo-cluster-jacek-ec2.us-east-2.eksctl.io
+*         jkowalski-cli@demo-cluster-jacek-fg.us-east-2.eksctl.io    demo-cluster-jacek-fg.us-east-2.eksctl.io    jkowalski-cli@demo-cluster-jacek-fg.us-east-2.eksctl.io
+```
+
+We can see that 2 nodes have been created, for now we do not have any pods:
+
+```
+PS D:\GitHub\kicaj29\aws\EKS\app> kubectl get nodes -o wide
+NAME                                                    STATUS   ROLES    AGE     VERSION              INTERNAL-IP       EXTERNAL-IP   OS-IMAGE         KERNEL-VERSION                  CONTAINER-RUNTIME
+fargate-ip-192-168-158-107.us-east-2.compute.internal   Ready    <none>   9m28s   v1.17.9-eks-a84824   192.168.158.107   <none>        Amazon Linux 2   4.14.193-149.317.amzn2.x86_64   containerd://1.3.2
+fargate-ip-192-168-96-207.us-east-2.compute.internal    Ready    <none>   10m     v1.17.9-eks-a84824   192.168.96.207    <none>        Amazon Linux 2   4.14.193-149.317.amzn2.x86_64   containerd://1.3.2
+PS D:\GitHub\kicaj29\aws\EKS\app> kubectl get pods -o wide
+No resources found in default namespace.
+```
+
+Also we can check that on list of EC2 instances we do not have fargate nodes (these are nodes from previous classic EKS cluster):
+
+![eks-03-ec2-instances.png](./../images/eks/eks-03-ec2-instances.png)
+
+## Deploy first version of the image
+
+```
+PS D:\GitHub\kicaj29\aws\EKS\app> kubectl create deployment deploy-demo-app-fg --image=633883526719.dkr.ecr.us-east-2.amazonaws.com/ecr-tmp-jacek:1.0
+deployment.apps/deploy-demo-app-fg created
+PS D:\GitHub\kicaj29\aws\EKS\app> kubectl get pods -o wide
+NAME                                  READY   STATUS    RESTARTS   AGE     IP                NODE                                                    NOMINATED NODE   READINESS GATES
+deploy-demo-app-fg-75f9dc8c49-68fq5   1/1     Running   0          2m53s   192.168.100.100   fargate-ip-192-168-100-100.us-east-2.compute.internal   <none>           <none>
+PS D:\GitHub\kicaj29\aws\EKS\app> kubectl get nodes -o wide
+NAME                                                    STATUS   ROLES    AGE   VERSION              INTERNAL-IP       EXTERNAL-IP   OS-IMAGE         KERNEL-VERSION                  CONTAINER-RUNTIME
+fargate-ip-192-168-100-100.us-east-2.compute.internal   Ready    <none>   92s   v1.17.9-eks-a84824   192.168.100.100   <none>        Amazon Linux 2   4.14.193-149.317.amzn2.x86_64   containerd://1.3.2
+fargate-ip-192-168-158-107.us-east-2.compute.internal   Ready    <none>   17m   v1.17.9-eks-a84824   192.168.158.107   <none>        Amazon Linux 2   4.14.193-149.317.amzn2.x86_64   containerd://1.3.2
+fargate-ip-192-168-96-207.us-east-2.compute.internal    Ready    <none>   18m   v1.17.9-eks-a84824   192.168.96.207    <none>        Amazon Linux 2   4.14.193-149.317.amzn2.x86_64   containerd://1.3.2
+```
+
+>NOTE: We can see that to run new pod new node has been created - it is the difference to normal EKS when new pod has been run on existing nodes.
+It looks that in case of Farget the first 2 nodes are used only to run K8s master and its infrastructure.
+
+## Create Load Balancer Service
+
+```
+PS D:\GitHub\kicaj29\aws\EKS\app> kubectl expose deployment deploy-demo-app-fg --type=LoadBalancer --port 5002 --target-port 5000
+service/deploy-demo-app-fg exposed
+PS D:\GitHub\kicaj29\aws\EKS\app> kubectl get service
+NAME                 TYPE           CLUSTER-IP       EXTERNAL-IP                                                               PORT(S)          AGE
+deploy-demo-app-fg   LoadBalancer   10.100.101.125   af850c0558d7a45b78c48ee639df26a7-1455864092.us-east-2.elb.amazonaws.com   5002:31884/TCP   15s
+kubernetes           ClusterIP      10.100.0.1       <none>                                                                    443/TCP          30m
+```
+
+>NOTE: :warning: this load balancer service will not redirect traffic to correct pods because for not it is not supported by Farget: https://github.com/weaveworks/eksctl/issues/1640#issuecomment-562522430
 
 # resources
 
