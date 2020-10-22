@@ -1,3 +1,5 @@
+>NOTE: examples with terraform for AWS are in repo: https://github.com/kicaj29/Terraform
+
 # Create AWS account
 
 ![aws-01-create-account.png](images/fundamentals/aws-01-create-account.png)
