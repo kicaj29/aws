@@ -3,6 +3,7 @@
 - [Network access control list](#network-access-control-list)
 - [Subnet](#subnet)
 - [Create VPC with 2 public subnets](#create-vpc-with-2-public-subnets)
+  - [Create EC2 instances that will be connected to created VPC](#create-ec2-instances-that-will-be-connected-to-created-vpc)
 
 # Security Groups
 
@@ -57,3 +58,29 @@ Create second subnet in second AZ - **single subnet can exist only in one AZ**. 
 ![vpc-13-aws-console-create-vpc.png](images/vpc-13-aws-console-create-vpc.png)
 
 ![vpc-14-aws-console-create-vpc.png](images/vpc-14-aws-console-create-vpc.png)
+
+## Create EC2 instances that will be connected to created VPC
+
+![vpc-15-aws-create-ec2-instance.png](images/vpc-15-aws-create-ec2-instance.png)
+
+![vpc-16-aws-create-ec2-instance.png](images/vpc-16-aws-create-ec2-instance.png)
+
+![vpc-17-aws-create-ec2-instance.png](images/vpc-17-aws-create-ec2-instance.png)
+
+![vpc-18-aws-create-ec2-instance.png](images/vpc-18-aws-create-ec2-instance.png)
+
+![vpc-19-aws-create-ec2-instance.png](images/vpc-19-aws-create-ec2-instance.png)
+
+![vpc-20-aws-create-ec2-instance.png](images/vpc-20-aws-create-ec2-instance.png)
+
+![vpc-21-aws-create-ec2-instance.png](images/vpc-21-aws-create-ec2-instance.png)
+
+![vpc-22-aws-create-ec2-instance.png](images/vpc-22-aws-create-ec2-instance.png)
+
+Create key pair to be able use SSH and download it (ec2-jacek-west1-keys.pem).
+
+![vpc-23-aws-create-ec2-instance.png](images/vpc-23-aws-create-ec2-instance.png)
+
+Click launch instances:
+
+![vpc-24-aws-create-ec2-instance.png](images/vpc-24-aws-create-ec2-instance.png)
