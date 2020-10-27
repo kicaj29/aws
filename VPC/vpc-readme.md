@@ -10,6 +10,7 @@
   - [Update EC2 instance and deploy the app](#update-ec2-instance-and-deploy-the-app)
     - [Update already installed components (in ssh console)](#update-already-installed-components-in-ssh-console)
     - [Install nodejs](#install-nodejs)
+    - [Upload the app using WinSCP](#upload-the-app-using-winscp)
 - [resources](#resources)
 
 # Security Groups
@@ -161,6 +162,34 @@ v14.14.0
 6.14.8
 [ec2-user@ip-10-0-0-152 ~]$
 ```
+
+### Upload the app using WinSCP
+
+Install WinSCP and import defined session from PuTTY.   
+Next upload the app to /home/ec2-user/sample-app. Before doing it remove **node_modules** folder from local app, these files will be download by EC2 instance later.
+
+![vpc-40-aws-winscp.png](images/vpc-40-aws-winscp.png)
+
+Next install necessary npms:
+
+![vpc-41-aws-npm-install.png](images/vpc-41-aws-npm-install.png)
+
+Next run the app:
+
+```
+[ec2-user@ip-10-0-0-152 sample-app]$ npm start
+
+> pizza-luvrs@1.0.0 start /home/ec2-user/sample-app
+> node index.js
+
+Server running at: http://ip-10-0-0-152.us-west-1.compute.internal:3000
+```
+
+To run it in web browsers use public IP address because the EC2 instance does not have interface with public IP (it looks that it exist only in Elastic IP component).
+
+Open in web browser this address ```http://52.53.108.154:3000/``` to see working app.
+
+
 
 # resources
 https://acloud.guru/forums/aws-certified-cloud-practitioner/discussion/-Lmu_Iq2Zrc_ojEYoN4d/I%20got%20a%20putty%20fatal%20error:%20No%20supported%20authentication%20methods%20available%20(server%20sent:publickey,gssapi-keyex,gssapi-with-mic)%20%20How%20do%20I%20resolve%20this%20issue%3F   
