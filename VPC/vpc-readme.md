@@ -4,6 +4,10 @@
 - [Subnet](#subnet)
 - [Create VPC with 2 public subnets](#create-vpc-with-2-public-subnets)
   - [Create EC2 instances that will be connected to created VPC](#create-ec2-instances-that-will-be-connected-to-created-vpc)
+  - [Create and assign a public IP address to EC2 instance](#create-and-assign-a-public-ip-address-to-ec2-instance)
+  - [Connect to the EC2 Instance via SSH](#connect-to-the-ec2-instance-via-ssh)
+    - [Run PuTTYGent to convert pem file to ppk](#run-puttygent-to-convert-pem-file-to-ppk)
+- [resources](#resources)
 
 # Security Groups
 
@@ -87,3 +91,45 @@ Create key pair to be able use SSH and download it (ec2-jacek-west1-keys.pem).
 Click launch instances:
 
 ![vpc-24-aws-create-ec2-instance.png](images/vpc-24-aws-create-ec2-instance.png)
+
+## Create and assign a public IP address to EC2 instance
+
+![vpc-25-aws-elastic-IP.png](images/vpc-25-aws-elastic-IP.png)
+![vpc-26-aws-elastic-IP.png](images/vpc-26-aws-elastic-IP.png)
+![vpc-27-aws-elastic-IP.png](images/vpc-27-aws-elastic-IP.png)
+![vpc-28-aws-elastic-IP.png](images/vpc-28-aws-elastic-IP.png)
+![vpc-29-aws-elastic-IP.png](images/vpc-29-aws-elastic-IP.png)
+![vpc-30-aws-elastic-IP.png](images/vpc-30-aws-elastic-IP.png)
+Now we can see that EC2 instance has public IP Address:
+![vpc-31-aws-elastic-IP.png](images/vpc-31-aws-elastic-IP.png)
+
+## Connect to the EC2 Instance via SSH
+
+### Run PuTTYGent to convert pem file to ppk
+
+Click load to select pem file:
+
+![vpc-32-aws-putty.png](images/vpc-32-aws-putty.png)
+![vpc-33-aws-putty.png](images/vpc-33-aws-putty.png)
+Select save private key to save if in ppk format.
+
+Apply the ppk file in putty:
+
+![vpc-34-aws-putty.png](images/vpc-34-aws-putty.png)
+
+> :warning: from unknown reasons I had to generate ppk file 2 times, file that was created first time did not work.
+
+To check user name that should be provided in putty select the instance in click connect:
+
+![vpc-34a-aws-putty.png](images/vpc-34a-aws-putty.png)
+![vpc-34b-aws-putty.png](images/vpc-34b-aws-putty.png)
+
+Connect to the EC2 instance:
+
+![vpc-35-aws-putty.png](images/vpc-35-aws-putty.png)
+
+![vpc-36-aws-putty.png](images/vpc-36-aws-putty.png)
+
+# resources
+https://acloud.guru/forums/aws-certified-cloud-practitioner/discussion/-Lmu_Iq2Zrc_ojEYoN4d/I%20got%20a%20putty%20fatal%20error:%20No%20supported%20authentication%20methods%20available%20(server%20sent:publickey,gssapi-keyex,gssapi-with-mic)%20%20How%20do%20I%20resolve%20this%20issue%3F   
+https://app.pluralsight.com/library/courses/aws-developer-getting-started/table-of-contents (chapters related with EC2 and putty)
