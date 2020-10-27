@@ -7,6 +7,9 @@
   - [Create and assign a public IP address to EC2 instance](#create-and-assign-a-public-ip-address-to-ec2-instance)
   - [Connect to the EC2 Instance via SSH](#connect-to-the-ec2-instance-via-ssh)
     - [Run PuTTYGent to convert pem file to ppk](#run-puttygent-to-convert-pem-file-to-ppk)
+  - [Update EC2 instance and deploy the app](#update-ec2-instance-and-deploy-the-app)
+    - [Update already installed components (in ssh console)](#update-already-installed-components-in-ssh-console)
+    - [Install nodejs](#install-nodejs)
 - [resources](#resources)
 
 # Security Groups
@@ -130,6 +133,36 @@ Connect to the EC2 instance:
 
 ![vpc-36-aws-putty.png](images/vpc-36-aws-putty.png)
 
+## Update EC2 instance and deploy the app
+
+### Update already installed components (in ssh console)
+```
+sudo yum update
+```
+![vpc-37-aws-suod-yum-update.png](images/vpc-37-aws-suod-yum-update.png)
+
+### Install nodejs
+```
+curl -sL https://rpm.nodesource.com/setup_14.x | sudo bash -
+```
+![vpc-38-aws-nodejs-install.png](images/vpc-38-aws-nodejs-install.png)
+
+```
+sudo yum install -y nodejs
+```
+![vpc-39-aws-nodejs-install.png](images/vpc-39-aws-nodejs-install.png)
+
+Next we can check version
+
+```
+[ec2-user@ip-10-0-0-152 ~]$ node -v
+v14.14.0
+[ec2-user@ip-10-0-0-152 ~]$ npm -v
+6.14.8
+[ec2-user@ip-10-0-0-152 ~]$
+```
+
 # resources
 https://acloud.guru/forums/aws-certified-cloud-practitioner/discussion/-Lmu_Iq2Zrc_ojEYoN4d/I%20got%20a%20putty%20fatal%20error:%20No%20supported%20authentication%20methods%20available%20(server%20sent:publickey,gssapi-keyex,gssapi-with-mic)%20%20How%20do%20I%20resolve%20this%20issue%3F   
-https://app.pluralsight.com/library/courses/aws-developer-getting-started/table-of-contents (chapters related with EC2 and putty)
+https://app.pluralsight.com/library/courses/aws-developer-getting-started/table-of-contents (chapters related with EC2 and putty)   
+https://techviewleo.com/how-to-install-nodejs-on-amazon-linux/   
