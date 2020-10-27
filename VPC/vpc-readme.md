@@ -9,6 +9,9 @@
 
 A security group defines a collection of IPs that are allowed to connect to your instance and IPs that instance is allowed to connect to. Security groups are attached at the instance level (EC2) and can be shared among many instances. You can even set security group rules to allow access from other security groups instead of by IP.   
 
+For example security group can be defined in EC2 wizard as one of its steps:
+![vpc-21-aws-create-ec2-instance.png](images/vpc-21-aws-create-ec2-instance.png)
+
 # Routing table
 
 Each VPC has one **routing table**, which declares attempted destination IPs and where they should be routed to. For instance, if you want to run all outgoing traffic through a proxy, you can set a routing table rule to automatically send traffic to that IP. This can be a powerful tool for security as you can inspect outgoing traffic and only whitelist safe destinations for traffic.
