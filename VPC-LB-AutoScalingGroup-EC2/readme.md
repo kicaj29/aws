@@ -347,7 +347,7 @@ Set *greater than 100 bytes* to easily simulate adding more instances.
 
 ![vpc-85-ec2-scaling-in-action.png](images/vpc-85-ec2-scaling-in-action.png)
 
-Remove notifications it is not needed now:
+Remove notifications it is not needed now:   
 ![vpc-86-ec2-scaling-in-action.png](images/vpc-86-ec2-scaling-in-action.png)
 
 It is common practice to create alarms that will trigger adding more instances and alarms that will trigger removing instances.
