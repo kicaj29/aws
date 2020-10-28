@@ -15,7 +15,8 @@
     - [Creating dedicated AMI (image) for EC2 instance](#creating-dedicated-ami-image-for-ec2-instance)
     - [Create load balancer](#create-load-balancer)
     - [Enable instance stickiness on Load Balancer](#enable-instance-stickiness-on-load-balancer)
-    - [Creating an auto-scaling group](#creating-an-auto-scaling-group)
+    - [Creating launch configuration for an auto-scaling group](#creating-launch-configuration-for-an-auto-scaling-group)
+    - [Create autoscaling group using created launch configuration](#create-autoscaling-group-using-created-launch-configuration)
 - [resources](#resources)
 
 # Security Groups
@@ -248,9 +249,75 @@ We need to ensure that if a user logs into our app in one EC2 instance that they
 
 ![vpc-59-ec2-target-group.png](images/vpc-59-ec2-target-group.png)
 
-### Creating an auto-scaling group
+### Creating launch configuration for an auto-scaling group
 
 ![vpc-60-ec2-auto-scaling-group.png](images/vpc-60-ec2-auto-scaling-group.png)
+
+
+![vpc-61-ec2-auto-scaling-group.png](images/vpc-61-ec2-auto-scaling-group.png)
+>NOTE: search in drop down AMI does not work well, typing *sample* does not find the AMI, I had to select it directly from the drop down.
+
+![vpc-62-ec2-auto-scaling-group.png](images/vpc-62-ec2-auto-scaling-group.png)
+
+![vpc-63-ec2-auto-scaling-group.png](images/vpc-63-ec2-auto-scaling-group.png)
+
+![vpc-64-ec2-auto-scaling-group.png](images/vpc-64-ec2-auto-scaling-group.png)
+
+![vpc-65-ec2-auto-scaling-group.png](images/vpc-65-ec2-auto-scaling-group.png)
+
+### Create autoscaling group using created launch configuration
+
+![vpc-66-ec2-auto-scaling-group.png](images/vpc-66-ec2-auto-scaling-group.png)
+
+![vpc-67-ec2-auto-scaling-group.png](images/vpc-67-ec2-auto-scaling-group.png)
+
+Select both sub-networks. Thx to this load balancer will balance the traffic across AZ.
+
+![vpc-68-ec2-auto-scaling-group.png](images/vpc-68-ec2-auto-scaling-group.png)
+
+Select the target group that was created in load balancer wizard.
+
+![vpc-69-ec2-auto-scaling-group.png](images/vpc-69-ec2-auto-scaling-group.png)
+
+Scaling policies will be defined after creation of the auto scaling group.
+
+![vpc-70-ec2-auto-scaling-group.png](images/vpc-70-ec2-auto-scaling-group.png)
+
+![vpc-71-ec2-auto-scaling-group.png](images/vpc-71-ec2-auto-scaling-group.png)
+
+![vpc-72-ec2-auto-scaling-group.png](images/vpc-72-ec2-auto-scaling-group.png)
+
+After 30 seconds from creation of auto scaling group new instances will be launched in this group:
+
+![vpc-73-ec2-auto-scaling-group.png](images/vpc-73-ec2-auto-scaling-group.png)
+
+In the load balancer/target group we can see 3 instances. One instance was created at the very beginning and 2 other instances are from the create auto scaling group:
+
+![vpc-74-ec2-auto-scaling-group.png](images/vpc-74-ec2-auto-scaling-group.png)
+>NOTE: it took some time to see **healthy** in this status column.
+
+Go to load balancer to check its DNS name. The ideas is that then you would get a normal URL like sample-app.com and create a DNS CNAME record to point to this load balancer DNS name. This part is not presented here.
+
+![vpc-75-ec2-auto-scaling-group.png](images/vpc-75-ec2-auto-scaling-group.png)
+
+Type ```http://jacek-app-load-balancer-west1-366905866.us-west-1.elb.amazonaws.com/``` in the web browser to see working app.
+
+We can also see that there is cookie created by the [Enable instance stickiness on Load Balancer](#enable-instance-stickiness-on-load-balancer) mechanism.
+
+![vpc-76-ec2-auto-scaling-group.png](images/vpc-76-ec2-auto-scaling-group.png)
+
+Improve security group for the EC2 instances because now it is enough to allow inbound traffic from the load balancer and SSH.
+
+Change from:
+![vpc-77-ec2-auto-scaling-group.png](images/vpc-77-ec2-auto-scaling-group.png)
+
+To:
+![vpc-78-ec2-auto-scaling-group.png](images/vpc-78-ec2-auto-scaling-group.png)
+The above configuration allows on inbound traffic from any instance that is in security group **jacek-lb-sg-west1**.
+
+We can see also that ```http://jacek-app-load-balancer-west1-366905866.us-west-1.elb.amazonaws.com/``` still works fine in the web browser.
+
+
 
 # resources
 https://acloud.guru/forums/aws-certified-cloud-practitioner/discussion/-Lmu_Iq2Zrc_ojEYoN4d/I%20got%20a%20putty%20fatal%20error:%20No%20supported%20authentication%20methods%20available%20(server%20sent:publickey,gssapi-keyex,gssapi-with-mic)%20%20How%20do%20I%20resolve%20this%20issue%3F   
