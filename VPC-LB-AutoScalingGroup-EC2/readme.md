@@ -17,6 +17,7 @@
     - [Enable instance stickiness on Load Balancer](#enable-instance-stickiness-on-load-balancer)
     - [Creating launch configuration for an auto-scaling group](#creating-launch-configuration-for-an-auto-scaling-group)
     - [Create autoscaling group using created launch configuration](#create-autoscaling-group-using-created-launch-configuration)
+    - [Scaling in action](#scaling-in-action)
 - [resources](#resources)
 
 # Security Groups
@@ -317,7 +318,43 @@ The above configuration allows on inbound traffic from any instance that is in s
 
 We can see also that ```http://jacek-app-load-balancer-west1-366905866.us-west-1.elb.amazonaws.com/``` still works fine in the web browser.
 
+### Scaling in action
 
+![vpc-79-ec2-scaling-in-action.png](images/vpc-79-ec2-scaling-in-action.png)
+
+Add policy:
+![vpc-80-ec2-scaling-in-action.png](images/vpc-80-ec2-scaling-in-action.png)
+
+
+![vpc-81-ec2-scaling-in-action.png](images/vpc-81-ec2-scaling-in-action.png)
+
+![vpc-82-ec2-scaling-in-action.png](images/vpc-82-ec2-scaling-in-action.png)
+
+Typical alarm metrics:
+* CPU Utilization
+* Disk reads
+* Disk writes
+* Disk read operations
+* Disk write operations
+* Network in
+* Network out
+
+![vpc-83-ec2-scaling-in-action.png](images/vpc-83-ec2-scaling-in-action.png)
+
+![vpc-84-ec2-scaling-in-action.png](images/vpc-84-ec2-scaling-in-action.png)
+
+Set *greater than 100 bytes* to easily simulate adding more instances.
+
+![vpc-85-ec2-scaling-in-action.png](images/vpc-85-ec2-scaling-in-action.png)
+
+Remove notifications it is not needed now:
+![vpc-86-ec2-scaling-in-action.png](images/vpc-86-ec2-scaling-in-action.png)
+
+It is common practice to create alarms that will trigger adding more instances and alarms that will trigger removing instances.
+
+From unknown reasons I was not able to select auto scaling group from the drop down. This chapter will be finalized later:
+
+![vpc-87-ec2-scaling-in-action.png](images/vpc-87-ec2-scaling-in-action.png)
 
 # resources
 https://acloud.guru/forums/aws-certified-cloud-practitioner/discussion/-Lmu_Iq2Zrc_ojEYoN4d/I%20got%20a%20putty%20fatal%20error:%20No%20supported%20authentication%20methods%20available%20(server%20sent:publickey,gssapi-keyex,gssapi-with-mic)%20%20How%20do%20I%20resolve%20this%20issue%3F   
