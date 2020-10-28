@@ -11,11 +11,16 @@
     - [Update already installed components (in ssh console)](#update-already-installed-components-in-ssh-console)
     - [Install nodejs](#install-nodejs)
     - [Upload the app using WinSCP](#upload-the-app-using-winscp)
+  - [Scaling EC2 instances](#scaling-ec2-instances)
+    - [Creating dedicated AMI (image) for EC2 instance](#creating-dedicated-ami-image-for-ec2-instance)
+    - [Create load balancer](#create-load-balancer)
+    - [Enable instance stickiness on Load Balancer](#enable-instance-stickiness-on-load-balancer)
+    - [Creating an auto-scaling group](#creating-an-auto-scaling-group)
 - [resources](#resources)
 
 # Security Groups
 
-A security group defines a collection of IPs that are allowed to connect to your instance and IPs that instance is allowed to connect to. Security groups are attached at the instance level (EC2) and can be shared among many instances. You can even set security group rules to allow access from other security groups instead of by IP.   
+A security group defines a collection of IPs that are allowed to connect to your instance and IPs that instance is allowed to connect to. **Security groups are attached at the instance level (EC2) and can be shared among many instances**. You can even set security group rules to allow access from other security groups instead of by IP.   
 
 For example security group can be defined in EC2 wizard as one of its steps:
 ![vpc-21-aws-create-ec2-instance.png](images/vpc-21-aws-create-ec2-instance.png)
@@ -189,7 +194,63 @@ To run it in web browsers use public IP address because the EC2 instance does no
 
 Open in web browser this address ```http://52.53.108.154:3000/``` to see working app.
 
+## Scaling EC2 instances
 
+### Creating dedicated AMI (image) for EC2 instance
+
+It is possible to created a snapshot of existing instance. Such snapshot can be saved and replicated.
+
+Such AMI can be automatically scaled using **Auto Scaling Group**. Auto Scaling Group expands or shrinks a pool of instances based on pre-defined rules.
+
+![vpc-42-ec2-scaling.png](images/vpc-42-ec2-scaling.png)
+
+![vpc-43-ec2-scaling.png](images/vpc-43-ec2-scaling.png)
+
+Created AMI (Amazon Machine Images) is visible on the AMI list:
+![vpc-44-ec2-scaling.png](images/vpc-44-ec2-scaling.png)
+
+### Create load balancer
+
+![vpc-45-ec2-load-balancer.png](images/vpc-45-ec2-load-balancer.png)
+
+![vpc-46-ec2-load-balancer.png](images/vpc-46-ec2-load-balancer.png)
+
+![vpc-47-ec2-load-balancer.png](images/vpc-47-ec2-load-balancer.png)
+
+![vpc-48-ec2-load-balancer.png](images/vpc-48-ec2-load-balancer.png)
+
+![vpc-49-ec2-load-balancer.png](images/vpc-49-ec2-load-balancer.png)
+
+![vpc-50-ec2-load-balancer.png](images/vpc-50-ec2-load-balancer.png)
+
+![vpc-51-ec2-load-balancer.png](images/vpc-51-ec2-load-balancer.png)
+
+![vpc-52-ec2-load-balancer.png](images/vpc-52-ec2-load-balancer.png)
+
+Click register to add the instance to LB targets:
+![vpc-53-ec2-load-balancer.png](images/vpc-53-ec2-load-balancer.png)
+
+![vpc-54-ec2-load-balancer.png](images/vpc-54-ec2-load-balancer.png)
+
+![vpc-55-ec2-load-balancer.png](images/vpc-55-ec2-load-balancer.png)
+
+![vpc-56-ec2-load-balancer.png](images/vpc-56-ec2-load-balancer.png)
+
+### Enable instance stickiness on Load Balancer
+
+We need to ensure that if a user logs into our app in one EC2 instance that they continue to connect to that same instance wit subsequent requests. If we didn't do this, there's a possibility that they would hit an instance where they don't have a session. To avoid this situation entirely, let's enable stickiness on the load balancer. The load balancer will use a cookie to keep track of which users should be sent to which instances.
+
+>NOTE: it is needed only if we deal with stateful app.
+
+![vpc-57-ec2-target-group.png](images/vpc-57-ec2-target-group.png)
+
+![vpc-58-ec2-target-group.png](images/vpc-58-ec2-target-group.png)
+
+![vpc-59-ec2-target-group.png](images/vpc-59-ec2-target-group.png)
+
+### Creating an auto-scaling group
+
+![vpc-60-ec2-auto-scaling-group.png](images/vpc-60-ec2-auto-scaling-group.png)
 
 # resources
 https://acloud.guru/forums/aws-certified-cloud-practitioner/discussion/-Lmu_Iq2Zrc_ojEYoN4d/I%20got%20a%20putty%20fatal%20error:%20No%20supported%20authentication%20methods%20available%20(server%20sent:publickey,gssapi-keyex,gssapi-with-mic)%20%20How%20do%20I%20resolve%20this%20issue%3F   
