@@ -1,6 +1,7 @@
 - [VPC](#vpc)
 - [Security Groups](#security-groups)
 - [Routing table](#routing-table)
+  - [Typical route table (public and private subnet)](#typical-route-table-public-and-private-subnet)
 - [Network access control list](#network-access-control-list)
 - [Subnet](#subnet)
 - [Create VPC with 2 public subnets](#create-vpc-with-2-public-subnets)
@@ -21,6 +22,10 @@
     - [Scaling in action](#scaling-in-action)
 - [Review of default VPC and default subnets](#review-of-default-vpc-and-default-subnets)
   - [Selected subnets fields](#selected-subnets-fields)
+  - [Internet Gateway](#internet-gateway)
+- [Create VPC with public and private subnets](#create-vpc-with-public-and-private-subnets)
+  - [Create VPC](#create-vpc)
+  - [Create private subnet](#create-private-subnet)
 - [resources](#resources)
 
 
@@ -41,7 +46,17 @@ For example security group can be defined in EC2 wizard as one of its steps:
 
 # Routing table
 
-Each VPC has one **routing table**, which declares attempted destination IPs and where they should be routed to. For instance, if you want to run all outgoing traffic through a proxy, you can set a routing table rule to automatically send traffic to that IP. This can be a powerful tool for security as you can inspect outgoing traffic and only whitelist safe destinations for traffic.
+Each VPC has one **routing table**, which declares attempted destination IPs and where they should be routed to. For instance, if you want to run all outgoing traffic through a proxy, you can set a routing table rule to automatically send traffic to that IP. This can be a powerful tool for security as you can inspect outgoing traffic and only whitelist safe destinations for traffic.   
+
+Router exist across availability zones and there is no single point of hardware failure that would take this router down.   
+
+**Route tables can be assigned also to subnets.**
+
+## Typical route table (public and private subnet)
+
+![vpc-93-route-table.png](images/vpc-93-route-table.png)
+
+![vpc-94-route-table2.png](images/vpc-94-route-table2.png)
 
 # Network access control list
 
@@ -57,7 +72,7 @@ A VPC defines a private, logically isolated area for instances, but a **subnet**
 * the first four addresses are reserved within each subnet
 * the highest address is reserved
 * for example: 10.0.1.0/24
-  * reserved addresses are: 10.0.1.0, 10.0.1.1, 10.0.1.2, 10.0.1.3, and 10.0.1.255
+  * reserved addresses are: 10.0.1.0 (subnet address), 10.0.1.1 (reserved for default gateway), 10.0.1.2 (default DNS server), 10.0.1.3, and 10.0.1.255 
 
 # Create VPC with 2 public subnets
 
@@ -377,6 +392,8 @@ From unknown reasons I was not able to select auto scaling group from the drop d
 
 Every AWS region has default VPC created. Thx to this we can start creating for example EC2 instances just after sign in to AWS console, if there would be no default VPC it would have to be created first, it is like pre-requisite step.
 
+> NOTE: if needed it is possible to delete default VPC. If we deleted default VPC by mistake it is possible to create it once again, go to VPC view and next Actions -> Create default VPC.
+
 ## Selected subnets fields
 
 * Auto-assign public IPv4 address (Yes/No): in case of Yes instances created in this subnet will get public IP address - publicly routable IP address. Some one in Internet could connect with this EC2 instance using this public IP if other AWS configuration (like security group) allows this.
@@ -389,6 +406,28 @@ Every AWS region has default VPC created. Thx to this we can start creating for 
 * Network ACL
   ![vpc-89-acl.png](images/vpc-89-acl.png)   
   By default it allows all traffic from any source and any port for inbound and outbound traffic. It means that by default this ACL blocks nothing! What does it mean * on this screen???
+
+## Internet Gateway
+
+![vpc-90-IntetnetGW.png](images/vpc-90-IntetnetGW.png)
+
+Together with VPC main route table and network ACL are created.
+
+# Create VPC with public and private subnets
+
+## Create VPC
+
+![vpc-91-create-vpc.png](images/vpc-91-create-vpc.png)
+
+## Create private subnet
+
+![vpc-92-create-priv-subnet.png](images/vpc-92-create-priv-subnet.png)
+
+**Created subnet will use default ACL and default route table (the same ACL and route table that are assigned to the VPC).** Thx to this instances in this VPC can talk each other.
+
+Because it is private subnet ```Auto-assign public IPv4 address``` is set to ```No```.
+
+
 # resources
 https://acloud.guru/forums/aws-certified-cloud-practitioner/discussion/-Lmu_Iq2Zrc_ojEYoN4d/I%20got%20a%20putty%20fatal%20error:%20No%20supported%20authentication%20methods%20available%20(server%20sent:publickey,gssapi-keyex,gssapi-with-mic)%20%20How%20do%20I%20resolve%20this%20issue%3F   
 https://app.pluralsight.com/library/courses/aws-developer-getting-started/table-of-contents (chapters related with EC2 and putty)   
