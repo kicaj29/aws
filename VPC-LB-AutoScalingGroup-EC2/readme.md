@@ -4,6 +4,7 @@
   - [Typical route table (public and private subnet)](#typical-route-table-public-and-private-subnet)
 - [Network access control list](#network-access-control-list)
 - [Subnet](#subnet)
+- [Internet Gateway](#internet-gateway)
 - [Create VPC with 2 public subnets](#create-vpc-with-2-public-subnets)
   - [Create EC2 instances that will be connected to created VPC](#create-ec2-instances-that-will-be-connected-to-created-vpc)
   - [Create and assign a public IP address to EC2 instance](#create-and-assign-a-public-ip-address-to-ec2-instance)
@@ -22,10 +23,12 @@
     - [Scaling in action](#scaling-in-action)
 - [Review of default VPC and default subnets](#review-of-default-vpc-and-default-subnets)
   - [Selected subnets fields](#selected-subnets-fields)
-  - [Internet Gateway](#internet-gateway)
+  - [Internet Gateway](#internet-gateway-1)
 - [Create VPC with public and private subnets](#create-vpc-with-public-and-private-subnets)
   - [Create VPC](#create-vpc)
   - [Create private subnet](#create-private-subnet)
+  - [Create route table](#create-route-table)
+  - [Dual-Homed Instance](#dual-homed-instance)
 - [resources](#resources)
 
 
@@ -39,7 +42,7 @@
 
 # Security Groups
 
-A security group defines a collection of IPs that are allowed to connect to your instance and IPs that instance is allowed to connect to. **Security groups are attached at the instance level (EC2) and can be shared among many instances**. You can even set security group rules to allow access from other security groups instead of by IP. **Security groups are stateful firewalls (it has persistency and can remember traffic from the past)**.
+A security group defines a collection of IPs that are allowed to connect to your instance and IPs that instance is allowed to connect to. **Security groups are attached at the instance level (EC2) to interfaces (ENI) and can be shared among many instances**. You can even set security group rules to allow access from other security groups instead of by IP. **Security groups are stateful firewalls (it has persistency and can remember traffic from the past)**.
 
 For example security group can be defined in EC2 wizard as one of its steps:
 ![vpc-21-aws-create-ec2-instance.png](images/vpc-21-aws-create-ec2-instance.png)
@@ -72,7 +75,25 @@ A VPC defines a private, logically isolated area for instances, but a **subnet**
 * the first four addresses are reserved within each subnet
 * the highest address is reserved
 * for example: 10.0.1.0/24
-  * reserved addresses are: 10.0.1.0 (subnet address), 10.0.1.1 (reserved for default gateway), 10.0.1.2 (default DNS server), 10.0.1.3, and 10.0.1.255 
+  * reserved addresses are: 10.0.1.0 (subnet address), 10.0.1.1 (reserved for default gateway), 10.0.1.2 (default DNS server), 10.0.1.3 (future use by AWS), and 10.0.1.255 (broad case address)
+
+# Internet Gateway
+
+**External IP is not visible from level of EC2 instance!** It sees only 10.0.1.23 address.   
+**Internet GW is performing source NAT and destination NAT**.   
+
+IGW is automatically HA, it is managed by AWS.
+
+If it will receive package with source 10.0.1.23 and destination 8.8.8.8 it will replace 10.0.1.23 by public IP 59.54.23.52. Similar when it will receive incoming packet from Internet it will replace address 59.54.23.52 by 10.0.1.23.
+
+Source nat:
+
+![vpc-97-source-nat.png](images/vpc-97-source-nat.png)
+
+Destination nat:
+
+![vpc-98-dest-nat.png](images/vpc-98-dest-nat.png)
+
 
 # Create VPC with 2 public subnets
 
@@ -427,6 +448,17 @@ Together with VPC main route table and network ACL are created.
 
 Because it is private subnet ```Auto-assign public IPv4 address``` is set to ```No```.
 
+## Create route table
+
+![vpc-95-new-route-table.png](images/vpc-95-new-route-table.png)
+
+After creation I had to add tag with name ```Name``` and proper name value!
+
+## Dual-Homed Instance
+
+It is possible to create second interface (ENI) and in this way EC2 instance be accessed from private and public subnet.
+
+![vpc-96-dual-homed-instance.png](images/vpc-96-dual-homed-instance.png)
 
 # resources
 https://acloud.guru/forums/aws-certified-cloud-practitioner/discussion/-Lmu_Iq2Zrc_ojEYoN4d/I%20got%20a%20putty%20fatal%20error:%20No%20supported%20authentication%20methods%20available%20(server%20sent:publickey,gssapi-keyex,gssapi-with-mic)%20%20How%20do%20I%20resolve%20this%20issue%3F   
