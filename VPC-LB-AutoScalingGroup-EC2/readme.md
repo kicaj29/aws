@@ -1,3 +1,4 @@
+- [VPC](#vpc)
 - [Security Groups](#security-groups)
 - [Routing table](#routing-table)
 - [Network access control list](#network-access-control-list)
@@ -18,11 +19,22 @@
     - [Creating launch configuration for an auto-scaling group](#creating-launch-configuration-for-an-auto-scaling-group)
     - [Create autoscaling group using created launch configuration](#create-autoscaling-group-using-created-launch-configuration)
     - [Scaling in action](#scaling-in-action)
+- [Review of default VPC and default subnets](#review-of-default-vpc-and-default-subnets)
+  - [Selected subnets fields](#selected-subnets-fields)
 - [resources](#resources)
+
+
+# VPC
+* is a logical data center
+* local to a single region
+* a vpc can span multiple AZ`s
+* good for separating public and private resources
+* you can create a hardware VPN between your data center  and your VPC
+* can have only one Internet Gateway (IGW is completely managed AWS including HA and scaling)
 
 # Security Groups
 
-A security group defines a collection of IPs that are allowed to connect to your instance and IPs that instance is allowed to connect to. **Security groups are attached at the instance level (EC2) and can be shared among many instances**. You can even set security group rules to allow access from other security groups instead of by IP.   
+A security group defines a collection of IPs that are allowed to connect to your instance and IPs that instance is allowed to connect to. **Security groups are attached at the instance level (EC2) and can be shared among many instances**. You can even set security group rules to allow access from other security groups instead of by IP. **Security groups are stateful firewalls (it has persistency and can remember traffic from the past)**.
 
 For example security group can be defined in EC2 wizard as one of its steps:
 ![vpc-21-aws-create-ec2-instance.png](images/vpc-21-aws-create-ec2-instance.png)
@@ -33,7 +45,7 @@ Each VPC has one **routing table**, which declares attempted destination IPs and
 
 # Network access control list
 
-Another tool the VPCs use for networking control is the **network access control list**. Each VPC has one access control list, and this acts as an IP filtering table saying which IPs are allowed through the VPC for both incoming and outgoing traffic. Access control lists are kind of like super-powered security groups that apply rules for the entire VPC.
+Another tool the VPCs use for networking control is the **network access control list**. Each VPC has one access control list, and this acts as an IP filtering table saying which IPs are allowed through the VPC for both incoming and outgoing traffic. Access control lists are kind of like super-powered security groups that apply rules for the entire VPC. **ACL is stateless firewall.**
 
 # Subnet
 
@@ -41,6 +53,11 @@ A VPC defines a private, logically isolated area for instances, but a **subnet**
 
 ![vpc-01-subnet.png](images/vpc-01-subnet.png)
 ![vpc-02-subnet-priv-public.png](images/vpc-02-subnet-priv-public.png)
+
+* the first four addresses are reserved within each subnet
+* the highest address is reserved
+* for example: 10.0.1.0/24
+  * reserved addresses are: 10.0.1.0, 10.0.1.1, 10.0.1.2, 10.0.1.3, and 10.0.1.255
 
 # Create VPC with 2 public subnets
 
@@ -356,7 +373,25 @@ From unknown reasons I was not able to select auto scaling group from the drop d
 
 ![vpc-87-ec2-scaling-in-action.png](images/vpc-87-ec2-scaling-in-action.png)
 
+# Review of default VPC and default subnets
+
+Every AWS region has default VPC created. Thx to this we can start creating for example EC2 instances just after sign in to AWS console, if there would be no default VPC it would have to be created first, it is like pre-requisite step.
+
+## Selected subnets fields
+
+* Auto-assign public IPv4 address (Yes/No): in case of Yes instances created in this subnet will get public IP address - publicly routable IP address. Some one in Internet could connect with this EC2 instance using this public IP if other AWS configuration (like security group) allows this.
+  
+* Route table
+  ![vpc-88-route-table.png](images/vpc-88-route-table.png)
+  First row (172.31.0.0/16): local route, it routes traffic locally within particular VPC. Thx this this instances from this subnet can communicate with instances from other subnets in this VPC.   
+  Second row (0.0.0.0/0): if the traffic is anything other than network 172.31.0.0/16 then send this traffic to Internet Gateway. This also causes that EC2 instances will be accessible **from Internet.** It makes this subnet public.
+
+* Network ACL
+  ![vpc-89-acl.png](images/vpc-89-acl.png)   
+  By default it allows all traffic from any source and any port for inbound and outbound traffic. It means that by default this ACL blocks nothing! What does it mean * on this screen???
 # resources
 https://acloud.guru/forums/aws-certified-cloud-practitioner/discussion/-Lmu_Iq2Zrc_ojEYoN4d/I%20got%20a%20putty%20fatal%20error:%20No%20supported%20authentication%20methods%20available%20(server%20sent:publickey,gssapi-keyex,gssapi-with-mic)%20%20How%20do%20I%20resolve%20this%20issue%3F   
 https://app.pluralsight.com/library/courses/aws-developer-getting-started/table-of-contents (chapters related with EC2 and putty)   
 https://techviewleo.com/how-to-install-nodejs-on-amazon-linux/   
+https://www.udemy.com/course/awsnetworking/   
+https://www.youtube.com/watch?v=gMvXruavqDI&t=189s   

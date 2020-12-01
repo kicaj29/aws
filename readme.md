@@ -149,3 +149,5 @@ In tab **Affected resources** I can check if resources related with my account a
 
 # resources
 https://app.pluralsight.com/library/courses/fundamental-cloud-concepts-aws/table-of-contents   
+https://www.youtube.com/watch?v=7LRtytR6ZbA   
+
