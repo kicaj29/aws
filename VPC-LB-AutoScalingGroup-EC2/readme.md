@@ -38,6 +38,11 @@
     - [Create bastion host](#create-bastion-host)
     - [Connect with the bastion host](#connect-with-the-bastion-host)
     - [Connect to private EC2 instance from bastion host](#connect-to-private-ec2-instance-from-bastion-host)
+  - [Create NAT gateway to allow traffic to/from private subnet](#create-nat-gateway-to-allow-traffic-tofrom-private-subnet)
+    - [Create new route table for private subnet](#create-new-route-table-for-private-subnet)
+    - [Check that there is no Internet traffic in private EC2](#check-that-there-is-no-internet-traffic-in-private-ec2)
+    - [Change association for route table in private subnet](#change-association-for-route-table-in-private-subnet)
+    - [Check that there is Internet traffic in private EC2](#check-that-there-is-internet-traffic-in-private-ec2)
 - [Dual-Homed Instance](#dual-homed-instance)
 - [resources](#resources)
 
@@ -620,6 +625,31 @@ Install putty and import ppk file.
 ![vpc-101-bastion-host-connect-to-private-EC2.png](images/vpc-101-bastion-host-connect-to-private-EC2.png)
 
 ![vpc-101-bastion-host-connected-to-private-EC2.png](images/vpc-101-bastion-host-connected-to-private-EC2.png)
+
+## Create NAT gateway to allow traffic to/from private subnet
+
+Create NAT gateway (assign new elastic IP):
+
+![vpc-102-NAT-GW-create.png](images/vpc-102-NAT-GW-create.png)
+
+
+### Create new route table for private subnet
+
+![vpc-102-NAT-GW-new-route-table.png](images/vpc-102-NAT-GW-new-route-table.png)
+
+![vpc-102-NAT-GW-add-new-route.png](images/vpc-102-NAT-GW-add-new-route.png)
+
+### Check that there is no Internet traffic in private EC2
+
+![vpc-102-NAT-GW-no-Internet.png](images/vpc-102-NAT-GW-no-Internet.png)
+
+### Change association for route table in private subnet
+
+![vpc-102-NAT-GW-change-association.png](images/vpc-102-NAT-GW-change-association.png)
+
+### Check that there is Internet traffic in private EC2
+
+![vpc-102-NAT-GW-Internet.png](images/vpc-102-NAT-GW-Internet.png)
 
 # Dual-Homed Instance
 
