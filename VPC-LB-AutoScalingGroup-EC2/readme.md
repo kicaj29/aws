@@ -30,6 +30,14 @@
   - [Create Internet Gateway](#create-internet-gateway)
   - [Create new route table for public subnet](#create-new-route-table-for-public-subnet)
   - [Enable auto-assign public IPv4](#enable-auto-assign-public-ipv4)
+  - [Create EC2 instance in public subnet](#create-ec2-instance-in-public-subnet)
+    - [Connect to the created EC2 via SSH to check IP addresses](#connect-to-the-created-ec2-via-ssh-to-check-ip-addresses)
+  - [Assigned Elastic IP to ENI](#assigned-elastic-ip-to-eni)
+  - [Create seconde EC2 instance in private network](#create-seconde-ec2-instance-in-private-network)
+  - [Bastion host (jump box)](#bastion-host-jump-box)
+    - [Create bastion host](#create-bastion-host)
+    - [Connect with the bastion host](#connect-with-the-bastion-host)
+    - [Connect to private EC2 instance from bastion host](#connect-to-private-ec2-instance-from-bastion-host)
 - [Dual-Homed Instance](#dual-homed-instance)
 - [resources](#resources)
 
@@ -176,7 +184,7 @@ Now we can see that EC2 instance has public IP Address:
 Click load to select pem file:
 
 ![vpc-32-aws-putty.png](images/vpc-32-aws-putty.png)
-![vpc-33-aws-putty.png](images/vpc-33-aws-putty.png)
+![vpc-33-aws-putty.png](images/vpc-33-aws-putty.png)   
 Select save private key to save if in ppk format.
 
 Apply the ppk file in putty:
@@ -499,6 +507,119 @@ In public subnet enable public IPv4:
 ![vpc-92-public-subnet-ip.png](images/vpc-92-public-subnet-ip.png)
 
 **Since now public network is really public because instances from this network will have public ID and there is route to Internet Gateway**.
+
+## Create EC2 instance in public subnet
+
+![vpc-99-public-subnet-EC2-create.png](images/vpc-99-public-subnet-EC2-create.png)
+
+![vpc-99-public-subnet-EC2-create-eth0.png](images/vpc-99-public-subnet-EC2-create-eth0.png)
+
+![vpc-99-public-subnet-EC2-create-sg.png](images/vpc-99-public-subnet-EC2-create-sg.png)
+
+![vpc-99-public-subnet-EC2-key-pair.png](images/vpc-99-public-subnet-EC2-key-pair.png)
+
+Download pem file and next connect to the EC2 instance
+
+Created instances has one ENI interface:
+![vpc-99-public-subnet-EC2-interfaces.png](images/vpc-99-public-subnet-EC2-interfaces.png)
+
+### Connect to the created EC2 via SSH to check IP addresses
+
+We can see that in the EC2 instance we do not have public IP address.
+Public IP address is managed by [Internet Gateway](#internet-gateway).
+
+```
+[ec2-user@ip-10-1-101-13 ~]$ ifconfig
+eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 9001
+        inet 10.1.101.13  netmask 255.255.255.0  broadcast 10.1.101.255
+        inet6 fe80::403:21ff:fe67:47a6  prefixlen 64  scopeid 0x20<link>
+        ether 06:03:21:67:47:a6  txqueuelen 1000  (Ethernet)
+        RX packets 36907  bytes 51476363 (49.0 MiB)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 11180  bytes 693870 (677.6 KiB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
+        inet 127.0.0.1  netmask 255.0.0.0
+        inet6 ::1  prefixlen 128  scopeid 0x10<host>
+        loop  txqueuelen 1000  (Local Loopback)
+        RX packets 8  bytes 648 (648.0 B)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 8  bytes 648 (648.0 B)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+```
+
+**Also this assigned public IP is not permanent. If we stop and start the EC2 instance it will get new public IP address!**.
+
+![vpc-99-public-subnet-EC2-public-IP1.png](images/vpc-99-public-subnet-EC2-public-IP1.png)
+
+![vpc-99-public-subnet-EC2-public-IP2.png](images/vpc-99-public-subnet-EC2-public-IP2.png)
+
+## Assigned Elastic IP to ENI
+
+To have permanent public IP address EIP has to be used and assigned to EC2 instance or to interface from EC2 instance.
+
+Create elastic IP:
+![vpc-100-create-elastic-IP.png](images/vpc-100-create-elastic-IP.png)
+
+Review created EIP:
+![vpc-100-elastic-IP.png](images/vpc-100-elastic-IP.png)
+
+Associate EIP to ENI:
+
+![vpc-100-elastic-associate.png](images/vpc-100-elastic-associate.png)
+
+Next we can see that the EC2 instance got new public IP which is permanent (restart will not change it). Also previous public IP is unassigned from the instance.
+
+![vpc-100-elastic-IP-ec2.png](images/vpc-100-elastic-IP-ec2.png)
+
+EIP is also not visible from EC2 instance - ```ifconfig``` command.
+
+## Create seconde EC2 instance in private network
+
+![vpc-100-ec2-in-private-network.png](images/vpc-100-ec2-in-private-network.png)
+
+## Bastion host (jump box)
+
+Bastion host allows connection to instance that runs in private network.
+
+### Create bastion host
+
+![vpc-101-bastion-host-ami.png](images/vpc-101-bastion-host-ami.png)
+
+![vpc-101-bastion-host-t3.png](images/vpc-101-bastion-host-t3.png)
+
+![vpc-101-bastion-host-vpc.png](images/vpc-101-bastion-host-vpc.png)
+
+![vpc-101-bastion-host-sg.png](images/vpc-101-bastion-host-sg.png)
+
+### Connect with the bastion host
+
+![vpc-101-bastion-host-connect.png](images/vpc-101-bastion-host-connect.png)
+
+![vpc-101-bastion-host-get-password.png](images/vpc-101-bastion-host-get-password.png)
+
+![vpc-101-bastion-host-pem.png](images/vpc-101-bastion-host-pem.png)
+
+![vpc-101-bastion-host-password.png](images/vpc-101-bastion-host-password.png)   
+Bq5zN6h.Xu
+
+Next connect RDP client to connect with the bastion host:
+
+![vpc-101-bastion-host-connected.png](images/vpc-101-bastion-host-connected.png)
+
+Next copy to Windows instance ppk and putty installer:
+
+![vpc-101-bastion-host-copy-files.png](images/vpc-101-bastion-host-copy-files.png)
+
+Install putty and import ppk file.
+
+### Connect to private EC2 instance from bastion host
+
+![vpc-101-bastion-host-connect-to-private-EC2.png](images/vpc-101-bastion-host-connect-to-private-EC2.png)
+
+![vpc-101-bastion-host-connected-to-private-EC2.png](images/vpc-101-bastion-host-connected-to-private-EC2.png)
 
 # Dual-Homed Instance
 
