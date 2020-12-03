@@ -23,12 +23,13 @@
     - [Scaling in action](#scaling-in-action)
 - [Review of default VPC and default subnets](#review-of-default-vpc-and-default-subnets)
   - [Selected subnets fields](#selected-subnets-fields)
-  - [Internet Gateway](#internet-gateway-1)
 - [Create VPC with public and private subnets](#create-vpc-with-public-and-private-subnets)
   - [Create VPC](#create-vpc)
   - [Create private subnet](#create-private-subnet)
-  - [Create route table](#create-route-table)
-  - [Dual-Homed Instance](#dual-homed-instance)
+  - [Create public subnet](#create-public-subnet)
+  - [Create Internet Gateway](#create-internet-gateway)
+  - [Create new route table for public subnet](#create-new-route-table-for-public-subnet)
+- [Dual-Homed Instance](#dual-homed-instance)
 - [resources](#resources)
 
 
@@ -417,7 +418,8 @@ Every AWS region has default VPC created. Thx to this we can start creating for 
 
 ## Selected subnets fields
 
-* Auto-assign public IPv4 address (Yes/No): in case of Yes instances created in this subnet will get public IP address - publicly routable IP address. Some one in Internet could connect with this EC2 instance using this public IP if other AWS configuration (like security group) allows this.
+* Auto-assign public IPv4 address (Yes/No): in case of Yes instances created in this subnet will get public IP address - publicly routable IP address. Someone in Internet could connect with this EC2 instance using this public IP if other AWS configuration (like security group) allows this.
+To have public subnet we need value ```Yes``` for this field and Internet GW in the subnet.
   
 * Route table
   ![vpc-88-route-table.png](images/vpc-88-route-table.png)
@@ -428,33 +430,60 @@ Every AWS region has default VPC created. Thx to this we can start creating for 
   ![vpc-89-acl.png](images/vpc-89-acl.png)   
   By default it allows all traffic from any source and any port for inbound and outbound traffic. It means that by default this ACL blocks nothing! What does it mean * on this screen???
 
-## Internet Gateway
-
-![vpc-90-IntetnetGW.png](images/vpc-90-IntetnetGW.png)
-
-Together with VPC main route table and network ACL are created.
-
 # Create VPC with public and private subnets
 
 ## Create VPC
 
 ![vpc-91-create-vpc.png](images/vpc-91-create-vpc.png)
 
+Automatically will be also created main route for this VPC and default ACL for this VPC.
+
+![vpc-91-create-vpc-main-route.png](images/vpc-91-create-vpc-main-route.png)
+Route with target local allows communication between all sub-networks within this VPC.
+
+
+![vpc-91-create-vpc-default-acl.png](images/vpc-91-create-vpc-default-acl.png)
+Default ACL allows for all incoming and all outgoing traffic.   
+What does it mean * on this screen???
+
 ## Create private subnet
 
 ![vpc-92-create-priv-subnet.png](images/vpc-92-create-priv-subnet.png)
 
-**Created subnet will use default ACL and default route table (the same ACL and route table that are assigned to the VPC).** Thx to this instances in this VPC can talk each other.
+Instances that will run in this subnet will not have public IP.
+It also has the same route table and ACL that "parent" VPC.
 
-Because it is private subnet ```Auto-assign public IPv4 address``` is set to ```No```.
+![vpc-92-create-priv-subnet-route-table.png](images/vpc-92-create-priv-subnet-route-table.png)
 
-## Create route table
+![vpc-92-create-priv-subnet-acl.png](images/vpc-92-create-priv-subnet-acl.png)
 
-![vpc-95-new-route-table.png](images/vpc-95-new-route-table.png)
+## Create public subnet
 
-After creation I had to add tag with name ```Name``` and proper name value!
+![vpc-92-create-public-subnet.png](images/vpc-92-create-public-subnet.png)
 
-## Dual-Homed Instance
+Again this subnet will by default will have the same route table and ACL as its VPC. At this moment this subnet is not yet public because instances in this subnet will not get public IP and there is missing route to Internet Gateway.
+
+![vpc-92-create-public-subnet-no-ip.png](images/vpc-92-create-public-subnet-no-ip.png)
+
+![vpc-92-create-public-subnet-default-route-table.png](images/vpc-92-create-public-subnet-default-route-table.png)
+
+![vpc-92-create-public-subnet-default-acl.png](images/vpc-92-create-public-subnet-default-acl.png)
+
+## Create Internet Gateway
+
+Internet gateway is fully managed service it means that HA and auto-scaling works out of the box.
+
+![vpc-92-create-public-subnet-igw.png](images/vpc-92-create-public-subnet-igw.png)
+
+Next attach IGW to the created VPC:
+
+![vpc-92-create-public-subnet-igw-attach-to-vpc.png](images/vpc-92-create-public-subnet-igw-attach-to-vpc.png)
+
+## Create new route table for public subnet
+
+![vpc-92-create-public-route-table.png](images/vpc-92-create-public-route-table.png)
+
+# Dual-Homed Instance
 
 It is possible to create second interface (ENI) and in this way EC2 instance be accessed from private and public subnet.
 
