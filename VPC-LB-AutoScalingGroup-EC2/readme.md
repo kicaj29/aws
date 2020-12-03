@@ -29,6 +29,7 @@
   - [Create public subnet](#create-public-subnet)
   - [Create Internet Gateway](#create-internet-gateway)
   - [Create new route table for public subnet](#create-new-route-table-for-public-subnet)
+  - [Enable auto-assign public IPv4](#enable-auto-assign-public-ipv4)
 - [Dual-Homed Instance](#dual-homed-instance)
 - [resources](#resources)
 
@@ -482,6 +483,22 @@ Next attach IGW to the created VPC:
 ## Create new route table for public subnet
 
 ![vpc-92-create-public-route-table.png](images/vpc-92-create-public-route-table.png)
+
+Next add route for Internet traffic:
+
+![vpc-92-create-public-subnet-route-igw.png](images/vpc-92-create-public-subnet-route-igw.png)
+
+Next attach this route to public network:
+
+![vpc-92-public-route-subnet-association.png](images/vpc-92-public-route-subnet-association.png)
+
+## Enable auto-assign public IPv4
+
+In public subnet enable public IPv4:
+
+![vpc-92-public-subnet-ip.png](images/vpc-92-public-subnet-ip.png)
+
+**Since now public network is really public because instances from this network will have public ID and there is route to Internet Gateway**.
 
 # Dual-Homed Instance
 
