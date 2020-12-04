@@ -7,6 +7,9 @@
 - [Network access control list](#network-access-control-list)
 - [Subnet](#subnet)
 - [Internet Gateway](#internet-gateway)
+- [Virtual Private Gateway](#virtual-private-gateway)
+- [VPC endpoints to connect with AWS public resources](#vpc-endpoints-to-connect-with-aws-public-resources)
+  - [Services outside the VPC](#services-outside-the-vpc)
 - [Create VPC with 2 public subnets](#create-vpc-with-2-public-subnets)
   - [Create EC2 instances that will be connected to created VPC](#create-ec2-instances-that-will-be-connected-to-created-vpc)
   - [Create and assign a public IP address to EC2 instance](#create-and-assign-a-public-ip-address-to-ec2-instance)
@@ -45,6 +48,14 @@
     - [Check that there is no Internet traffic in private EC2](#check-that-there-is-no-internet-traffic-in-private-ec2)
     - [Change association for route table in private subnet](#change-association-for-route-table-in-private-subnet)
     - [Check that there is Internet traffic in private EC2](#check-that-there-is-internet-traffic-in-private-ec2)
+  - [Create VPC Endpoint for S3](#create-vpc-endpoint-for-s3)
+    - [Using jump box confirm that private EC2 instance has access to S3](#using-jump-box-confirm-that-private-ec2-instance-has-access-to-s3)
+    - [Remove NAT GW from route in private subnet](#remove-nat-gw-from-route-in-private-subnet)
+    - [Create VPC endpoint](#create-vpc-endpoint)
+    - [Test VPC endpoint for S3](#test-vpc-endpoint-for-s3)
+    - [Remove VPC endpoint](#remove-vpc-endpoint)
+    - [VPC endpoint pricing](#vpc-endpoint-pricing)
+    - [VPC endpoint access control](#vpc-endpoint-access-control)
 - [Dual-Homed Instance](#dual-homed-instance)
 - [resources](#resources)
 
@@ -152,6 +163,36 @@ Destination nat:
 
 ![vpc-98-dest-nat.png](images/vpc-98-dest-nat.png)
 
+# Virtual Private Gateway
+
+From on-prem to cloud:
+![vpc-105-VirtualPrivateGW-to-cloud.png](images/vpc-105-VirtualPrivateGW-to-cloud.png)   
+
+From cloud to on-prem:
+![vpc-105-VirtualPrivateGW-to-on-prem.png](images/vpc-105-VirtualPrivateGW-to-on-prem.png)
+
+Route propagation can be used to automatically add routes from the VWG to route tables:
+![vpc-105-VirtualPrivateGW-route-propagation.png](images/vpc-105-VirtualPrivateGW-route-propagation.png)
+
+# VPC endpoints to connect with AWS public resources
+
+* allows private access to S3 and dynamo DB
+* gateway type endpoints
+* interface type endpoints
+* local to a region
+* bound to a single VPC
+* multiple endpoints are supported based on route tables
+* not usable over a VPC peer or VPN connection
+* DNS resolution is required in a VPC to resolve the public address to a private VPC endpoint address
+
+## Services outside the VPC
+
+Not secure approach (S3 and dynamoDB available from Internet).
+>NOTE: in some cases we want make available S3 and dynamoDB from Internet  
+![vpc-106-vpc-endpoints.png](images/vpc-106-vpc-endpoints.png)
+
+More secure approach:
+![vpc-106-vpc-endpoints-sec.png](images/vpc-106-vpc-endpoints-sec.png)
 
 # Create VPC with 2 public subnets
 
@@ -576,6 +617,8 @@ Created instances has one ENI interface:
 We can see that in the EC2 instance we do not have public IP address.
 Public IP address is managed by [Internet Gateway](#internet-gateway).
 
+![coonect-to-EC2-ssh.png](images/coonect-to-EC2-ssh.png)
+
 ```
 [ec2-user@ip-10-1-101-13 ~]$ ifconfig
 eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 9001
@@ -694,6 +737,73 @@ Create NAT gateway (assign new elastic IP):
 
 ![vpc-102-NAT-GW-Internet.png](images/vpc-102-NAT-GW-Internet.png)
 
+## Create VPC Endpoint for S3
+
+VPC endpoint supports only this S3 buckets which are created in the same region as VPC endpoint.
+
+### Using jump box confirm that private EC2 instance has access to S3
+
+![vpc-107-vpc-endpoints-s3-access.png](images/vpc-107-vpc-endpoints-s3-access.png)
+
+### Remove NAT GW from route in private subnet
+
+![vpc-107-vpc-endpoints-s3-remove-route.png](images/vpc-107-vpc-endpoints-s3-remove-route.png)
+
+![vpc-107-vpc-endpoints-s3-deleted-route.png](images/vpc-107-vpc-endpoints-s3-deleted-route.png)
+
+After this operation EC2 instance is loosing access to Internet and cannot connect with S3:
+
+![vpc-107-vpc-endpoints-s3-no-access.png](images/vpc-107-vpc-endpoints-s3-no-access.png)
+
+### Create VPC endpoint
+
+![vpc-107-vpc-endpoints-s3-create.png](images/vpc-107-vpc-endpoints-s3-create.png)
+![vpc-107-vpc-endpoints-s3-create2.png](images/vpc-107-vpc-endpoints-s3-create2.png)
+
+After this we can see that new route has been added in route table used in private subnet:
+
+![vpc-107-vpc-endpoints-new-route.png](images/vpc-107-vpc-endpoints-new-route.png)
+
+### Test VPC endpoint for S3
+
+We can see that now private EC2 instance can connect with S3 without Internet connection (ping to google.com does not work):
+
+![vpc-107-vpc-endpoints-s3-connection-without-Internet.png](images/vpc-107-vpc-endpoints-s3-connection-without-Internet.png)
+
+**Accessing detailed data about S3 from region different then VPC endpoint region is not supported!**
+
+![vpc-107-vpc-endpoints-s3-access-no-internet.png](images/vpc-107-vpc-endpoints-s3-access-no-internet.png)
+
+### Remove VPC endpoint
+
+It is not possible to delete route to the target VPC. To remove the route the whole VPC endpoint has to be deleted or in the VPC endpoint we have to unassign the route table.
+
+![vpc-107-vpc-endpoints-s3-route-cannot-delete.png](images/vpc-107-vpc-endpoints-s3-route-cannot-delete.png)
+
+![vpc-107-vpc-endpoints-s3-unassign.png](images/vpc-107-vpc-endpoints-s3-unassign.png)
+
+After this operation we can see that again private EC2 instance cannot S3 in eu-north-1 (Stockholm) region:
+
+![vpc-107-vpc-endpoints-s3-no-access-again.png](images/vpc-107-vpc-endpoints-s3-no-access-again.png)
+
+### VPC endpoint pricing
+
+VPC endpoint uses own AWS network that`s why it is cheaper then Internet traffic.
+
+### VPC endpoint access control
+
+To execute this step assign again VPC endpoint to the route table used by private subnet.   
+Create also second bucket in eu-north-1 region:
+
+![vpc-107-vpc-endpoints-access-control-second-bucket.png](images/vpc-107-vpc-endpoints-access-control-second-bucket.png)
+
+It is possible to narrow access for the VPC endpoint only to selected S3 buckets.
+To do this we have to update policy on the VPC endpoint to:
+
+![vpc-107-vpc-endpoints-access-policy.png](images/vpc-107-vpc-endpoints-access-policy.png)
+
+![vpc-107-vpc-endpoints-s3-no-access-to-selected-bucket.png](images/vpc-107-vpc-endpoints-s3-no-access-to-selected-bucket.png)
+
 # Dual-Homed Instance
 
 It is possible to create second interface (ENI) and in this way EC2 instance be accessed from private and public subnet.
@@ -706,3 +816,4 @@ https://app.pluralsight.com/library/courses/aws-developer-getting-started/table-
 https://techviewleo.com/how-to-install-nodejs-on-amazon-linux/   
 https://www.udemy.com/course/awsnetworking/   
 https://www.youtube.com/watch?v=gMvXruavqDI&t=189s   
+https://aws.amazon.com/vpc/pricing/
