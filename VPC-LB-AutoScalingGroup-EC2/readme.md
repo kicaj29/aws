@@ -58,6 +58,7 @@
     - [VPC endpoint access control](#vpc-endpoint-access-control)
   - [VPC endpoint type of interface](#vpc-endpoint-type-of-interface)
     - [Create VPC endpoint type of interface](#create-vpc-endpoint-type-of-interface)
+    - [Test connection to eu-north-1](#test-connection-to-eu-north-1)
 - [Dual-Homed Instance](#dual-homed-instance)
 - [resources](#resources)
 
@@ -847,6 +848,8 @@ We can see that new ENI has been created for this VPC interface endpoint:
 It uses default security group. Inbound rules have set as a source the same security groups. It means that anything else that is inside this security group can establish connection with anything else that is inside this security group. By default anything else is blocked. 
 
 ![vpc-108-vpc-endpoint-interface-sg.png](images/vpc-108-vpc-endpoint-interface-sg.png)
+
+### Test connection to eu-north-1
 
 Next we can see that AWS endpoint for EC2 is reachable:
 
