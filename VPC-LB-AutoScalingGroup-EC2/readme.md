@@ -48,7 +48,7 @@
     - [Check that there is no Internet traffic in private EC2](#check-that-there-is-no-internet-traffic-in-private-ec2)
     - [Change association for route table in private subnet](#change-association-for-route-table-in-private-subnet)
     - [Check that there is Internet traffic in private EC2](#check-that-there-is-internet-traffic-in-private-ec2)
-  - [Create VPC Endpoint for S3](#create-vpc-endpoint-for-s3)
+  - [Create VPC Endpoint type of gateway for S3](#create-vpc-endpoint-type-of-gateway-for-s3)
     - [Using jump box confirm that private EC2 instance has access to S3](#using-jump-box-confirm-that-private-ec2-instance-has-access-to-s3)
     - [Remove NAT GW from route in private subnet](#remove-nat-gw-from-route-in-private-subnet)
     - [Create VPC endpoint](#create-vpc-endpoint)
@@ -56,6 +56,8 @@
     - [Remove VPC endpoint](#remove-vpc-endpoint)
     - [VPC endpoint pricing](#vpc-endpoint-pricing)
     - [VPC endpoint access control](#vpc-endpoint-access-control)
+  - [VPC endpoint type of interface](#vpc-endpoint-type-of-interface)
+    - [Create VPC endpoint type of interface](#create-vpc-endpoint-type-of-interface)
 - [Dual-Homed Instance](#dual-homed-instance)
 - [resources](#resources)
 
@@ -737,7 +739,7 @@ Create NAT gateway (assign new elastic IP):
 
 ![vpc-102-NAT-GW-Internet.png](images/vpc-102-NAT-GW-Internet.png)
 
-## Create VPC Endpoint for S3
+## Create VPC Endpoint type of gateway for S3
 
 VPC endpoint supports only this S3 buckets which are created in the same region as VPC endpoint.
 
@@ -803,6 +805,63 @@ To do this we have to update policy on the VPC endpoint to:
 ![vpc-107-vpc-endpoints-access-policy.png](images/vpc-107-vpc-endpoints-access-policy.png)
 
 ![vpc-107-vpc-endpoints-s3-no-access-to-selected-bucket.png](images/vpc-107-vpc-endpoints-s3-no-access-to-selected-bucket.png)
+
+## VPC endpoint type of interface
+
+>NOTE: VPC endpoint type of gateway are limited because connections cannot be extended out of a VPC. Resources on the other side of a VPC connection, VPC peering connection, transit gateway, AWS Direct Connect connection or ClassicLink connection in your VPC cannot use the endpoint to communicate with resources in the endpoint service.
+
+Above limitations do not exist in case of VPC endpoint type of interface.
+Interface VPC endpoints are created in a subnet and are assigned to ENI. Thanks to this for example security groups can be used.
+
+![vpc-108-vpc-endpoint-interface.png](images/vpc-108-vpc-endpoint-interface.png)
+
+### Create VPC endpoint type of interface
+
+Before start remove previously created VPC gateway endpoint that has route in the private subnet. After removal the route table should have only one entry:
+
+![vpc-108-vpc-endpoint-interface-route-table-status.png](images/vpc-108-vpc-endpoint-interface-route-table-status.png)
+
+Next pre-requisite was to enable DNS hostnames in the used VPC.
+
+![vpc-108-vpc-endpoint-interface-dns-host-names.png](images/vpc-108-vpc-endpoint-interface-dns-host-names.png)
+
+We can also check that aws cli command does not work because it cannot reach the endpoint:
+
+![vpc-108-vpc-endpoint-interface-no-connection.png](images/vpc-108-vpc-endpoint-interface-no-connection.png)
+
+Create endpoint:
+![vpc-108-vpc-endpoint-interface-create1.png](images/vpc-108-vpc-endpoint-interface-create1.png)
+
+![vpc-108-vpc-endpoint-interface-create2.png](images/vpc-108-vpc-endpoint-interface-create2.png)
+
+![vpc-108-vpc-endpoint-interface-created1.png](images/vpc-108-vpc-endpoint-interface-created1.png)
+
+![vpc-108-vpc-endpoint-interface-created2.png](images/vpc-108-vpc-endpoint-interface-created2.png)
+
+We can see that new ENI has been created for this VPC interface endpoint:
+
+![vpc-108-vpc-endpoint-interface-eni.png](images/vpc-108-vpc-endpoint-interface-eni.png)
+
+![vpc-108-vpc-endpoint-interface-eni1.png](images/vpc-108-vpc-endpoint-interface-eni1.png)
+
+It uses default security group. Inbound rules have set as a source the same security groups. It means that anything else that is inside this security group can establish connection with anything else that is inside this security group. By default anything else is blocked. 
+
+![vpc-108-vpc-endpoint-interface-sg.png](images/vpc-108-vpc-endpoint-interface-sg.png)
+
+Next we can see that AWS endpoint for EC2 is reachable:
+
+![vpc-108-vpc-endpoint-interface-connection.png](images/vpc-108-vpc-endpoint-interface-connection.png)
+
+>NOTE: to have it working I had to update inbound rules in the security group to the following: ![vpc-108-vpc-endpoint-interface-sg-update.png](images/vpc-108-vpc-endpoint-interface-sg-update.png)
+
+The connection is possible although there is only route for local connections:
+![vpc-108-vpc-endpoint-interface-only-local-route.png](images/vpc-108-vpc-endpoint-interface-only-local-route.png)
+
+It is working because VPC interface endpoint uses DNS names, traffic to eu-east-1 is going to the address of the ENI that is assigned to this VPC interface endpoint - its all local traffic!
+
+![vpc-108-vpc-endpoint-interface-dns.png](images/vpc-108-vpc-endpoint-interface-dns.png)
+
+Because of this other resources can potentially use this IP address that`s why interface endpoints have less limitations than gateway endpoints.
 
 # Dual-Homed Instance
 
