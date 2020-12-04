@@ -1,5 +1,7 @@
 - [VPC](#vpc)
 - [Security Groups](#security-groups)
+  - [Example 1: single security group](#example-1-single-security-group)
+  - [Example 2: linked security groups](#example-2-linked-security-groups)
 - [Routing table](#routing-table)
   - [Typical route table (public and private subnet)](#typical-route-table-public-and-private-subnet)
 - [Network access control list](#network-access-control-list)
@@ -70,6 +72,25 @@ For example security group can be defined in EC2 wizard as one of its steps:
 
 * By default security group is assigned to eth0.
 
+* Order of rules is not relevant because there are only ALLOW rules.
+  
+* It is possible to have empty list of rules and then all traffic is blocked
+
+## Example 1: single security group
+
+The following security group allows incoming traffic to SQL Server from subnet 10.1.1.0/24 and automatically allows responses for this traffic.   
+All outgoing traffic is allowed.
+
+![vpc-104-SG1.png](images/vpc-104-SG1.png)
+
+## Example 2: linked security groups
+
+One security group can reference another security group. Thx to this we can say that incoming traffic to database server is allowed only if it comes from web server.
+
+![vpc-104-SG-webserver.png](images/vpc-104-SG-webserver.png)
+
+![vpc-104-SG-combined.png](images/vpc-104-SG-combined.png)
+
 # Routing table
 
 Each VPC has one **routing table**, which declares attempted destination IPs and where they should be routed to. For instance, if you want to run all outgoing traffic through a proxy, you can set a routing table rule to automatically send traffic to that IP. This can be a powerful tool for security as you can inspect outgoing traffic and only whitelist safe destinations for traffic.   
@@ -92,7 +113,7 @@ Another tool the VPCs use for networking control is the **network access control
 
 **For incoming traffic first is always checked ACL and next Security Group rules.** 
 
-When new ACL is created then by default it has rules that deny all traffic. It is not possible to delete these rules!
+When new ACL is created then by default it has rules that DENY all traffic. It is not possible to delete these rules!
 
 ![vpc-103-ACL.png](images/vpc-103-ACL.png)
 ![vpc-103-ACL-outbound.png](images/vpc-103-ACL-outbound.png)
