@@ -62,6 +62,14 @@ A security group defines a collection of IPs that are allowed to connect to your
 For example security group can be defined in EC2 wizard as one of its steps:
 ![vpc-21-aws-create-ec2-instance.png](images/vpc-21-aws-create-ec2-instance.png)
 
+* **Outbound traffic is allowed by default** - when incoming connection (request) is allowed then by default response is also allowed. Using other worlds: return traffic is allowed by default (if incoming traffic is allowed).
+
+* **Inbound traffic is implicitly denied** - if there is no rule then the incoming traffic is denied.
+
+* Only **allow rules** are supported!
+
+* By default security group is assigned to eth0.
+
 # Routing table
 
 Each VPC has one **routing table**, which declares attempted destination IPs and where they should be routed to. For instance, if you want to run all outgoing traffic through a proxy, you can set a routing table rule to automatically send traffic to that IP. This can be a powerful tool for security as you can inspect outgoing traffic and only whitelist safe destinations for traffic.   
@@ -78,7 +86,21 @@ Router exist across availability zones and there is no single point of hardware 
 
 # Network access control list
 
-Another tool the VPCs use for networking control is the **network access control list**. Each VPC has one access control list, and this acts as an IP filtering table saying which IPs are allowed through the VPC for both incoming and outgoing traffic. Access control lists are kind of like super-powered security groups that apply rules for the entire VPC. **ACL is stateless firewall.**
+Another tool the VPCs use for networking control is the **network access control list**. Each VPC has one access control list, and this acts as an IP filtering table saying which IPs are allowed through the VPC for both incoming and outgoing traffic. Access control lists are kind of like super-powered security groups that apply rules for the entire VPC. **ACL is stateless firewall.**   
+
+**ACL can be assigned to VPC and subnet.** It is not possible to assign ACL to EC2 instance or ENI (Security Groups can be assigned to EC2 instance or ENI).
+
+**For incoming traffic first is always checked ACL and next Security Group rules.** 
+
+When new ACL is created then by default it has rules that deny all traffic. It is not possible to delete these rules!
+
+![vpc-103-ACL.png](images/vpc-103-ACL.png)
+![vpc-103-ACL-outbound.png](images/vpc-103-ACL-outbound.png)
+
+Rules are executed from the lowest number to the highest number and at then end *.
+This allows supporting scenarios when HTTPS traffic from specific IPs is forbidden but all other incoming HTTPS traffic is allowed - first deny stops checking further rules. 
+
+![vpc-103-ACL-rules-order.png](images/vpc-103-ACL-rules-order.png)
 
 # Subnet
 
