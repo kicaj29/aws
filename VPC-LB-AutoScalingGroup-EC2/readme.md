@@ -10,6 +10,12 @@
 - [Virtual Private Gateway](#virtual-private-gateway)
 - [VPC endpoints to connect with AWS public resources](#vpc-endpoints-to-connect-with-aws-public-resources)
   - [Services outside the VPC](#services-outside-the-vpc)
+- [PrivateLink](#privatelink)
+- [Web Application Firewall (WAF)](#web-application-firewall-waf)
+- [VPC Flow logs](#vpc-flow-logs)
+  - [Create flow logs](#create-flow-logs)
+  - [Read flow logs](#read-flow-logs)
+- [Other AWS networking stuff](#other-aws-networking-stuff)
 - [Create VPC with 2 public subnets](#create-vpc-with-2-public-subnets)
   - [Create EC2 instances that will be connected to created VPC](#create-ec2-instances-that-will-be-connected-to-created-vpc)
   - [Create and assign a public IP address to EC2 instance](#create-and-assign-a-public-ip-address-to-ec2-instance)
@@ -196,6 +202,58 @@ Not secure approach (S3 and dynamoDB available from Internet).
 
 More secure approach:
 ![vpc-106-vpc-endpoints-sec.png](images/vpc-106-vpc-endpoints-sec.png)
+
+# PrivateLink
+
+AWS PrivateLink provides private connectivity between VPCs and services hosted on AWS or on-premises, securely on the Amazon network. If services are hosted by AWS they have to be in the same region!   
+
+It works very well when in one AWS account we have load balancer that will be reached by many clients that for example can be in different AWS accounts and have overlapping VPCs - that`s why using VPC peering is not good idea in such case and it is better to use PrivateLink.
+
+![vpc-109-private-link.png](images/vpc-109-private-link.png)
+
+* Step one is create **endpoint service** that connects this service with selected load balancer.
+
+* Second step is to create endpoint that will connect with this service. This endpoint will have own private IP address that`s why later EC2 instances can access the load balancer by providing this IP address. This endpoint has to be created in every client subnet that wants connect with the load balancer.
+
+# Web Application Firewall (WAF)
+
+WAFs are available in AWS marketplace. It can ve deployed on Cloudfront or an Application Load Balancer (ALB).
+
+# VPC Flow logs
+
+* collect network traffic information in your AWS env.
+* data is stored in a CloudWatch log
+* can be created for a VPC, subnet or EC2 instance/ENI
+* view accepted, rejected, or all traffic
+* logs are published every 10 mins or 1 minute
+
+It is good practice to create IAM role that will be responsible for creating flow logs.
+
+More [here](https://docs.aws.amazon.com/vpc/latest/userguide/flow-logs.html).
+
+## Create flow logs
+
+Create log group:
+![vpc-110-flow-logs-create-log-group.png](images/vpc-110-flow-logs-create-log-group.png)
+
+Create flow logs:
+![vpc-110-flow-logs.png](images/vpc-110-flow-logs.png)
+
+![vpc-110-flow-logs-form.png](images/vpc-110-flow-logs-form.png)
+
+## Read flow logs
+
+First generate some network traffic. Next wait ~10mins/~1min and navigate to log group that contains the logs.
+
+# Other AWS networking stuff
+
+https://aws.amazon.com/marketplace/pp/Cloud-Infrastructure-Services-Squid-Proxy-Cache-Se/B084H16546   
+
+https://aws.amazon.com/blogs/networking-and-content-delivery/securing-egress-using-ids-ips-leveraging-transit-gateway/   
+
+https://aws.amazon.com/marketplace/pp/Deep-Packet-Inspection-and-Processing-Market/prodview-jus56ki4exp6q   
+
+![vpc-110-flow-logs-navi.png](images/vpc-110-flow-logs-navi.png)
 
 # Create VPC with 2 public subnets
 
