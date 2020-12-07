@@ -245,6 +245,8 @@ Create flow logs:
 
 First generate some network traffic. Next wait ~10mins/~1min and navigate to log group that contains the logs.
 
+![vpc-110-flow-logs-navi.png](images/vpc-110-flow-logs-navi.png)
+
 # Other AWS networking stuff
 
 https://aws.amazon.com/marketplace/pp/Cloud-Infrastructure-Services-Squid-Proxy-Cache-Se/B084H16546   
@@ -252,8 +254,6 @@ https://aws.amazon.com/marketplace/pp/Cloud-Infrastructure-Services-Squid-Proxy-
 https://aws.amazon.com/blogs/networking-and-content-delivery/securing-egress-using-ids-ips-leveraging-transit-gateway/   
 
 https://aws.amazon.com/marketplace/pp/Deep-Packet-Inspection-and-Processing-Market/prodview-jus56ki4exp6q   
-
-![vpc-110-flow-logs-navi.png](images/vpc-110-flow-logs-navi.png)
 
 # Create VPC with 2 public subnets
 
