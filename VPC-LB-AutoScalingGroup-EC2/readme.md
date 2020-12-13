@@ -66,6 +66,16 @@
     - [Create VPC endpoint type of interface](#create-vpc-endpoint-type-of-interface)
     - [Test connection to eu-north-1](#test-connection-to-eu-north-1)
 - [Dual-Homed Instance](#dual-homed-instance)
+- [Load balancers](#load-balancers)
+- [Route 53/DNS](#route-53dns)
+  - [Key DNS record types](#key-dns-record-types)
+  - [Routing policies](#routing-policies)
+  - [Route 53 Alias records](#route-53-alias-records)
+  - [Example: domain registration, alias record and ELB integration](#example-domain-registration-alias-record-and-elb-integration)
+    - [Register domain](#register-domain)
+    - [Create 2 EC2 instances](#create-2-ec2-instances)
+    - [Create NLB](#create-nlb)
+    - [Add Route 53 alias record](#add-route-53-alias-record)
 - [resources](#resources)
 
 
@@ -929,6 +939,119 @@ Because of this other resources can potentially use this IP address that`s why i
 It is possible to create second interface (ENI) and in this way EC2 instance be accessed from private and public subnet.
 
 ![vpc-96-dual-homed-instance.png](images/vpc-96-dual-homed-instance.png)
+
+# Load balancers
+TBD
+
+# Route 53/DNS
+
+* AWS based DNS Service
+* Can monitor health of endpoints
+* DNS runs on port 53
+
+## Key DNS record types
+
+* A - maps host name to IPv4 address
+* AAAA - maps host name to IPv6 address
+* CNAME - alias one name to another. **A CNAME record cannot point to the domain apex**.   
+  >NOTE: A domain apex is the "root" level of your domain. For example, let's say you just purchased mygreatbrand.com. We'd call that the "domain apex", meaning that mygreatbrand.com is the "root" of the hierarchy of domain names. Any subdomain of that (e.g. www.mygreatbrand.com, mail.mygreatbrand.com, etc.) are not considered domain apexes, but are considered subdomains of mygreatbrand.com.
+* MX - email server
+* NS - identifies name servers for a hosted zone
+
+## Routing policies
+
+* simple: user -> route 53 -> web server instance (www.mypage.com/10.64.100.200)
+* weighted
+ user1 -> route 53 (90% traffic) -> web server instance (www.mypage.com/10.64.100.200)
+ user2 -> route 53 (10% traffic) -> web server instance (www.mypage.com/10.64.100.201)
+* latency-based: good for apps hosted in different regions
+ user1 (NewYork) -> route 53 -> web server instance 1 in us-east-1 (www.mypage.com/10.78.100.221)
+ user2 (California) -> route 53 -> web server instance 2 in us-west-1  (www.mypage.com/10.78.100.222)
+* failover routing policy: if some web server is down then it will not be routed by route 53 service
+* geo location
+  * traffic if routed based on the location of the user
+  * if location can`t be identified it uses a default resource set
+  * can be used to serve different content to users from different locations
+
+## Route 53 Alias records
+
+* similar to CNAME records
+* **can be used to map the zone apex to an ELB**
+* the ip address of the ELB can change dynamically
+* alias record adjusts to ELB IP address changes
+
+## Example: domain registration, alias record and ELB integration
+
+### Register domain
+
+![route53-111-reg-domain1.png](images/route53/route53-001-reg-domain1.png)
+![route53-111-reg-domain2.png](images/route53/route53-001-reg-domain2.png)
+![route53-001-reg-domain3.png](images/route53/route53-001-reg-domain3.png)
+![route53-001-reg-domain4.png](images/route53/route53-001-reg-domain4.png)
+![route53-001-reg-domain5.png](images/route53/route53-001-reg-domain5.png)
+![route53-001-reg-domain6.png](images/route53/route53-001-reg-domain6.png)
+
+EMail from AWS:
+```
+Dear AWS customer,
+We successfully registered the jacek-sandbox-temp-1981.com domain. We also created a hosted zone for the domain.
+Your next step is to add records to the hosted zone. These records contain information about how to route traffic for your domain and any subdomains. To learn how to add records to your hosted zone, see Working with Records [amazon.com]. 
+If you did not request this change, contact Amazon Web Services Customer Support [amazon.com] immediately. 
+Regards, 
+Amazon Route 53 
+```
+
+![route53-001-reg-domain7.png](images/route53/route53-001-reg-domain7.png)
+
+### Create 2 EC2 instances
+
+Select image ```Amazon Linux 2 AMI (HVM), SSD Volume Type``` and use default security groups.
+
+Make sure to enable HTTP traffic in security group:
+![route53-002-ec2-sg.png](images/route53/route53-002-ec2-sg.png)
+
+For both instances create use data input:
+
+```
+#!/bin/bash
+yum update -y
+yum install httpd -y
+systemctl enable httpd.service
+systemctl start httpd.service
+echo "<html><h1>N.California Web Server #1</h1></html>" > /var/www/html/index.html
+```
+
+```
+#!/bin/bash
+yum update -y
+yum install httpd -y
+systemctl enable httpd.service
+systemctl start httpd.service
+echo "<html><h1>N.California Web Server #2</h1></html>" > /var/www/html/index.html
+```
+
+Both EC2 got public IP addresses so we can see the page in a web browser: http://54.176.147.39/, http://18.144.62.41/ 
+
+### Create NLB
+
+![route53-003-nlb-1.png](images/route53/route53-003-nlb-1.png)
+![route53-003-nlb-2.png](images/route53/route53-003-nlb-2.png)
+![route53-003-nlb-3.png](images/route53/route53-003-nlb-3.png)
+![route53-003-nlb-4.png](images/route53/route53-003-nlb-4.png)
+
+After creation we can check its dns name:
+![route53-003-nlb-5.png](images/route53/route53-003-nlb-5.png)
+and see that it is working:
+![route53-003-nlb-6.png](images/route53/route53-003-nlb-6.png)
+
+### Add Route 53 alias record
+![route53-004-dns-update1.png](images/route53/route53-004-dns-update1.png)
+![route53-004-dns-update2.png](images/route53/route53-004-dns-update2.png)
+![route53-004-dns-update3.png](images/route53/route53-004-dns-update3.png)
+New record set is added:
+![route53-004-dns-update4.png](images/route53/route53-004-dns-update4.png)
+Next we can see that our DNS name is correctly mapped to DNS name of NLB:
+![route53-004-dns-update5.png](images/route53/route53-004-dns-update5.png)
 
 # resources
 https://acloud.guru/forums/aws-certified-cloud-practitioner/discussion/-Lmu_Iq2Zrc_ojEYoN4d/I%20got%20a%20putty%20fatal%20error:%20No%20supported%20authentication%20methods%20available%20(server%20sent:publickey,gssapi-keyex,gssapi-with-mic)%20%20How%20do%20I%20resolve%20this%20issue%3F   
