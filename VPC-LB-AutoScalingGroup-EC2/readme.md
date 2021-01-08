@@ -78,6 +78,9 @@
     - [Add Route 53 alias record - simple routing](#add-route-53-alias-record---simple-routing)
     - [Add weighted routing](#add-weighted-routing)
     - [Add latency-based routing](#add-latency-based-routing)
+    - [Add failover routing policy](#add-failover-routing-policy)
+      - [Create health checks](#create-health-checks)
+      - [Create DNS records for failover](#create-dns-records-for-failover)
 - [resources](#resources)
 
 
@@ -1113,6 +1116,59 @@ Next create DNS records:
 Next if we are close to Frankfurt we will see:
 
 ![route53-004-dns-latency_page.png](images/route53/route53-004-dns-latency_page.png)
+
+### Add failover routing policy
+
+We will use 1 instance from Frankfurt and 1 instanced from Tokio.
+
+![route53-004-dns-failover-ec2.png](images/route53/route53-004-dns-failover-ec2.png)
+
+
+>NOTE: without ElasticIP IP address of EC2 instance is changed after its restart!
+
+
+#### Create health checks
+
+Create health check based on IP for Frankfurt server, here we check based on IP address (for now no alarms defined): 
+
+![route53-005-dns-healtcheck-by-ip.png](images/route53/route53-005-dns-healtcheck-by-ip.png)
+
+Next create health check based on domain name:
+
+![route53-005-dns-healtcheck-by-dns1.png](images/route53/route53-005-dns-healtcheck-by-dns1.png)
+
+![route53-005-dns-healtcheck-by-dns2.png](images/route53/route53-005-dns-healtcheck-by-dns2.png)
+
+After this we can see that health check based on IP is ok and health check based on DNS name fails because this DNS name has not been configured yet.
+
+![route53-005-dns-healtcheck-status1.png](images/route53/route53-005-dns-healtcheck-status1.png)
+
+#### Create DNS records for failover
+
+![route53-005-dns-healtcheck-record-primary.png](images/route53/route53-005-dns-healtcheck-record-primary.png)
+
+
+Secondary record is not assigned to any health checks:
+![route53-005-dns-healtcheck-record-secondary.png](images/route53/route53-005-dns-healtcheck-record-secondary.png)
+
+After this we can see working DNS name:
+
+![route53-005-dns-healtcheck-page1.png](images/route53/route53-005-dns-healtcheck-page1.png)
+
+and we can see that both health checks are ok now:
+
+![route53-005-dns-healtcheck-status2.png](images/route53/route53-005-dns-healtcheck-status2.png)
+
+
+Now if we will stop Frankfurt EC2 instance then DNS will start pointing secondary EC2 in Tokyo:
+
+![route53-005-dns-healtcheck-page2.png](images/route53/route53-005-dns-healtcheck-page2.png)
+
+and also health checks have updated statuses:
+
+![route53-005-dns-healtcheck-status3.png](images/route53/route53-005-dns-healtcheck-status3.png)
+
+>NOTE: after shouting down EC2 in Frankfurt I had to wait ~5 mins to have again working URL http://failover.jacek-sandbox-temp-1981.com ! This is not good because then system is not available for the users for ~5 mins!
 
 # resources
 https://acloud.guru/forums/aws-certified-cloud-practitioner/discussion/-Lmu_Iq2Zrc_ojEYoN4d/I%20got%20a%20putty%20fatal%20error:%20No%20supported%20authentication%20methods%20available%20(server%20sent:publickey,gssapi-keyex,gssapi-with-mic)%20%20How%20do%20I%20resolve%20this%20issue%3F   
