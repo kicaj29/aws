@@ -81,6 +81,7 @@
     - [Add failover routing policy](#add-failover-routing-policy)
       - [Create health checks](#create-health-checks)
       - [Create DNS records for failover](#create-dns-records-for-failover)
+    - [Add geolocation routing policy](#add-geolocation-routing-policy)
 - [resources](#resources)
 
 
@@ -1179,6 +1180,26 @@ NOTE: before receiving first email with alarm I have to click confirmation link 
 To clean up after this example do not forget to delete SNS topic, it was created by default in Virginia region
 
 ![route53-005-dns-healtcheck-sns-topic.png](images/route53/route53-005-dns-healtcheck-sns-topic.png)
+
+### Add geolocation routing policy
+
+Tokyo EC2 IP: 52.69.211.195
+Frankfurt EC2 IP: 18.185.2.205
+
+Create DNS record for clients that will send their requests from Poland:
+
+![route53-006-dns-geo-record1.png](images/route53/route53-006-dns-geo-record1.png)
+
+Create DNS record for clients that will send their requests from any other locations:
+![route53-006-dns-geo-record2.png](images/route53/route53-006-dns-geo-record2.png)
+
+Next if from Poland we will open this address we will see:
+
+![route53-006-dns-geo-page1.png](images/route53/route53-006-dns-geo-page1.png)
+
+to test other locations you can for example connect via VPN to some other region in the world and then you will see:
+
+![route53-006-dns-geo-page2.png](images/route53/route53-006-dns-geo-page2.png)
 
 # resources
 https://acloud.guru/forums/aws-certified-cloud-practitioner/discussion/-Lmu_Iq2Zrc_ojEYoN4d/I%20got%20a%20putty%20fatal%20error:%20No%20supported%20authentication%20methods%20available%20(server%20sent:publickey,gssapi-keyex,gssapi-with-mic)%20%20How%20do%20I%20resolve%20this%20issue%3F   
