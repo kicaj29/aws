@@ -1170,6 +1170,16 @@ and also health checks have updated statuses:
 
 >NOTE: after shouting down EC2 in Frankfurt I had to wait ~5 mins to have again working URL http://failover.jacek-sandbox-temp-1981.com ! This is not good because then system is not available for the users for ~5 mins!
 
+Next stop instance in Tokyo and we will see that both health checks fail (after ~30 seconds form the EC2 stop) and alarm is raised:
+
+![route53-005-dns-healtcheck-status4.png](images/route53/route53-005-dns-healtcheck-status4.png)
+
+NOTE: before receiving first email with alarm I have to click confirmation link in email sent by AWS to accept subscription in SNS topic.
+
+To clean up after this example do not forget to delete SNS topic, it was created by default in Virginia region
+
+![route53-005-dns-healtcheck-sns-topic.png](images/route53/route53-005-dns-healtcheck-sns-topic.png)
+
 # resources
 https://acloud.guru/forums/aws-certified-cloud-practitioner/discussion/-Lmu_Iq2Zrc_ojEYoN4d/I%20got%20a%20putty%20fatal%20error:%20No%20supported%20authentication%20methods%20available%20(server%20sent:publickey,gssapi-keyex,gssapi-with-mic)%20%20How%20do%20I%20resolve%20this%20issue%3F   
 https://app.pluralsight.com/library/courses/aws-developer-getting-started/table-of-contents (chapters related with EC2 and putty)   
