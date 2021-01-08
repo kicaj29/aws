@@ -75,7 +75,8 @@
     - [Register domain](#register-domain)
     - [Create 2 EC2 instances](#create-2-ec2-instances)
     - [Create NLB](#create-nlb)
-    - [Add Route 53 alias record](#add-route-53-alias-record)
+    - [Add Route 53 alias record - simple routing](#add-route-53-alias-record---simple-routing)
+    - [Add weighted routing](#add-weighted-routing)
 - [resources](#resources)
 
 
@@ -1044,7 +1045,7 @@ After creation we can check its dns name:
 and see that it is working:
 ![route53-003-nlb-6.png](images/route53/route53-003-nlb-6.png)
 
-### Add Route 53 alias record
+### Add Route 53 alias record - simple routing
 ![route53-004-dns-update1.png](images/route53/route53-004-dns-update1.png)
 ![route53-004-dns-update2.png](images/route53/route53-004-dns-update2.png)
 ![route53-004-dns-update3.png](images/route53/route53-004-dns-update3.png)
@@ -1052,6 +1053,48 @@ New record set is added:
 ![route53-004-dns-update4.png](images/route53/route53-004-dns-update4.png)
 Next we can see that our DNS name is correctly mapped to DNS name of NLB:
 ![route53-004-dns-update5.png](images/route53/route53-004-dns-update5.png)
+
+### Add weighted routing
+
+Assuming there are 2 EC2 instances we will create DNS record that 50% traffic sends to EC2 #1 and second 50% sends to EC2 #2.
+
+![route53-004-dns-weighted_EC2-instances.png](images/route53/route53-004-dns-weighted_EC2-instances.png)
+
+
+Next created 2 weighted records:
+
+![route53-004-dns-weighted_record1.png](images/route53/route53-004-dns-weighted_record1.png)
+
+![route53-004-dns-weighted_record2.png](images/route53/route53-004-dns-weighted_record2.png)
+
+Next we can open the URL and page will be displayed
+![route53-004-dns-weighted_page1.png](images/route53/route53-004-dns-weighted_page1.png)
+
+Next we can run ```ipconfig /displaydns``` to see cached record in Win10 for DNS name ```fifty.jacek-sandbox-temp-1981.com```:
+
+```
+    Record Name . . . . . : fifty.jacek-sandbox-temp-1981.com
+    Record Type . . . . . : 1
+    Time To Live  . . . . : 57
+    Data Length . . . . . : 4
+    Section . . . . . . . : Answer
+    A (Host) Record . . . : 13.52.215.135
+```
+
+We see that TTL is currently 57s so it means that in 57s this record will be deleted from the cache. After deleting from the cache we can try open once again ```http://fifty.jacek-sandbox-temp-1981.com``` and there will be 50% chance that this time we will hit web server 2 so if you are lucky you will see
+
+![route53-004-dns-weighted_page2.png](images/route53/route53-004-dns-weighted_page2.png)
+
+and new recorded to the local DNS cache will be added
+
+```
+    Record Name . . . . . : fifty.jacek-sandbox-temp-1981.com
+    Record Type . . . . . : 1
+    Time To Live  . . . . : 293
+    Data Length . . . . . : 4
+    Section . . . . . . . : Answer
+    A (Host) Record . . . : 13.52.251.29
+```
 
 # resources
 https://acloud.guru/forums/aws-certified-cloud-practitioner/discussion/-Lmu_Iq2Zrc_ojEYoN4d/I%20got%20a%20putty%20fatal%20error:%20No%20supported%20authentication%20methods%20available%20(server%20sent:publickey,gssapi-keyex,gssapi-with-mic)%20%20How%20do%20I%20resolve%20this%20issue%3F   
