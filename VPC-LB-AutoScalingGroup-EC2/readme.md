@@ -77,6 +77,7 @@
     - [Create NLB](#create-nlb)
     - [Add Route 53 alias record - simple routing](#add-route-53-alias-record---simple-routing)
     - [Add weighted routing](#add-weighted-routing)
+    - [Add latency-based routing](#add-latency-based-routing)
 - [resources](#resources)
 
 
@@ -1095,6 +1096,23 @@ and new recorded to the local DNS cache will be added
     Section . . . . . . . : Answer
     A (Host) Record . . . : 13.52.251.29
 ```
+
+### Add latency-based routing
+
+Here we assume that we have one EC2 in Frankfurt and second EC2 in Tokyo.
+Web client is close to Frankfurt so latency to this location is lower.
+
+![route53-004-dns-latency-based.png](images/route53/route53-004-dns-latency-based.png)
+
+Next create DNS records:
+
+![route53-004-dns-latency-record1.png](images/route53/route53-004-dns-latency-record1.png)
+
+![route53-004-dns-latency-record2.png](images/route53/route53-004-dns-latency-record2.png)
+
+Next if we are close to Frankfurt we will see:
+
+![route53-004-dns-latency_page.png](images/route53/route53-004-dns-latency_page.png)
 
 # resources
 https://acloud.guru/forums/aws-certified-cloud-practitioner/discussion/-Lmu_Iq2Zrc_ojEYoN4d/I%20got%20a%20putty%20fatal%20error:%20No%20supported%20authentication%20methods%20available%20(server%20sent:publickey,gssapi-keyex,gssapi-with-mic)%20%20How%20do%20I%20resolve%20this%20issue%3F   
