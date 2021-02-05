@@ -208,7 +208,7 @@ Route propagation can be used to automatically add routes from the VWG to route 
 * bound to a single VPC
 * multiple endpoints are supported based on route tables
 * not usable over a VPC peer or VPN connection
-* DNS resolution is required in a VPC to resolve the public address to a private VPC endpoint address
+* DNS resolution is required in a VPC to resolve the public address to a private VPC endpoint address  
 
 ## Services outside the VPC
 
@@ -962,7 +962,7 @@ TBD
 * CNAME - alias one name to another. **A CNAME record cannot point to the domain apex**.   
   >NOTE: A domain apex is the "root" level of your domain. For example, let's say you just purchased mygreatbrand.com. We'd call that the "domain apex", meaning that mygreatbrand.com is the "root" of the hierarchy of domain names. Any subdomain of that (e.g. www.mygreatbrand.com, mail.mygreatbrand.com, etc.) are not considered domain apexes, but are considered subdomains of mygreatbrand.com.
 * MX - email server
-* NS - identifies name servers for a hosted zone
+* NS - identifies name servers for a hosted zone. A NS (name server) record allows you to delegate the DNS of one of your subdomains to a different nameserver. 
 
 ## Routing policies
 
