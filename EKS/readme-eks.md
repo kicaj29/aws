@@ -21,6 +21,7 @@
   - [Create Load Balancer Service](#create-load-balancer-service)
   - [Scale pods](#scale-pods-1)
 - [Delete EKS cluster](#delete-eks-cluster)
+- [Connect to existing EKS](#connect-to-existing-eks)
 - [resources](#resources)
 
 # Create ECR via AWS CLI
@@ -568,6 +569,21 @@ aws ecr batch-delete-image --repository-name ecr-tmp-jacek --image-ids imageDige
 
 ```
 aws ecr delete-repository --repository-name ecr-tmp-jacek --force
+```
+
+# Connect to existing EKS
+
+```
+D:\>aws eks --region us-east-1 update-kubeconfig --name my-cluster --profile my-profile
+Added new context arn:aws:eks:us-east-1:381123432777:cluster/my-cluster to C:\Users\kicaj29\.kube\config
+```
+
+Added connection is also automatically set as current:
+
+```
+D:\>kubectl config get-contexts
+CURRENT   NAME                                                               CLUSTER                                                            AUTHINFO                                                           NAMESPACE
+*         arn:aws:eks:us-east-1:381123432777:cluster/my-cluster                 arn:aws:eks:us-east-1:381123432777:cluster/my-cluster                 arn:aws:eks:us-east-1:381123432777:cluster/my-cluster      
 ```
 
 # resources
