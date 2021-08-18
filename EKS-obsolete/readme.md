@@ -1,3 +1,8 @@
+----!!!!OBSOLETE FOLDER!!!!----
+Moved to repo: https://github.com/kicaj29/Kubernetes
+
+
+
 - [Create ECR via AWS CLI](#create-ecr-via-aws-cli)
 - [Create docker image](#create-docker-image)
 - [Publish image to ECR](#publish-image-to-ecr)
