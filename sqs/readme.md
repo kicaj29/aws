@@ -22,3 +22,25 @@ C:\>aws sqs get-queue-attributes --endpoint-url http://localhost:4566 --queue-ur
     }
 }
 ```
+
+Usually the queues are created by a system during its startup so it means that first we have to run the system to create the queues.
+
+
+It looks that we have to set some default fake credentials, only then the cli will work correctly:
+
+C:\Users\[USER]\.aws\credentials
+
+```
+[default]
+aws_access_key_id=sfsdfdsf
+aws_secret_access_key=sdfsasdf
+aws_session_token=asdasdasd
+```
+
+From some reason it did not work when the values were set on n/a !
+
+C:\Users\[USER]\.aws\config
+```
+[default]
+region = us-east-1
+```
