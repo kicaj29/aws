@@ -1,36 +1,21 @@
-# Basic example
+- [Run lambda on localstack](#run-lambda-on-localstack)
+  - [Run localstack on docker desktop set as linux containers](#run-localstack-on-docker-desktop-set-as-linux-containers)
+  - [Configure IAM](#configure-iam)
+  - [Run aws lambda in localstack](#run-aws-lambda-in-localstack)
+- [Links](#links)
 
-## Run localstack
+# Run lambda on localstack
 
-* Sometimes to download localstack image from docker hub first you have to sign in:
+## Run localstack on docker desktop set as linux containers
 
-```
-PS D:\GitHub\kicaj29\aws\Lambda\Simple.Lambda.DotNet\src\Simple.Lambda.DotNet> docker login -u [USR] -p [PASS]
-WARNING! Using --password via the CLI is insecure. Use --password-stdin.
-Login Succeeded
-```
-
-* Run localstack on Linux docker, no vpn
+* Run localstack
 
 ```
-PS D:\GitHub\kicaj29\aws\Lambda\Simple.Lambda.DotNet\src\Simple.Lambda.DotNet> docker run --name localstack_for_lambda -p 4567:4566 --privileged -v //var/run/docker.sock:/var/run/docker.sock -d -e SERVICES=sqs,sns,logs,lambda,iam -e LAMBDA_EXECUTOR=docker localstack/localstack:latest
-0c6b125c51f53776cfc3f8d6d5a6d9ad2acfc18da47793027cb953d3ea777e9a
-PS D:\GitHub\kicaj29\aws\Lambda\Simple.Lambda.DotNet\src\Simple.Lambda.DotNet> docker ps
-CONTAINER ID   IMAGE                   COMMAND                  CREATED         STATUS         PORTS                                        NAMES
-0c6b125c51f5   localstack/localstack   "docker-entrypoint.sh"   5 seconds ago   Up 3 seconds   4571/tcp, 0.0.0.0:4566->4566/tcp, 5678/tcp   localstack_for_lambda
+docker run --name localstack_for_lambda -p 4567:4566 --privileged -v //var/run/docker.sock:/var/run/docker.sock -d -e SERVICES=sqs,sns,logs,lambda,iam -e LAMBDA_EXECUTOR=docker localstack/localstack:latest
 ```
 
->NOTE: because port 4566 is on list with excluded port ranges we use different host port. To check excluded port ranges run `netsh interface ipv4 show excludedportrange protocol=tcp`
+>NOTE: sometimes (because of some Windows Updates?) port 4566 is on list with excluded port ranges use different host port than default 4566. To check excluded port ranges run `netsh interface ipv4 show excludedportrange protocol=tcp`
 
-* Other runs
-```
-docker network create -d nat localstack_net
-PS D:\GitHub\kicaj29\aws\Lambda\Simple.Lambda.DotNet\src\Simple.Lambda.DotNet> docker run --network localstack_net --name localstack_for_lambda -p 4566:4566 --restart=on-failure:10 --platform linux -d -e SERVICES=sqs,sns,logs,lambda,iam -e LAMBDA_EXECUTOR=docker localstack/localstack:latest
-0c6b125c51f53776cfc3f8d6d5a6d9ad2acfc18da47793027cb953d3ea777e9a
-PS D:\GitHub\kicaj29\aws\Lambda\Simple.Lambda.DotNet\src\Simple.Lambda.DotNet> docker ps
-CONTAINER ID   IMAGE                   COMMAND                  CREATED         STATUS         PORTS                                        NAMES
-0c6b125c51f5   localstack/localstack   "docker-entrypoint.sh"   5 seconds ago   Up 3 seconds   4571/tcp, 0.0.0.0:4566->4566/tcp, 5678/tcp   localstack_for_lambda
-```
 
 * To remove container run
 ```
@@ -85,7 +70,7 @@ You can invoke the tool using the following command: dotnet-lambda
 Tool 'amazon.lambda.tools' (version '5.2.0') was successfully installed.
 ```
 
->NOTE: it looks that param `--add-source` does not work correctly because I had to manually modify `nuget.config` (`%appdata%\nuget\nuget.config`) to remove broken sources that were blocking installation.
+>NOTE: it looks that param `--add-source` does not work correctly because I had to manually modify `nuget.config` (`%appdata%\nuget\nuget.config`) to remove broken sources that were causing that that package were not installed but also there was no error/warning!
 
 ```
 dotnet new -i Amazon.Lambda.Templates
