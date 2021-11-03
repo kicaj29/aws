@@ -117,13 +117,21 @@ zip -r ../function.zip *
 * Create lambda function used earlier created role `lambda-dotnet-ex`
 ```
 cd ..
-aws lambda --endpoint-url http://localhost:4567 create-function --function-name lambda-dotnet-function --zip-file fileb://function.zip --handler Sample.Lambda.DotNet::Sample.Lambda.DotNet.Function::FunctionHandler --runtime dotnetcore3.1 --role arn:aws:iam::000000000000:role/lambda-dotnet-ex
+aws lambda --endpoint-url http://localhost:4567 create-function --function-name lambda-dotnet-function --zip-file fileb://function.zip --handler Simple.Lambda.DotNet::Simple.Lambda.DotNet.Function::FunctionHandler --runtime dotnetcore3.1 --role arn:aws:iam::000000000000:role/lambda-dotnet-ex
 ```
 
 * Invoke lambda
 
+Payload text must be encoded as base64 and :
 ```
-aws lambda --endpoint-url http://localhost:4566 invoke --function-name lambda-dotnet-function --payload 'eyAibmFtZSI6ICJCb2IiIH0=' response.json --log-type Tail
+"{ \"name\": \"Bob\" }"
+```
+```
+aws lambda --endpoint-url http://localhost:4567 invoke --function-name lambda-dotnet-function --payload InsgXCJuYW1lXCI6IFwiQm9iXCIgfSI= response.json --log-type Tail
+```
+
+```
+aws lambda --endpoint-url http://localhost:4567 invoke --cli-binary-format raw-in-base64-out --function-name lambda-dotnet-function --payload file://sample-payload.json response.json --log-type Tail
 ```
 
 # Links
@@ -131,3 +139,5 @@ https://docs.aws.amazon.com/lambda/latest/dg/csharp-package-cli.html
 https://www.alexhyett.com/contact-form-lambda-dotnet-core/   
 https://gitlab.com/sunnyatticsoftware/sandbox/localstack-sandbox/-/tree/master/03-lambda-dotnet-empty   
 https://awscli.amazonaws.com/v2/documentation/api/latest/reference/lambda/create-function.html
+https://awscli.amazonaws.com/v2/documentation/api/latest/reference/lambda/invoke.html
+https://docs.aws.amazon.com/sdkref/latest/guide/setting-global-cli_binary_format.html
