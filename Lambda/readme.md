@@ -120,15 +120,17 @@ cd ..
 aws lambda --endpoint-url http://localhost:4567 create-function --function-name lambda-dotnet-function --zip-file fileb://function.zip --handler Simple.Lambda.DotNet::Simple.Lambda.DotNet.Function::FunctionHandler --runtime dotnetcore3.1 --role arn:aws:iam::000000000000:role/lambda-dotnet-ex
 ```
 
-* Invoke lambda
-
-Payload text must be encoded as base64 and :
+* Invoke lambda using payload in CLI
+Payload text must be encoded as base64 and quoted:
 ```
 "{ \"name\": \"Bob\" }"
 ```
+
 ```
 aws lambda --endpoint-url http://localhost:4567 invoke --function-name lambda-dotnet-function --payload InsgXCJuYW1lXCI6IFwiQm9iXCIgfSI= response.json --log-type Tail
 ```
+
+* Invoke lambda using payload from a file
 
 ```
 aws lambda --endpoint-url http://localhost:4567 invoke --cli-binary-format raw-in-base64-out --function-name lambda-dotnet-function --payload file://sample-payload.json response.json --log-type Tail
