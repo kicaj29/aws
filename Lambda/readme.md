@@ -176,12 +176,12 @@ In this mode we can enable experimental flag that also allows run linux containe
 docker run --name localstack_for_lambda -p 4567:4566 --platform linux --privileged -v //var/run/docker.sock:/var/run/docker.sock -d -e SERVICES=sqs,sns,logs,lambda,iam -e LAMBDA_EXECUTOR=docker localstack/localstack:latest
 ```
 
-Unfortunately privileged mode is not supported on Windows even if we specify `--platform linux` flag because this command generates out put:
+Unfortunately privileged mode is not supported on Windows even if we specify `--platform linux` flag because this command generates output:
 ```
 docker: Error response from daemon: Windows does not support privileged mode.
 ```
 
-Let's try run it without privileged mode - then also we have to use default `LAMBDA_EXECUTOR`.
+Let's try run it without privileged mode - then also we have to use `local` as `LAMBDA_EXECUTOR`.
 From [docs](https://hub.docker.com/r/localstack/localstack):
 
 `LAMBDA_EXECUTOR` supports values: `local`, `docker` - default, `docker-reuse` but for the last 2 if the localstack is started inside Docker, then the `docker` command needs to be available inside the container and to achieve this we have to the container in privileged mode.
@@ -189,56 +189,108 @@ From [docs](https://hub.docker.com/r/localstack/localstack):
 * Try run with `LAMBDA_EXECUTOR` set on `docker` but without privileged mode, there are errors
 
 ```
-PS C:\> docker run --name localstack_for_lambda -p 4566:4566 --platform linux -e SERVICES=sqs,sns,logs,lambda,iam -e LAMBDA_EXECUTOR=docker localstack/localstack:latest
+PS C:\WINDOWS\system32> docker run --name localstack_for_lambda -p 4566:4566 --platform linux -e SERVICES=sqs,sns,logs,lambda,iam -e LAMBDA_EXECUTOR=docker localstack/localstack:0.12.18
 Waiting for all LocalStack services to be ready
-2021-11-03 10:46:42,816 CRIT Supervisor is running as root.  Privileges were not dropped because no user is specified in the config file.  If you intend to run as root, you can set user=root in the config file to avoid this message.
-2021-11-03 10:46:42,819 INFO supervisord started with pid 13
-2021-11-03 10:46:43,821 INFO spawned: 'infra' with pid 27
+2021-11-03 11:36:06,809 CRIT Supervisor is running as root.  Privileges were not dropped because no user is specified in the config file.  If you intend to run as root, you can set user=root in the config file to avoid this message.
+2021-11-03 11:36:06,811 INFO supervisord started with pid 13
+2021-11-03 11:36:07,813 INFO spawned: 'infra' with pid 25
 (. .venv/bin/activate; exec bin/localstack start --host --no-banner)
-2021-11-03 10:46:44,826 INFO success: infra entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2021-11-03 11:36:08,817 INFO success: infra entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+exception while loading plugin localstack.plugins.cli:pro: plugin localstack.plugins.cli:pro is deactivated
 
-LocalStack version: 0.12.19.1
-LocalStack build date: 2021-11-02
-LocalStack build git hash: 531dc8cf
+LocalStack version: 0.12.18
+LocalStack build date: 2021-09-23
+LocalStack build git hash: 2c436bad
 
 Starting edge router (https port 4566)...
-2021-11-03T10:46:46:INFO:bootstrap.py: Execution of "prepare_environment" took 506.46ms
+2021-11-03T11:36:11:INFO:bootstrap.py: Execution of "load_plugin_from_path" took 1710.89ms
+2021-11-03T11:36:11:INFO:bootstrap.py: Execution of "load_plugins" took 1711.66ms
 Waiting for all LocalStack services to be ready
-2021-11-03 10:46:51,943 INFO exited: infra (exit status 2; not expected)
-2021-11-03 10:46:51,944 INFO spawned: 'infra' with pid 47
-Error starting infrastructure: gave up waiting for edge server on 0.0.0.0:4566 Traceback (most recent call last):
-  File "/opt/code/localstack/localstack/services/infra.py", line 396, in start_infra
-    thread = do_start_infra(asynchronous, apis, is_in_docker)
-  File "/opt/code/localstack/localstack/services/infra.py", line 505, in do_start_infra
-    thread = start_runtime_components()
-  File "/opt/code/localstack/localstack/utils/bootstrap.py", line 91, in wrapped
-    return f(*args, **kwargs)
-  File "/opt/code/localstack/localstack/services/infra.py", line 498, in start_runtime_components
-    f"gave up waiting for edge server on {config.EDGE_BIND_HOST}:{config.EDGE_PORT}"
-TimeoutError: gave up waiting for edge server on 0.0.0.0:4566
+Waiting for all LocalStack services to be ready
+Starting mock CloudWatch service on http port 4566 ...
+2021-11-03T11:36:21:INFO:localstack_ext.bootstrap.install: Unable to download local test SSL certificate from https://cdn.jsdelivr.net/gh/localstack/localstack-artifacts@master/local-certs/server.key to /tmp/localstack/server.test.pem: MyHTTPSConnectionPool(host='cdn.jsdelivr.net', port=443): Max retries exceeded with url: /gh/localstack/localstack-artifacts@master/local-certs/server.key (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x7f2d53c4b210>: Failed to establish a new connection: [Errno -3] Try again')) Traceback (most recent call last):
+  File "/opt/code/localstack/.venv/lib/python3.7/site-packages/urllib3/connection.py", line 175, in _new_conn
+    (self._dns_host, self.port), self.timeout, **extra_kw
+  File "/opt/code/localstack/.venv/lib/python3.7/site-packages/urllib3/util/connection.py", line 73, in create_connection
+    for res in socket.getaddrinfo(host, port, family, socket.SOCK_STREAM):
+  File "/usr/lib/python3.7/socket.py", line 752, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+```
 
-(. .venv/bin/activate; exec bin/localstack start --host --no-banner)
+It is possible to deploy lambda function but it crashes when we try call it:
+```
+{"errorMessage":"Lambda process returned with error. Result: . Output:\n","errorType":"InvocationException","stackTrace":["  File \"/opt/code/localstack/localstack/services/awslambda/lambda_api.py\", line 820, in run_lambda\n    lock_discriminator=lock_discriminator,\n","  File \"/opt/code/localstack/localstack/services/awslambda/lambda_executors.py\", line 399, in execute\n    return do_execute()\n","  File \"/opt/code/localstack/localstack/services/awslambda/lambda_executors.py\", line 389, in do_execute\n    return _run(func_arn=func_arn)\n","  File \"/opt/code/localstack/localstack/utils/cloudwatch/cloudwatch_util.py\", line 157, in wrapped\n    raise e\n","  File \"/opt/code/localstack/localstack/utils/cloudwatch/cloudwatch_util.py\", line 153, in wrapped\n    result = func(*args, **kwargs)\n","  File \"/opt/code/localstack/localstack/services/awslambda/lambda_executors.py\", line 376, in _run\n    raise e\n","  File \"/opt/code/localstack/localstack/services/awslambda/lambda_executors.py\", line 362, in _run\n    result = self._execute(lambda_function, inv_context)\n","  File \"/opt/code/localstack/localstack/services/awslambda/lambda_executors.py\", line 659, in _execute\n    result = self.run_lambda_executor(lambda_function=lambda_function, inv_context=inv_context)\n","  File \"/opt/code/localstack/localstack/services/awslambda/lambda_executors.py\", line 587, in run_lambda_executor\n    ) from error\n"]}
+
 ```
 
 * Try run with `LAMBDA_EXECUTOR` value `local`, also errors
 
 ```
+PS C:\WINDOWS\system32> docker run --name localstack_for_lambda -p 4566:4566 --platform linux -e SERVICES=sqs,sns,logs,lambda,iam -e LAMBDA_EXECUTOR=local localstack/localstack:0.12.18
+Waiting for all LocalStack services to be ready
+2021-11-03 11:41:09,813 CRIT Supervisor is running as root.  Privileges were not dropped because no user is specified in the config file.  If you intend to run as root, you can set user=root in the config file to avoid this message.
+2021-11-03 11:41:09,815 INFO supervisord started with pid 14
+2021-11-03 11:41:10,818 INFO spawned: 'infra' with pid 26
+(. .venv/bin/activate; exec bin/localstack start --host --no-banner)
+2021-11-03 11:41:11,823 INFO success: infra entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+
+LocalStack version: 0.12.18
+LocalStack build date: 2021-09-23
+LocalStack build git hash: 2c436bad
+
+exception while loading plugin localstack.plugins.cli:pro: plugin localstack.plugins.cli:pro is deactivated
+Starting edge router (https port 4566)...
+2021-11-03T11:41:16:INFO:bootstrap.py: Execution of "load_plugin_from_path" took 1635.45ms
+2021-11-03T11:41:16:INFO:bootstrap.py: Execution of "load_plugins" took 1635.92ms
+Waiting for all LocalStack services to be ready
+Waiting for all LocalStack services to be ready
+Starting mock CloudWatch service on http port 4566 ...
+Starting mock IAM service on http port 4566 ...
+Starting mock Lambda service on http port 4566 ...
+Starting mock CloudWatch Logs service on http port 4566 ...
+Starting mock SNS service on http port 4566 ...
+Starting mock SQS service on http port 4566 ...
+2021-11-03T11:41:26:INFO:localstack_ext.bootstrap.install: Unable to download local test SSL certificate from https://cdn.jsdelivr.net/gh/localstack/localstack-artifacts@master/local-certs/server.key to /tmp/localstack/server.test.pem: MyHTTPSConnectionPool(host='cdn.jsdelivr.net', port=443): Max retries exceeded with url: /gh/localstack/localstack-artifacts@master/local-certs/server.key (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x7fe77ece8710>: Failed to establish a new connection: [Errno -3] Try again')) Traceback (most recent call last):
+  File "/opt/code/localstack/.venv/lib/python3.7/site-packages/urllib3/connection.py", line 175, in _new_conn
+    (self._dns_host, self.port), self.timeout, **extra_kw
+  File "/opt/code/localstack/.venv/lib/python3.7/site-packages/urllib3/util/connection.py", line 73, in create_connection
+    for res in socket.getaddrinfo(host, port, family, socket.SOCK_STREAM):
+  File "/usr/lib/python3.7/socket.py", line 752, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+socket.gaierror: [Errno -3] Try again
+
+During handling of the above exception, another exception occurred:
+```
+
+And if we try to create and run lambda we get the following error:
+
+**Note that Node.js, Golang, and .Net Core Lambdas currently require LAMBDA_EXECUTOR=docker**
+
+```
+{"errorMessage":"Unable to find executor for Lambda function \"lambda-dotnet-function\". Note that Node.js, Golang, and .Net Core Lambdas currently require LAMBDA_EXECUTOR=docker","errorType":"InvocationException","stackTrace":["  File \"/opt/code/localstack/localstack/services/awslambda/lambda_api.py\", line 820, in run_lambda\n    lock_discriminator=lock_discriminator,\n","  File \"/opt/code/localstack/localstack/services/awslambda/lambda_executors.py\", line 399, in execute\n    return do_execute()\n","  File \"/opt/code/localstack/localstack/services/awslambda/lambda_executors.py\", line 389, in do_execute\n    return _run(func_arn=func_arn)\n","  File \"/opt/code/localstack/localstack/utils/cloudwatch/cloudwatch_util.py\", line 157, in wrapped\n    raise e\n","  File \"/opt/code/localstack/localstack/utils/cloudwatch/cloudwatch_util.py\", line 153, in wrapped\n    result = func(*args, **kwargs)\n","  File \"/opt/code/localstack/localstack/services/awslambda/lambda_executors.py\", line 376, in _run\n    raise e\n","  File \"/opt/code/localstack/localstack/services/awslambda/lambda_executors.py\", line 362, in _run\n    result = self._execute(lambda_function, inv_context)\n","  File \"/opt/code/localstack/localstack/services/awslambda/lambda_executors.py\", line 1201, in _execute\n    raise InvocationException(result, log_output)\n"]}
+```
+
+So it looks that it is not possible to execute lambda on localstack when docker desktop is run as Windows containers because **LAMBDA_EXECUTOR=docker** is required but it requires privileged mode and this mode is not supported on Windows!
+
+If we try use latest tag then it is even worst because we cannot create IAM role:
+
+```
 PS C:\> docker run --name localstack_for_lambda -p 4566:4566 --platform linux -e SERVICES=sqs,sns,logs,lambda,iam -e LAMBDA_EXECUTOR=local localstack/localstack:latest
 Waiting for all LocalStack services to be ready
-2021-11-03 10:39:09,813 CRIT Supervisor is running as root.  Privileges were not dropped because no user is specified in the config file.  If you intend to run as root, you can set user=root in the config file to avoid this message.
-2021-11-03 10:39:09,815 INFO supervisord started with pid 15
-2021-11-03 10:39:10,817 INFO spawned: 'infra' with pid 26
+2021-11-03 11:49:21,833 CRIT Supervisor is running as root.  Privileges were not dropped because no user is specified in the config file.  If you intend to run as root, you can set user=root in the config file to avoid this message.
+2021-11-03 11:49:21,835 INFO supervisord started with pid 16
+2021-11-03 11:49:22,837 INFO spawned: 'infra' with pid 28
 (. .venv/bin/activate; exec bin/localstack start --host --no-banner)
-2021-11-03 10:39:11,822 INFO success: infra entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2021-11-03 11:49:23,842 INFO success: infra entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
 
 LocalStack version: 0.12.19.1
 LocalStack build date: 2021-11-02
-LocalStack build git hash: 531dc8cf
+LocalStack build git hash: 4c9b108c
 
-Waiting for all LocalStack services to be ready
 Starting edge router (https port 4566)...
-2021-11-03 10:39:21,820 INFO exited: infra (exit status 2; not expected)
-2021-11-03 10:39:21,821 INFO spawned: 'infra' with pid 45
+Waiting for all LocalStack services to be ready
+2021-11-03 11:49:32,794 INFO exited: infra (exit status 2; not expected)
+2021-11-03 11:49:32,795 INFO spawned: 'infra' with pid 47
 Error starting infrastructure: gave up waiting for edge server on 0.0.0.0:4566 Traceback (most recent call last):
   File "/opt/code/localstack/localstack/services/infra.py", line 396, in start_infra
     thread = do_start_infra(asynchronous, apis, is_in_docker)
@@ -251,15 +303,15 @@ Error starting infrastructure: gave up waiting for edge server on 0.0.0.0:4566 T
 TimeoutError: gave up waiting for edge server on 0.0.0.0:4566
 
 (. .venv/bin/activate; exec bin/localstack start --host --no-banner)
-
-LocalStack version: 0.12.19.1
-LocalStack build date: 2021-11-02
-LocalStack build git hash: 531dc8cf
 ```
 
-And if we try to create and run lambda we get the following error:
+```
+PS D:\GitHub\kicaj29\aws\Lambda\Simple.Lambda.DotNet\src\Simple.Lambda.DotNet> aws iam --endpoint-url http://localhost:4566 create-role --role-name lambda-dotnet-ex --assume-role-policy-document '{"Version": "2012-10-17", "Statement": [{ "Effect": "Allow", "Principal": {"Service": "lambda.amazonaws.com"}, "Action": "sts:AssumeRole"}]}'
 
+Could not connect to the endpoint URL: "http://localhost:4566/"
+```
 
+* Used commands
 ```
 aws iam --endpoint-url http://localhost:4566 create-role --role-name lambda-dotnet-ex --assume-role-policy-document '{"Version": "2012-10-17", "Statement": [{ "Effect": "Allow", "Principal": {"Service": "lambda.amazonaws.com"}, "Action": "sts:AssumeRole"}]}'
 ```
