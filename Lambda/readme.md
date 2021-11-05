@@ -1,15 +1,17 @@
-- [Run lambda on localstack](#run-lambda-on-localstack)
-  - [Run localstack on docker desktop set as linux containers](#run-localstack-on-docker-desktop-set-as-linux-containers)
+- [Run lambda on localstack with dotnet core 3.1](#run-lambda-on-localstack-with-dotnet-core-31)
+  - [Run localstack on docker desktop set as linux containers - WORKS OK](#run-localstack-on-docker-desktop-set-as-linux-containers---works-ok)
     - [Configure IAM](#configure-iam)
     - [Run aws lambda in localstack](#run-aws-lambda-in-localstack)
     - [Watch localstack logs](#watch-localstack-logs)
-  - [Run localstack on docker desktop set as windows containers](#run-localstack-on-docker-desktop-set-as-windows-containers)
-  - [Run localstack on docker desktop set as windows containers and use SAM triggering lambda by SQS](#run-localstack-on-docker-desktop-set-as-windows-containers-and-use-sam-triggering-lambda-by-sqs)
+  - [Run localstack on docker desktop set as windows containers - DOES NOT WORK](#run-localstack-on-docker-desktop-set-as-windows-containers---does-not-work)
+  - [SAM to host lambda](#sam-to-host-lambda)
+    - [Run localstack on docker desktop set as linux containers - WORKS OK](#run-localstack-on-docker-desktop-set-as-linux-containers---works-ok-1)
+    - [Run localstack on docker desktop set as windows containers - DOES NOT WORK](#run-localstack-on-docker-desktop-set-as-windows-containers---does-not-work-1)
 - [Links](#links)
 
-# Run lambda on localstack
+# Run lambda on localstack with dotnet core 3.1
 
-## Run localstack on docker desktop set as linux containers
+## Run localstack on docker desktop set as linux containers - WORKS OK
 
 * Run localstack
 
@@ -167,7 +169,7 @@ Ready.
 2021-11-03T11:21:33:INFO:localstack.services.awslambda.lambda_executors: Running lambda: arn:aws:lambda:us-east-1:000000000000:function:lambda-dotnet-function
 ```
 
-## Run localstack on docker desktop set as windows containers
+## Run localstack on docker desktop set as windows containers - DOES NOT WORK
 
 In this mode we can enable experimental flag that also allows run linux containers.
 
@@ -329,9 +331,120 @@ aws lambda --endpoint-url http://localhost:4566 create-function --function-name 
 aws lambda --endpoint-url http://localhost:4566 invoke --cli-binary-format raw-in-base64-out --function-name lambda-dotnet-function --payload file://sample-payload.json response.json --log-type Tail
 ```
 
-## Run localstack on docker desktop set as windows containers and use SAM triggering lambda by SQS
+## SAM to host lambda
+
+In this scenario I try to integrate localstack and SAM.
+
+### Run localstack on docker desktop set as linux containers - WORKS OK
+
+In this scenario lambda is run on SAM and it sends a message to SQS from localstack
+
+[Sources](./Simple.Lambda.ToSQS.DotNet)
+
+* Create project
 
 ```
+dotnet new lambda.EmptyFunction -n Simple.Lambda.ToSQS.DotNet
+```
+
+>NOTE: files *Dockerfile* and *serverless.template* are not created with this project and there were added manually after project creation.
+
+* Build lambda
+
+```
+sam build -t .\serverless.template --use-container
+```
+
+* Start SAM
+
+```
+sam local start-lambda
+```
+result
+```
+PS D:\GitHub\kicaj29\aws\Lambda\Simple.Lambda.ToSQS.DotNet\src\Simple.Lambda.ToSQS.DotNet> sam local start-lambda
+Starting the Local Lambda Service. You can now invoke your Lambda Functions defined in your template through the endpoint.
+2021-11-05 15:37:40  * Running on http://127.0.0.1:3001/ (Press CTRL+C to quit)
+```
+
+* Call lambda
+
+```
+aws --endpoint-url=http://localhost:3001 lambda invoke --function-name TransferFunction --payload InsgXCJuYW1lXCI6IFwiQm9iXCIgfSI= .\res.txt
+```
+
+* Check SQS from the localstack
+
+The message send by the lambda is in the queue
+
+```
+PS C:\Users\jkowalski> aws sqs receive-message --endpoint-url http://localhost:4566  --queue-url http://localhost:4566/000000000000/MyQueue
+{
+    "Messages": [
+        {
+            "MessageId": "be92f69a-7db6-365e-4472-8d01bad572ae",
+            "ReceiptHandle": "tpjfacsztbiyvaplyywjqpinytoufelhqbpgdzqwkgnlsbxdvgzkddfwvjkshfcceioyivccgimzzzupcyhoxgvwdfwsggzochemozcxmzmexjmrwlwvrxyztwtvfctsgkjamycoajijkltkctzapgudcmkukoqmxjifbnfiogzucaojuiulmopqk",
+            "MD5OfBody": "00d5df7b1ecb9d109cb35ce40c0eb705",
+            "Body": "Message sent by lamnda"
+        }
+    ]
+}
+```
+
+### Run localstack on docker desktop set as windows containers - DOES NOT WORK
+
+In this scenario I wanted have 2 SQSs in localstack and one lambda in SAM.
+This lambda should be triggered by first SQS and should send message to second SQS.
+It does not work because it is not possible to build the image and even if the image would be somehow available there is no way to hook the lambda from SAM to 
+SQS from localstack because ARN address does not contain IP and PORT, more [here](https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html#events-sqs-eventsource)
+
+```
+aws lambda create-event-source-mapping --function-name my-function --batch-size 5 \
+--maximum-batching-window-in-seconds 60 \
+--event-source-arn arn:aws:sqs:us-east-2:123456789012:my-queue
+```
+
+[Sources](./SQS.Lambda.DotNet)
+
+* Install AWS SAM CLI
+  
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install-windows.html
+
+>NOTE: currently there is no official docker image for AWS SAM CLI
+
+* Create project
+
+```
+dotnet new lambda.SQS -n SQS.Lambda.DotNet
+```
+
+>NOTE: files *Dockerfile* and *serverless.template* are not created with this project and there were added manually after project creation.
+
+* Build lambda
+
+The build fails because there is no way to build linux image on windows and even if the image would somehow would be already available there is no way to instruct SAM to run this image with ```--platform linux``` flag.
+
+https://aws.amazon.com/blogs/compute/using-container-image-support-for-aws-lambda-with-aws-sam/
+
+```
+sam build -t .\serverless.template --use-container
+```
+results:
+```
+PS D:\GitHub\kicaj29\aws\Lambda\SQS.Lambda.DotNet\src\SQS.Lambda.DotNet> sam build -t .\serverless.template --use-container
+Starting Build inside a container
+Building codeuri: D:\GitHub\kicaj29\aws\Lambda\SQS.Lambda.DotNet\src\SQS.Lambda.DotNet runtime: None metadata: {'DockerTag': 'dotnetcore-v1', 'Dockerfile': 'SQS.Lambda.DotNet/Dockerfile', 'DockerContext': 'D:\\GitHub\\kicaj29\\aws\\Lambda\\SQS.Lambda.DotNet\\src'} architecture: x86_64 functions: ['TransferFunction']
+Building image for TransferFunction function
+Setting DockerBuildArgs: {} for TransferFunction function
+Step 1/9 : FROM mcr.microsoft.com/dotnet/sdk:3.1 AS build-image
+ ---> ec62f0eae4ba
+Step 2/9 : RUN mkdir -p /build/build_artifacts
+ ---> [Warning] The requested image's platform (linux/amd64) does not match the detected host platform (windows/amd64) and no specific platform was requested
+ ---> Running in 2d7e5a5987d0
+
+Build Failed
+Error: TransferFunction failed to build: The command '/bin/sh -c mkdir -p /build/build_artifacts' returned a non-zero code: 4294967295: failed to shutdown container: container 2d7e5a5987d0c438c4e350e61ba7d10b9be2d7702208ab566c53ef0c82eeafcb encountered an error during hcsshim::System::waitBackground: failure in a Windows system call: The virtual machine or container with the specified identifier is 
+not running. (0xc0370110): subsequent terminate failed container 2d7e5a5987d0c438c4e350e61ba7d10b9be2d7702208ab566c53ef0c82eeafcb encountered an error during hcsshim::System::waitBackground: failure in a Windows system call: The virtual machine or container with the specified identifier is not running. (0xc0370110)
 ```
 
 # Links

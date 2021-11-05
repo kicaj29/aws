@@ -1,0 +1,5 @@
+﻿Restored D:\GitHub\kicaj29\aws\Lambda\Simple.Lambda.ToSQS.DotNet\src\Simple.Lambda.ToSQS.DotNet\Simple.Lambda.ToSQS.DotNet.csproj (in 43 ms).
+Time Elapsed: 00:00:00.5059260
+========== Finished ==========
+
+

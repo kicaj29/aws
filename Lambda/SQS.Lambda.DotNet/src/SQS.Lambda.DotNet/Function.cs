@@ -26,7 +26,7 @@ namespace SQS.Lambda.DotNet
 
 
         /// <summary>
-        /// This method is called for every Lambda invocation. This method takes in an SQS event object and can be used 
+        /// This method is called for every Lambda invocation. This method takes in an SQS event object and can be used
         /// to respond to SQS messages.
         /// </summary>
         /// <param name="evnt"></param>
@@ -43,6 +43,10 @@ namespace SQS.Lambda.DotNet
         private async Task ProcessMessageAsync(SQSEvent.SQSMessage message, ILambdaContext context)
         {
             context.Logger.LogLine($"Processed message {message.Body}");
+
+            var client = new SQSClient();
+            client.Init();
+            await client.SendMessageAsync("TEST: " + message.Body);
 
             // TODO: Do interesting work based on the new message
             await Task.CompletedTask;
