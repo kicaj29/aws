@@ -4,6 +4,7 @@
     - [Run aws lambda in localstack](#run-aws-lambda-in-localstack)
     - [Watch localstack logs](#watch-localstack-logs)
   - [Run localstack on docker desktop set as windows containers](#run-localstack-on-docker-desktop-set-as-windows-containers)
+  - [Run localstack on docker desktop set as windows containers and use SAM triggering lambda by SQS](#run-localstack-on-docker-desktop-set-as-windows-containers-and-use-sam-triggering-lambda-by-sqs)
 - [Links](#links)
 
 # Run lambda on localstack
@@ -326,6 +327,11 @@ aws lambda --endpoint-url http://localhost:4566 create-function --function-name 
 
 ```
 aws lambda --endpoint-url http://localhost:4566 invoke --cli-binary-format raw-in-base64-out --function-name lambda-dotnet-function --payload file://sample-payload.json response.json --log-type Tail
+```
+
+## Run localstack on docker desktop set as windows containers and use SAM triggering lambda by SQS
+
+```
 ```
 
 # Links

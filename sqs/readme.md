@@ -44,3 +44,7 @@ C:\Users\[USER]\.aws\config
 [default]
 region = us-east-1
 ```
+
+## SQS.SampleApp example
+
+Currently this example requires creation of the queue upfront.
