@@ -21,7 +21,7 @@ Select permissions which will be need (best practice is to select only these whi
 
 ![04_create_role.png](./images/04_create_role.png)
 
-Next we have to add policy that allows the role to be assumed by any IAM user in the aws account 123456789012 (fake number), if the administrator of that account explicitly grants the ```sts:assumerole``` permission to the user.
+Next we have to add policy that allows the role to be assumed by any IAM user in the aws account 123456789012 (fake number), **if the administrator of that account explicitly grants the ```sts:assumerole``` permission to the user.**
 
 ```
 {
@@ -31,6 +31,26 @@ Next we have to add policy that allows the role to be assumed by any IAM user in
       "Effect": "Allow",
       "Principal": {
         "AWS": "arn:aws:iam::123456789012:root"
+      },
+      "Action": "sts:AssumeRole"
+    }
+  ]
+}
+```
+
+>NOTE: It seems that if on a role we specify exact IAM user then it is not need to add ```sts:assumerole``` on this user.
+
+```
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "",
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": [
+          "arn:aws:iam::593685711111:user/infrastructure-admin"
+        ]
       },
       "Action": "sts:AssumeRole"
     }
@@ -52,6 +72,8 @@ Next we should copy credentials and placed them in aws ```credentials``` file on
 ![11_create_user.png](./images/11_create_user.png)
 
 Next we have to add policy that allows the user to assume only the ```@Infra``` role.
+
+>NOTE: Like explained in chapter create role this step is needed only if IAM role has policy assume role specified using root user!
 
 ```
 {
