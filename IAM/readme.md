@@ -88,6 +88,9 @@ output=json
 region=eu-central-1
 ```
 
+>NOTE: in case of terraform assume role we have to use different way of configuring credentials: do not use `source_profile` and simple set only `aws_access_key_id` and `aws_secret_access_key` for the IAM user and next use such profile in terraform. Example is available in terraform repository:
+https://github.com/kicaj29/Terraform/tree/master/aws/terraform-enhanced-backend
+
 ## Usage @Infra role
 
 Next we can use ```@Infra``` role to do some operations in AWS (assuming it has proper permissions).
