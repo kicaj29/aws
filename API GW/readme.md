@@ -8,6 +8,9 @@
   - [Change lambda to use request body](#change-lambda-to-use-request-body)
     - [Integration Request with enabled **Use Lambda Proxy integration**](#integration-request-with-enabled-use-lambda-proxy-integration)
     - [Integration Request with disabled **Use Lambda Proxy integration**](#integration-request-with-disabled-use-lambda-proxy-integration)
+      - [Integration Response](#integration-response)
+  - [Using models and validators](#using-models-and-validators)
+  - [Using params in URL path](#using-params-in-url-path)
 
 
 # Create first mocked API
@@ -203,3 +206,145 @@ In AWS Cloud Watch we can that the **event** parameter contains the whole reques
 Usually this approach is not recommended because then lambda has to do some extra logic that normally is responsibility of API GW.
 
 ### Integration Request with disabled **Use Lambda Proxy integration**
+
+Uncheck option **Use Lambda Proxy integration**:
+
+![035_api_lambda.png](./images/035_api_lambda.png)
+
+Use payload like this:
+```json
+{
+    "personData": {
+        "name": "Jacek",
+        "age": 26
+    }
+}
+```
+
+and next use this lambda code:
+
+```js
+exports.handler = (event, context, callback) => {
+    // callback is a method that is used to return info from the lambda function
+    // first paramter is used to pass errors, here we do not have any errors so we pass null,
+    // second param is the resposne
+    console.log('Event content: ' + JSON.stringify(event));
+    const newAge = event.personData.age;
+    callback(null, newAge * 2);
+};
+```
+
+It is working fine but there is way to create a data contract tailor made for this lambda using mappings.
+
+![036_api_lambda.png](./images/036_api_lambda.png)
+
+Use body mapping in **Integration Request** to format the body. Select **When there are no templates defined (recommended)** and set `content-type` to `application-json`. It will cause that all requests with such content type will be mapped according to the template. Requests with other content types will be simply forwarded to the lambda without any modification.
+
+>NOTE: if the template is empty then for `application-json` still forwarding without modification will be used but if we add an empty object in the template then this object will be passed to the lambda.
+
+Select template **Method Request passthrough** to get some sample code:
+
+![037_api_lambda.png](./images/037_api_lambda.png)
+
+but we can reduce it to version we need in this example:
+
+```json
+{
+"age" : $input.json('$.personData.age')
+}
+```
+
+Next we can update the lambda code to this:
+
+```js
+exports.handler = (event, context, callback) => {
+    // callback is a method that is used to return info from the lambda function
+    // first paramter is used to pass errors, here we do not have any errors so we pass null,
+    // second param is the resposne
+    console.log('Event content: ' + JSON.stringify(event));
+    const newAge = event.age;
+    callback(null, newAge * 2);
+};
+```
+
+and see that it is working fine:
+
+![038_api_lambda.png](./images/038_api_lambda.png)
+
+#### Integration Response
+
+```
+{
+    "your-age": $input.json('$')
+}
+```
+
+![039_api_lambda.png](./images/039_api_lambda.png)
+
+Next we can test that mapping is working fine:
+
+![040_api_lambda.png](./images/040_api_lambda.png)
+
+## Using models and validators
+
+```json
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "CompareData",
+  "type": "object",
+  "properties": {
+    "age": {"type": "integer"},
+    "height": {"type": "integer"},
+    "income": {"type": "integer"}
+  },
+  "required": ["age", "height", "income"]
+}
+```
+
+![041_api_lambda.png](./images/041_api_lambda.png)
+
+Next we can use this model as a validation rule in **Method Request**:
+
+![042_api_lambda.png](./images/042_api_lambda.png)
+
+If we pass a payload that does not satisfy the schema then we get an error:
+
+![043_api_lambda.png](./images/043_api_lambda.png)
+
+## Using params in URL path
+
+![044_api_lambda.png](./images/044_api_lambda.png)
+
+Create a new lambda function:
+
+```js
+exports.handler = (event, context, callback) => {
+    const type = event.type
+    console.log('Event content: ' + JSON.stringify(event));
+    if (type == 'all') {
+        callback(null, 'Deleted all data');
+    } else if (type == 'single') {
+        callback(null, 'Deleted only my data');
+    } else {
+        callback(null, 'Nothing deleted');
+    }
+};
+```
+
+Bind this lambda function with API in API GW:
+
+![045_api_lambda.png](./images/045_api_lambda.png)
+
+Define mapping in **Integration Request**:
+
+```
+{
+    "type": "$input.params('type')"
+}
+```
+
+![046_api_lambda.png](./images/046_api_lambda.png)
+
+and next we can test it:
+
+![047_api_lambda.png](./images/047_api_lambda.png)
