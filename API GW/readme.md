@@ -5,7 +5,7 @@
   - [Create API](#create-api)
   - [Create lambda](#create-lambda)
   - [Call the API and solve CORS problem](#call-the-api-and-solve-cors-problem)
-  - [Change lambda use request body](#change-lambda-use-request-body)
+  - [Change lambda to use request body](#change-lambda-to-use-request-body)
     - [Integration Request with enabled **Use Lambda Proxy integration**](#integration-request-with-enabled-use-lambda-proxy-integration)
 
 
@@ -146,7 +146,7 @@ Now we have to deploy the new version of the API and next we can check if it is 
 
 ![030_api_lambda.png](./images/030_api_lambda.png)
 
-## Change lambda use request body
+## Change lambda to use request body
 
 
 ```js
@@ -199,3 +199,4 @@ In AWS Cloud Watch we can that the **event** parameter contains the whole reques
 
 ![034_api_lambda.png](./images/034_api_lambda.png)
 
+Unusually this approach is not recommended because then lambda has to do some extra logic that normally is responsibility of API GW.
