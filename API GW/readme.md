@@ -7,6 +7,7 @@
   - [Call the API and solve CORS problem](#call-the-api-and-solve-cors-problem)
   - [Change lambda to use request body](#change-lambda-to-use-request-body)
     - [Integration Request with enabled **Use Lambda Proxy integration**](#integration-request-with-enabled-use-lambda-proxy-integration)
+    - [Integration Request with disabled **Use Lambda Proxy integration**](#integration-request-with-disabled-use-lambda-proxy-integration)
 
 
 # Create first mocked API
@@ -200,3 +201,5 @@ In AWS Cloud Watch we can that the **event** parameter contains the whole reques
 ![034_api_lambda.png](./images/034_api_lambda.png)
 
 Usually this approach is not recommended because then lambda has to do some extra logic that normally is responsibility of API GW.
+
+### Integration Request with disabled **Use Lambda Proxy integration**
