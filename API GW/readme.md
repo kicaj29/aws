@@ -192,7 +192,7 @@ Next we can call the lambda:
 
 ![033_api_lambda.png](./images/033_api_lambda.png)
 
->NOTE: if we would try run lambda version when it returns the whole request as a response that with enabled **Use Lambda Proxy integration** it would not work because request schema does not match to response schema.
+>NOTE: if we would try run lambda version when it returns the whole request as a response then with enabled **Use Lambda Proxy integration** it would not work because request schema does not match to response schema.
 
 In AWS Cloud Watch we can that the **event** parameter contains the whole request with all its field:
 
