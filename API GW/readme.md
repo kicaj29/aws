@@ -199,4 +199,4 @@ In AWS Cloud Watch we can that the **event** parameter contains the whole reques
 
 ![034_api_lambda.png](./images/034_api_lambda.png)
 
-Unusually this approach is not recommended because then lambda has to do some extra logic that normally is responsibility of API GW.
+Usually this approach is not recommended because then lambda has to do some extra logic that normally is responsibility of API GW.
