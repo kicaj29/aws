@@ -5,6 +5,8 @@
   - [Create API](#create-api)
   - [Create lambda](#create-lambda)
   - [Call the API and solve CORS problem](#call-the-api-and-solve-cors-problem)
+  - [Change lambda use request body](#change-lambda-use-request-body)
+    - [Integration Request with enabled **Use Lambda Proxy integration**](#integration-request-with-enabled-use-lambda-proxy-integration)
 
 
 # Create first mocked API
@@ -87,6 +89,16 @@ Next create a lambda function:
 
 ![021_api_lambda.png](./images/021_api_lambda.png)
 
+js
+```
+exports.handler = (event, context, callback) => {
+    // callback is a method that is used to return info from the lambda function
+    // first paramter is used to pass errors, here we do not have any errors so we pass null,
+    // second param is the resposne
+    callback(null, {message: 'I am lambda function'});
+};
+```
+
 It is import to point which java-script function should be called when the lambda is called: `[file-name].[method-name]`
 
 ![022_api_lambda.png](./images/022_api_lambda.png)
@@ -109,8 +121,7 @@ Next we can deploy the API to dev stage.
 
 ## Call the API and solve CORS problem
 
-js
-```
+```js
 var xhr = new XMLHttpRequest();
 xhr.open('POST', 'https://3d20ljuw26.execute-api.eu-central-1.amazonaws.com/dev/api-lambda');
 xhr.onreadystatechange = function(event) {
@@ -134,4 +145,57 @@ and next set its value in the **Integration Response**:
 Now we have to deploy the new version of the API and next we can check if it is working fine:
 
 ![030_api_lambda.png](./images/030_api_lambda.png)
+
+## Change lambda use request body
+
+
+```js
+exports.handler = (event, context, callback) => {
+    // callback is a method that is used to return info from the lambda function
+    // first paramter is used to pass errors, here we do not have any errors so we pass null,
+    // second param is the resposne
+    callback(null, event);
+};
+```
+
+Go to test button and send some payload:
+
+![031_api_lambda.png](./images/031_api_lambda.png)
+
+```json
+{
+    "name": "Jacek",
+    "age": 28
+}
+```
+
+We can see that response body returns the whole request body.
+
+![032_api_lambda.png](./images/032_api_lambda.png)
+
+
+### Integration Request with enabled **Use Lambda Proxy integration**
+
+Select option **Use Lambda Proxy integration** it will cause that the whole request will be passed to the lambda function. In such case we do not use any API GW built-in features and we have to take care to return proper CORS headers in the lambda function:
+
+```js
+exports.handler = (event, context, callback) => {
+    // callback is a method that is used to return info from the lambda function
+    // first paramter is used to pass errors, here we do not have any errors so we pass null,
+    // second param is the resposne
+    console.log('Event content: ' + JSON.stringify(event));
+    callback(null, {headers: {'Access-Control-Allow-Origin': '*'}});
+};
+```
+
+Next we can call the lambda:
+
+![033_api_lambda.png](./images/033_api_lambda.png)
+
+>NOTE: if we would try run lambda version when it returns the whole request as a response that with enabled **Use Lambda Proxy integration** it would not work because request schema does not match to response schema.
+
+In AWS Cloud Watch we can that the **event** parameter contains the whole request with all its field:
+
+
+![034_api_lambda.png](./images/034_api_lambda.png)
 
