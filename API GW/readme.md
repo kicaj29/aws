@@ -150,6 +150,10 @@ Now we have to deploy the new version of the API and next we can check if it is 
 
 ![030_api_lambda.png](./images/030_api_lambda.png)
 
+Calls can be also enable by selecting parent path - then all (only VERBS???) will also have enabled CORS.
+
+![048_api_lambda.png](./images/048_api_lambda.png)
+
 ## Change lambda to use request body
 
 
@@ -348,3 +352,17 @@ Define mapping in **Integration Request**:
 and next we can test it:
 
 ![047_api_lambda.png](./images/047_api_lambda.png)
+
+Deploy the API because next we will try call it from the web:
+
+```js
+var xhr = new XMLHttpRequest();
+xhr.open('DELETE', 'https://3d20ljuw26.execute-api.eu-central-1.amazonaws.com/dev/api-lambda/all');
+xhr.onreadystatechange = function (event) {
+  console.log(event.target.response);
+}
+xhr.setRequestHeader('Content-Type', 'application/json');
+xhr.send();
+```
+
+>NOTE: from some reason I was getting CORS error for this endpoint but did not have time to solve it.
