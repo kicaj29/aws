@@ -147,6 +147,10 @@ Information about health of AWS.
 
 In tab **Affected resources** I can check if resources related with my account are impacted by some of these issues.
 
+# Scalability vs Elasticity vs Agility
+
+![aws-20-s-e-a.png](./images/fundamentals/aws-20-s-e-a.png)
+
 # resources
 https://app.pluralsight.com/library/courses/fundamental-cloud-concepts-aws/table-of-contents   
 https://www.youtube.com/watch?v=7LRtytR6ZbA   

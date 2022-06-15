@@ -446,6 +446,7 @@ Created AMI (Amazon Machine Images) is visible on the AMI list:
 
 ![vpc-46-ec2-load-balancer.png](images/vpc-46-ec2-load-balancer.png)
 
+If you host HTTP application select Application Load Balancer.
 ![vpc-47-ec2-load-balancer.png](images/vpc-47-ec2-load-balancer.png)
 
 ![vpc-48-ec2-load-balancer.png](images/vpc-48-ec2-load-balancer.png)
