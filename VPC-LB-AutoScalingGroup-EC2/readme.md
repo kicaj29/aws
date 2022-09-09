@@ -66,7 +66,6 @@
     - [Create VPC endpoint type of interface](#create-vpc-endpoint-type-of-interface)
     - [Test connection to eu-north-1](#test-connection-to-eu-north-1)
 - [Dual-Homed Instance](#dual-homed-instance)
-- [Load balancers](#load-balancers)
 - [Route 53/DNS](#route-53dns)
   - [Key DNS record types](#key-dns-record-types)
   - [Routing policies](#routing-policies)
@@ -947,8 +946,6 @@ It is possible to create second interface (ENI) and in this way EC2 instance be 
 
 ![vpc-96-dual-homed-instance.png](images/vpc-96-dual-homed-instance.png)
 
-# Load balancers
-TBD
 
 # Route 53/DNS
 
