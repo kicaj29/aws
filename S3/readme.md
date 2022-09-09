@@ -72,6 +72,8 @@ SRR use cases: log aggregation, live replication between production and test acc
 
 # S3 classes
 
+Can be specified for the whole bucket or per object (file) or per prefix (using lifecycle rules).
+
 ## S3 Durability
 
 * High durability (99,999999999%, 11 9s) of objects across multiple AZ.
@@ -122,3 +124,130 @@ Can move between classes manually or using S3 lifecycle configurations.
 * Comparison
 
 ![Comparison](./images/01-s3-comparison.png)
+
+
+# S3 Object lock
+
+* S3 object lock: adopt a WORM (Write Once - Read Many) model
+* Block an object version deletion for a specified amount of time
+
+# S3 Glacier vault lock
+
+* S3 object lock: adopt a WORM (Write Once - Read Many) model
+* **Lock the policy for future edits (can no longer be changed)**
+  * For example: I want upload and object to s3 and make sure then no one will ever be able to delete this file (even admins cannot delete it)
+* Helpful for compliance and data retention
+
+# S3 Encryption
+
+* No encryption
+* Server-side encryption (server encrypts the file after receiving it)
+* Client-side encryption (user encrypts the file before uploading it)
+
+# Shared responsibility model for S3
+
+* aws
+  * Infrastructure (global security, durability, availability, sustain concurrent loss of data in 2 facilities)
+  * Configuration and vulnerability analysis
+  * Compliance validation
+* clients
+  * S3 versioning
+  * S3 bucket policies
+  * S3 replication setup
+  * Logging and monitoring
+  * S3 storage class
+  * Data encryption at rest and in transit
+
+# AWS Snow Family
+
+Highly-secure, portable offline devices to collect and process data at the edge, and migrate data into and out of AWS. Usually it is used to move on-premises data to AWS. In this way we can transfer data to AWS much faster.
+
+## Data migration
+
+* Snowcone
+  * Small device, portable, computing anywhere, rugged & secure, withstands harsh environments
+  * Light (4.5 pounds, 2.1 kg)
+  * Device used for edge computing, storage and data transfer
+  * 8 TB of usable storage
+  * Must provide own batter/cables
+  * Can be sent back to AWS offline, or connect it to Internet and use **AWS DataSync** to send data
+* Snowball edge
+  * Big device
+  * Move TBs or PBs of data in or out of AWS
+  * Pay per data transfer job
+  * Provide block storage and Amazon S3-compatible object storage
+  * Storage Optimized
+    * 80 TB of HDD capacity for block volume and S3 compatible object storage
+  * Compute Optimized
+    * 42 TB of HDD capacity for block volume and S3 compatible object storage
+  * Use case: large data cloud migration, DC decommission, disaster recovery
+  * No **AWS DataSync** agent
+  * Up to 15 nodes
+* Snowmobile
+  * It is truck (real truck)
+  * 1 EB = 1 000 PB
+  * GPS
+  * 24/7 video surveillance
+  * No **AWS DataSync** agent
+
+## Edge computing
+
+Process data while it`s being created **on an edge location**. For example: a truck on the road, a ship on the sea, mining station underground, ...
+These locations my have:
+
+* Limited / no Internet access
+* Limited / no easy access to computing powe
+
+Use cases:
+* pre-process data
+* machine learning at the edge
+* transcoding media streams
+
+### Edge computing devices
+
+* Snowcone
+  * 2 CPU
+  * 4GB of memory
+  * Wired or wireless access
+  * USB-C power using a cord of the optional better
+* Snowball edge
+  * Storage Optimized
+    * Up to 40 vCPU, 80 GiB of RAM
+    * Object storage clustering available
+    * Better than Compute Optimized for data transfer (because of supporting clusters ?)
+  * Compute Optimized
+    * 52 vCPUs, 208 GiB of RAM
+    * Optional GPU (useful for video processing or machine learning)
+    * 42 TB usable storage
+* All: can run EC2 instances & AWS lambda functions (using AWS IoT Greengrass)
+
+## AWS OpsHub
+
+Historically, to use Snow Family devices, you needed a CLI.
+Today, you can use AWS OpsHub a software you instal on your computer to manage your Snow Family Devices (it has UI).
+
+# Storage gateway - hybrid cloud
+
+* AWS is pushing for "hybrid cloud"
+  * Part of infra is on-prem
+  * Part of infra is on the cloud
+* This can be due to
+  * Long cloud migrations
+  * Security requirements
+  * Compliance requirements
+  * IT strategy
+* S3 is a proprietary storage technology (unlike EFS/NFS), so how do you expose the S3 data on-premise?
+  * **Use AWS Storage Gateway**
+
+AWS Storage Gateway is a bridge between on-premise data and cloud data in S3. Hybrid storage service to allow on-prem to seamlessly use the AWS Cloud.
+
+Use cases: disaster recovery, backup and restore, tiered storage
+
+Types of storage gateways:
+* File
+* Volume
+* Tape
+
+
+
+
