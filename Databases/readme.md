@@ -12,6 +12,12 @@
 - [Athena](#athena)
 - [QuickSight](#quicksight)
 - [DocumentDB](#documentdb)
+- [Neptune](#neptune)
+- [QLDB (Quantum Ledger Database)](#qldb-quantum-ledger-database)
+- [Amazon Managed Blockchain](#amazon-managed-blockchain)
+- [Glue](#glue)
+  - [Glue Data Catalog](#glue-data-catalog)
+- [DMS](#dms)
 
 
 # NoSQL Databases (non relational databases)
@@ -153,3 +159,61 @@ Aurora is AWS Proprietary database, not open source.
 * Fully managed, HA with replication across 3 AZ
 * Storage automatically grows in increments of 10GB, up to 64TB
 * Automatically scales to workloads with millions of requests per seconds
+
+# Neptune
+
+* Fully managed graph database
+* A popular graph dataset would be a social network
+  * Users have friends
+  * Posts have comments
+  * Comments have likes from users
+  * Users share and like posts...
+* HA across 3 AZ, with pu to 15 read replicas
+* Build and run applications working with highly connected datasets - optimized for these complex and hard queries
+* Can store up to billions of relations and query the graph with milliseconds latency
+* HA with replications across multiple AZs
+* Great for knowledge graphs (Wikipedia), fraud detection, recommendation engines, social networking
+
+# QLDB (Quantum Ledger Database)
+
+* A ledger is a book recording financial transactions
+* Fully managed, serverless, HA, replication across 3 AZ
+* Used to review history of all the changes made to your application data over time
+* Immutable system: no entry can be removed or modified, cryptographically verifiable
+* 2-3x better performance than common ledger blockchain frameworks
+![11-QLDB.png](./images/11-QLDB.png)
+* Manipulate data using SQL
+* Difference with Amazon Managed Blockchain: **no decentralization component**, in accordance with financial regulations rules
+
+# Amazon Managed Blockchain
+
+* Blockchain makes it possible to build applications where multiple parties can execute transactions **without the need for a trusted, central authority.**
+* Can be used to:
+  * Join public blockchain networks
+  * Or create your own scalable private network
+* Compatible with the frameworks Hyperledger Fabric and Ethereum
+* It is decentralized
+
+# Glue
+
+* Managed extract, transform, and load (ETL) service
+* Useful to prepare and transform data for analytics
+* Fully serverless service
+
+![12-Glue.png](./images/12-Glue.png)
+
+## Glue Data Catalog
+
+* Catalog of datasets in AWS infrastructure (column names, field name, field type, etc.)
+* Can be used by Athena, Redshift, EMR
+
+# DMS
+
+* **Database Migration Service**
+* Quick and securely migrate databases to AWS, resilient, self healing
+* The source database remains available during the migration
+* Supports
+  * Homogeneous migrations: ex Oracle to Oracle
+  * Heterogeneous migrations: ex Microsoft SQL Server to Aurora
+
+![13-DMS.png](./images/13-DMS.png)
