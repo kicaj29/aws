@@ -1,3 +1,21 @@
+- [CloudFormation](#cloudformation)
+- [AWS Cloud Development Kit (CDK)](#aws-cloud-development-kit-cdk)
+- [Elastic Beanstalk](#elastic-beanstalk)
+  - [Typical architecture](#typical-architecture)
+  - [Beanstalk Overview](#beanstalk-overview)
+- [AWS CodeDeploy](#aws-codedeploy)
+- [AWS CodeCommit](#aws-codecommit)
+- [AWS CodeBuild](#aws-codebuild)
+- [AWS CodePipeline](#aws-codepipeline)
+- [AWS CodeArtifact](#aws-codeartifact)
+- [AWS CodeStar](#aws-codestar)
+- [AWS Cloud9](#aws-cloud9)
+- [CodeStart & Cloud9 Hands On](#codestart--cloud9-hands-on)
+- [Systems Manager (SSM)](#systems-manager-ssm)
+  - [How Systems Manager work](#how-systems-manager-work)
+  - [SSM Session Manager](#ssm-session-manager)
+    - [SSM Session Manger Hands On](#ssm-session-manger-hands-on)
+- [OpsWorks Overview](#opsworks-overview)
 # CloudFormation
 
 It is declarative way of outlining your AWS Infra, for any resources (most of them are supported).
@@ -142,3 +160,146 @@ CloudFormation creates those for you, in the right order, with the exact configu
 
 # CodeStart & Cloud9 Hands On
 
+* Developer tools: please where all developer tools are available but we have to create all of them
+![10-code-hands-on.png](./images/10-code-hands-on.png)
+
+* CodeStart creates everything automatically
+
+![11-code-hands-on.png](./images/11-code-hands-on.png)
+
+![12-code-hands-on.png](./images/12-code-hands-on.png)
+
+![13-code-hands-on.png](./images/13-code-hands-on.png)
+
+![14-code-hands-on.png](./images/14-code-hands-on.png)
+
+![15-code-hands-on.png](./images/15-code-hands-on.png)
+
+![16-code-hands-on.png](./images/16-code-hands-on.png)
+
+![17-code-hands-on.png](./images/17-code-hands-on.png)
+
+* After creation we can see that a lot of resources have been created automatically
+
+![18-code-hands-on.png](./images/18-code-hands-on.png)
+
+* Pipeline steps
+
+![19-code-hands-on.png](./images/19-code-hands-on.png)
+
+![20-code-hands-on.png](./images/20-code-hands-on.png)
+
+![21-code-hands-on.png](./images/21-code-hands-on.png)
+
+* If we go to the beanstalk we can  see created application and also there we can click the link to open the app
+
+![22-code-hands-on.png](./images/22-code-hands-on.png)
+
+* Next create Cloud9 environment
+
+![23-code-hands-on.png](./images/23-code-hands-on.png)
+
+![24-code-hands-on.png](./images/24-code-hands-on.png)
+
+![25-code-hands-on.png](./images/25-code-hands-on.png)
+
+* Next we can open Cloud9 IDE
+
+![26-code-hands-on.png](./images/26-code-hands-on.png)
+
+* Push the changes
+
+![27-code-hands-on.png](./images/27-code-hands-on.png)
+
+# Systems Manager (SSM)
+
+* Helps you manage your EC2 and On-Premises systems at scale
+* Another **Hybrid AWS service**
+* Get operational insights about the state of your infra.
+* Suit of 10+ products
+* Most important features
+  * Patching automation for enhanced compliance
+  * Run commands across an entire fleet of servers
+  * Store parameter configuration with the SSM Parameter Store
+* Works for both Windows and Linux OS
+
+## How Systems Manager work
+
+* We need to install the SSM agent onto the systems we control
+* Installed by default on Amazon Linux AMI & some Ubuntu AMIs
+* If an instance cannot be controlled with SSM, it is probably an issue with the SSM agent!
+* Thanks to the SSM agent, we can run commands, path & configure our servers
+
+![28-ssm.png](./images/28-ssm.png)
+
+## SSM Session Manager
+
+* Allows you to start a secure shell on your EC2 and on-premises servers
+* No SSH access, bastion hosts, or SSH keys needed
+* No port 22 needed (better security)
+* Supports Linux, macOS and Windows
+* Send session log data to S3 or CloudWatch Logs
+
+![29-ssm-session-manager.png](./images/29-ssm-session-manager.png)
+
+### SSM Session Manger Hands On
+
+* First we have to launch some EC2 instance
+
+![30-ssm-session-manager-hands-on.png](./images/30-ssm-session-manager-hands-on.png)
+
+* We will not use any key-pair
+
+![31-ssm-session-manager-hands-on.png](./images/31-ssm-session-manager-hands-on.png)
+
+* Also disable SSH traffic
+
+![32-ssm-session-manager-hands-on.png](./images/32-ssm-session-manager-hands-on.png)
+
+* Assign IAM role which can talk to the SSM service
+
+![33-ssm-session-manager-hands-on.png](./images/33-ssm-session-manager-hands-on.png)
+
+![34-ssm-session-manager-hands-on.png](./images/34-ssm-session-manager-hands-on.png)
+
+* Next go to the SSM Service and select **Fleet Manager**
+
+![35-ssm-session-manager-hands-on.png](./images/35-ssm-session-manager-hands-on.png)
+
+Here all EC2 instances which are registered with SSM will appear here:
+
+![36-ssm-session-manager-hands-on.png](./images/36-ssm-session-manager-hands-on.png)
+
+* When the created EC2 instances will start it will appear on the list
+
+![37-ssm-session-manager-hands-on.png](./images/37-ssm-session-manager-hands-on.png)
+
+* Next we can run secure shell using **Session Manager**
+
+![38-ssm-session-manager-hands-on.png](./images/38-ssm-session-manager-hands-on.png)
+
+* Start the session
+
+![39-ssm-session-manager-hands-on.png](./images/39-ssm-session-manager-hands-on.png)
+
+![40-ssm-session-manager-hands-on.png](./images/40-ssm-session-manager-hands-on.png)
+
+![41-ssm-session-manager-hands-on.png](./images/41-ssm-session-manager-hands-on.png)
+
+* We can access also session history
+
+![42-ssm-session-manager-hands-on.png](./images/42-ssm-session-manager-hands-on.png)
+
+# OpsWorks Overview
+
+* Chef & Puppet help you perform server configuration automatically, or repetitive actions.
+  * These tools are not created by AWS
+* They work great with EC2 & On-Premises VM
+* AWS OpsWorks = Managed Chef & Puppet
+* It is alternative to the AWS SSM
+* Only provision on standard AWS resources
+  * EC2, Databases, Load Balancers, EBS volumes
+* **The only reason to use OpsWorks is that you were using Chef & Puppet before migration to the cloud and after migration
+  you would like to still use Chef & Puppet to re-use existing code**
+
+![43-opswork.png](./images/43-opswork.png)
