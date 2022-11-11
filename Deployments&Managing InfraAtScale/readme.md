@@ -70,3 +70,75 @@ CloudFormation creates those for you, in the right order, with the exact configu
 * Health Monitoring
 
 ![04-beanstalk.png](./images/04-beanstalk.png)
+
+# AWS CodeDeploy
+
+* We want to deploy our application
+* Works with EC2 instances
+* Works with On-Premises Servers
+* Servers/Instances must be provisioned and configured ahead of time with the CodeDeploy Agent
+
+![05-code-deploy.png](./images/05-code-deploy.png)
+
+# AWS CodeCommit
+
+* AWS competing product for GitHub is CodeCommit
+* It hosts Git-based repositories
+* Fully managed
+* Scalable & high available
+* Private, Secured, Integrated with AWS 
+
+# AWS CodeBuild
+
+* Code building service in the cloud (name is obvious)
+* Compiles source code, run tests, and produces packages that are ready to be deployed (by CodeDeploy for example)
+
+![06-code-build.png](./images/06-code-build.png)
+
+* Benefits
+  * Fully managed, serverless
+  * Continuously scalable & high available
+  * Secure
+  * Pay-as-you-go pricing - only pay for the build time
+
+# AWS CodePipeline
+
+* Orchestrate the different steps to have the code automatically pushed to production
+  * Code => Build => Test => Provision => Deploy
+  * Basics for CICD
+* Benefits
+  * Fully managed, compatible with CodeCommit, CodeBuild, CodeDeploy, Elastic Beanstalk
+  * Fast delivery & rapid updates
+
+![07-code-pipeline.png](./images/07-code-pipeline.png)
+
+# AWS CodeArtifact
+
+* Software packages depend on each other to be built (also called code dependencies), and new onces are created
+* Storing and retrieving these dependencies is called artifact management
+* Traditional you need to setup your own artifact management system
+* **CodeArtifact** is a secure, scalable, and code-effective artifact management for software development
+* Works with common deps tools such as Maven, npm, yarn, pip, NuGet
+* Developers and CodeBuild can then retrieve deps straight from CodeArtifact
+
+# AWS CodeStar
+
+* Unified UI to easily manage software development activities in one place
+
+![08-code-star.png](./images/08-code-star.png)
+
+* "Quick way" to get started to correctly set-up CodeCommit, CodePipeline, CodeBuild, CodeDeploy, Elastic Beanstalk, EC2, etc...
+* Can edit the code "in-the-cloud" using **AWS Cloud9**
+
+# AWS Cloud9
+
+* It is cloud IDE for writing, running and debugging code
+* "Classic" IDE are downloaded on a computer before being used
+* A cloud IDE can be used within a web browser, meaning you can work on your projects with no setup necessary
+* Allows for code collaboration in real-time (pair-programming)
+
+![09-code-star.png](./images/09-code-star.png)
+
+
+# CodeStart & Cloud9 Hands On
+
