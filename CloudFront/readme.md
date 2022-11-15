@@ -15,6 +15,7 @@
   * Enhanced security with CloudFront Origin Access Control (OAC)
     * OAC is replacing Origin Access Identity (OAI)
   * **CloudFront can be used as an ingress (to upload files to S3)**
+    * Is it about "S3 Transfer Acceleration" ? TBD
 * Custom Origin (HTTP)
   * ALB
   * EC2 instance

@@ -249,5 +249,15 @@ Types of storage gateways:
 * Tape
 
 
+# S3 Transfer Acceleration
+
+* Increase transfer speed by transferring file to an AWS edge location which will forward the data to the S3 bucket in the target region
+
+![02-s3-transfer-acceleration.png](./images/02-s3-transfer-acceleration.png)
+
+* Can be tested using page https://s3-accelerate-speedtest.s3-accelerate.amazonaws.com/en/accelerate-speed-comparsion.html
+
+
+
 
 
