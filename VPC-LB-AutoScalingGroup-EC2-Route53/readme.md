@@ -955,24 +955,27 @@ It is possible to create second interface (ENI) and in this way EC2 instance be 
 
 ## Key DNS record types
 
-* A - maps host name to IPv4 address
-* AAAA - maps host name to IPv6 address
-* CNAME - alias one name to another. **A CNAME record cannot point to the domain apex**.   
+* A - maps host name to IPv4 address, for example mapping: www.google.com => 12.34.56.78
+* AAAA - maps host name to IPv6 address, the same like above but for IPv6
+* CNAME - alias one name to another, for example: search.google.com => www.google.com. **A CNAME record cannot point to the domain apex**.   
   >NOTE: A domain apex is the "root" level of your domain. For example, let's say you just purchased mygreatbrand.com. We'd call that the "domain apex", meaning that mygreatbrand.com is the "root" of the hierarchy of domain names. Any subdomain of that (e.g. www.mygreatbrand.com, mail.mygreatbrand.com, etc.) are not considered domain apexes, but are considered subdomains of mygreatbrand.com.
 * MX - email server
 * NS - identifies name servers for a hosted zone. A NS (name server) record allows you to delegate the DNS of one of your subdomains to a different nameserver. 
 
 ## Routing policies
 
-* simple: user -> route 53 -> web server instance (www.mypage.com/10.64.100.200)
-* weighted
+* simple, does not have health check: user -> route 53 -> web server instance (www.mypage.com/10.64.100.200)
+* weighted, has health check
  user1 -> route 53 (90% traffic) -> web server instance (www.mypage.com/10.64.100.200)
- user2 -> route 53 (10% traffic) -> web server instance (www.mypage.com/10.64.100.201)
-* latency-based: good for apps hosted in different regions
+ user2 -> route 53 (10% traffic) -> web server instance (www.mypage.com/10.64.100.201)   
+ example
+ ![route53-007-routing-policies.png](./images/route53/route53-007-routing-policies.png)
+* latency-based, has health check: good for apps hosted in different regions
  user1 (NewYork) -> route 53 -> web server instance 1 in us-east-1 (www.mypage.com/10.78.100.221)
  user2 (California) -> route 53 -> web server instance 2 in us-west-1  (www.mypage.com/10.78.100.222)
-* failover routing policy: if some web server is down then it will not be routed by route 53 service
-* geo location
+* failover routing policy, has health check: if some web server is down then it will not be routed by route 53 service
+![route53-008-routing-policies.png](./images/route53/route53-008-routing-policies.png)
+* geo location, has health check
   * traffic if routed based on the location of the user
   * if location can`t be identified it uses a default resource set
   * can be used to serve different content to users from different locations
@@ -983,6 +986,7 @@ It is possible to create second interface (ENI) and in this way EC2 instance be 
 * **can be used to map the zone apex to an ELB**
 * the ip address of the ELB can change dynamically
 * alias record adjusts to ELB IP address changes
+* for example: example.com => AWS resource (ELB, CloudFront, S3, RDS, etc...)
 
 ## Example: domain registration, alias record and ELB integration
 
