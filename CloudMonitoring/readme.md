@@ -1,3 +1,19 @@
+- [Cloud watch Important Metrics](#cloud-watch-important-metrics)
+- [CloudWatch Alarms](#cloudwatch-alarms)
+- [CloudWatch Logs](#cloudwatch-logs)
+- [CloudWatch Logs EC2](#cloudwatch-logs-ec2)
+- [Amazon EventBridge (formerly CloudWatch Events)](#amazon-eventbridge-formerly-cloudwatch-events)
+  - [Default event bus](#default-event-bus)
+  - [It is possible to receive events from partners for AWS](#it-is-possible-to-receive-events-from-partners-for-aws)
+  - [Additional capabilities](#additional-capabilities)
+  - [EventBridge Hands On](#eventbridge-hands-on)
+- [AWS CloudTrail](#aws-cloudtrail)
+  - [AWS CloudTrail Hands On](#aws-cloudtrail-hands-on)
+- [AWS X-Ray](#aws-x-ray)
+- [CodeGuru](#codeguru)
+- [AWS Health Dashboard](#aws-health-dashboard)
+  - [Service Health (aka Service Health Dashboard)](#service-health-aka-service-health-dashboard)
+  - [Your Account Health (aka Personal Health Dashboard)](#your-account-health-aka-personal-health-dashboard)
 # Cloud watch Important Metrics
 
 * EC2 instances: CPU, Status Check, Network (not RAM)
@@ -71,3 +87,70 @@ It is possible to react on events happening outside of AWS.
 ![06-event-bridge.png](./images/06-event-bridge.png)
 
 ![07-event-bridge.png](./images/07-event-bridge.png)
+
+# AWS CloudTrail
+
+* Provides governance, compliance and audit for your AWS account
+* CloudTrail is enabled by default
+* Get an history of events / API calls made within you AWS account by
+  * Console
+  * SDK
+  * CLI
+  * AWS Services
+* Can put logs from CloudTrail into CloudWatch Logs or S3 for longer retention
+* A trail can be applied to All Regions (default) or a single Region
+* If a resource is deleted in AWS, investigate CloudTrail first
+* Entries in the CloudTrail appears after around 5 mins after executing action in AWS
+
+## AWS CloudTrail Hands On
+
+![08-cloud-trail.png](./images/08-cloud-trail.png)
+
+# AWS X-Ray
+
+* Debugging in Production, the good old way
+  * Test locally
+  * Add log statements everywhere
+  * Re-deploy in production
+  * Log formats differ across applications and log analysis is hard
+  * Debugging: one big monolith "easy", distributed services "hard"
+  * No common views of you entire architecture
+
+* AWS X-Ray visual analysis of our applications
+  ![09-x-ray.png](./images/09-x-ray.png)
+  * Troubleshooting performance (bottlenecks)
+  * Understand dependencies in a microservice architecture
+  * Pinpoint service issue
+  * Review request behavior
+  * Find errors and exceptions
+  * Are we meeting time SLA?
+  * Where I am throttled?
+  * Identify users that are impacted
+
+# CodeGuru
+
+* An ML-powered service for automated code reviews and application performance recommendations
+* Provide two functionalities
+  * CodeGuru Reviewer: automated code reviews for static code analysis (development)
+  * CodeGuru Profiler: visibility/recommendations about application performance during runtime (production)
+
+![10-code-guru.png](./images/10-code-guru.png)
+
+# AWS Health Dashboard
+
+https://health.aws.amazon.com/
+
+## Service Health (aka Service Health Dashboard)
+
+https://status.aws.amazon.com redirects to https://health.aws.amazon.com/health/home#/account/dashboard/open-issues and here we can see status of all services in all regions https://health.aws.amazon.com/health/status
+
+![11-service-health-dashboard.png](./images/11-service-health-dashboard.png)
+
+
+## Your Account Health (aka Personal Health Dashboard)
+
+https://phd.aws.amazon.com/ now it is redirected to https://health.aws.amazon.com/health/home#/account/dashboard/open-issues
+
+* Provides alerts and remediation guidance when AWS is experiencing events that might impact you
+* While the `Service Health Dashboard` displays the general status of AWS services, `Your Account Health` gives you a personalized view into the performance and availability of the AWS services underlying your AWS resources
+* Displays relevant and timely information to help you manage events in progress and provides proactive notification to help you plan for scheduled activities
