@@ -10,11 +10,15 @@
 - [Virtual Private Gateway](#virtual-private-gateway)
 - [VPC endpoints to connect with AWS public resources](#vpc-endpoints-to-connect-with-aws-public-resources)
   - [Services outside the VPC](#services-outside-the-vpc)
+- [VPC Peering](#vpc-peering)
 - [PrivateLink](#privatelink)
 - [Web Application Firewall (WAF)](#web-application-firewall-waf)
 - [VPC Flow logs](#vpc-flow-logs)
   - [Create flow logs](#create-flow-logs)
   - [Read flow logs](#read-flow-logs)
+- [Site to Site VPN \& Direct Connect](#site-to-site-vpn--direct-connect)
+- [AWS Client VPN](#aws-client-vpn)
+- [AWS Transient Gateway](#aws-transient-gateway)
 - [Other AWS networking stuff](#other-aws-networking-stuff)
 - [Create VPC with 2 public subnets](#create-vpc-with-2-public-subnets)
   - [Create EC2 instances that will be connected to created VPC](#create-ec2-instances-that-will-be-connected-to-created-vpc)
@@ -142,7 +146,7 @@ Router exist across availability zones and there is no single point of hardware 
 
 # Network access control list
 
-Another tool the VPCs use for networking control is the **network access control list**. Each VPC has one access control list, and this acts as an IP filtering table saying which IPs are allowed through the VPC for both incoming and outgoing traffic. Access control lists are kind of like super-powered security groups that apply rules for the entire VPC. **ACL is stateless firewall.**   
+Another tool the VPCs use for networking control is the **network access control list**. Each VPC has one access control list, and this acts as an IP filtering table saying which IPs are allowed through the VPC for both incoming and outgoing traffic. Access control lists are kind of like super-powered security groups that apply rules for the entire VPC. **ACL is stateless firewall** - it means that return traffic must be explicitly allowed by rules.
 
 **ACL can be assigned to VPC and subnet.** It is not possible to assign ACL to EC2 instance or ENI (Security Groups can be assigned to EC2 instance or ENI).
 
@@ -157,6 +161,8 @@ Rules are executed from the lowest number to the highest number and at then end 
 This allows supporting scenarios when HTTPS traffic from specific IPs is forbidden but all other incoming HTTPS traffic is allowed - first deny stops checking further rules. 
 
 ![vpc-103-ACL-rules-order.png](images/vpc-103-ACL-rules-order.png)
+
+[Security Group vs ACL](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Security.html)
 
 # Subnet
 
@@ -218,9 +224,20 @@ Not secure approach (S3 and dynamoDB available from Internet).
 More secure approach:
 ![vpc-106-vpc-endpoints-sec.png](images/vpc-106-vpc-endpoints-sec.png)
 
+# VPC Peering
+
+* Connect two VPC, privately using AWS network
+* Make them behave as if they were in the same network
+* Must not have overlapping CIDR
+* VPC Peering connection is not transitive - must be established for each VPC then need to communicate with one another
+
+![vpc_peering.png](./images/vpc_peering.png)
+
 # PrivateLink
 
 AWS PrivateLink provides private connectivity between VPCs and services hosted on AWS or on-premises, securely on the Amazon network. If services are hosted by AWS they have to be in the same region!   
+
+It is most secure & scalable way to expose a service to 1000s of VPCs.
 
 It works very well when in one AWS account we have load balancer that will be reached by many clients that for example can be in different AWS accounts and have overlapping VPCs - that`s why using VPC peering is not good idea in such case and it is better to use PrivateLink.
 
@@ -261,6 +278,41 @@ Create flow logs:
 First generate some network traffic. Next wait ~10mins/~1min and navigate to log group that contains the logs.
 
 ![vpc-110-flow-logs-navi.png](images/vpc-110-flow-logs-navi.png)
+
+# Site to Site VPN & Direct Connect
+
+* Site to Site VPN
+  * Connect an on-premises VPN to AWS
+  * The connection is automatically encrypted
+  * **Goes over the public Internet**
+  * On-premises: must use a Customer Gateway (CGW)
+  * AWS: must use a Virtual Private Gateway (VGW)
+  ![site-to-site-gateways.png](./images/site-to-site-gateways.png)
+
+* Direct Connect (DX)
+  * Establish a physical connection between on-premises and AWS
+  * The connection is private, secure and fast
+  * Goes over a private network
+  * Takes at least month to establish
+  * Is more expensive
+
+
+![site-to-site-direct-connect.png](./images/site-to-site-direct-connect.png)
+
+# AWS Client VPN
+
+* Connect from your computer using OpenVPN to your private network in AWS and on-premises
+* Allow you to connect to your EC2 instances over a private IP (just as if you were in the private VPC network)
+* Goes over public Internet
+![vpn-client.png](./images/vpn-client.png)
+
+# AWS Transient Gateway
+
+* For having transitive peering between thousands of VPCs and on-premises, hub-and-spoke (start) connection
+* One single gateway to provide this functionality
+* Works with DirectConnect Gateway, VPN connections
+
+![transient-gateway.png](./images/transient-gateway.png)
 
 # Other AWS networking stuff
 
