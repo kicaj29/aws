@@ -41,3 +41,33 @@ CloudWatch Logs can be collected from:
 
 ![01-cloudwatch-logs.png](./images/01-cloudwatch-logs.png)
 
+# Amazon EventBridge (formerly CloudWatch Events)
+
+A serverless service for building event-driven applications.
+
+## Default event bus
+* Schedule: Cron jobs (scheduled scripts)
+  ![02-event-bridge.png](./images/02-event-bridge.png)
+* Even Patter: Event rules to react to a service doing something
+  ![03-event-bridge.png](./images/03-event-bridge.png)
+* Trigger Lambda functions, send SQS/SNS messages...
+
+## It is possible to receive events from partners for AWS
+
+It is possible to react on events happening outside of AWS.
+
+![04-event-bridge.png](./images/04-event-bridge.png)
+
+## Additional capabilities
+
+* Schema registry: model event schema
+* You can archive events (all/filter) sent to an even bus (indefinitely or se period)
+* Ability to replay archived events
+
+## EventBridge Hands On
+
+![05-event-bridge.png](./images/05-event-bridge.png)
+
+![06-event-bridge.png](./images/06-event-bridge.png)
+
+![07-event-bridge.png](./images/07-event-bridge.png)
