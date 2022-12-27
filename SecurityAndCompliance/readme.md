@@ -1,5 +1,5 @@
 - [AWS Shared responsibility model](#aws-shared-responsibility-model)
-- [DDoS protection: WAF and Shield](#ddos-protection-waf-and-shield)
+- [WAF and Shield](#waf-and-shield)
 - [Penetration testing on AWS Cloud](#penetration-testing-on-aws-cloud)
 - [Encryption with KMS (Key Management Service)](#encryption-with-kms-key-management-service)
 - [Encryption CloudHMS](#encryption-cloudhms)
@@ -57,9 +57,9 @@
 
 More here https://aws.amazon.com/compliance/shared-responsibility-model/
 
-# DDoS protection: WAF and Shield
+# WAF and Shield
 
-* AWS Shield Standard: protects against DDoS attack for your website and applications, for all customers at no additional costs
+* AWS **Shield** Standard: **protects against DDoS attack** for your website and applications, for all customers at no additional costs
   * Provides protection from attacks such as SYN/UDP Floods, Reflection attacks and other layers 3 and 4 attacks
 * AWS Shield Advanced: 24/7 premium DDoS protection, $3000 per month per organization
   * Protect against more sophisticated attack on Amazon EC2, ELB, CloudFront, AWS Global Accelerator and Route 53
