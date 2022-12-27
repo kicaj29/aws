@@ -12,6 +12,11 @@
 - [Guard Duty](#guard-duty)
 - [Amazon Inspector](#amazon-inspector)
 - [AWS Config](#aws-config)
+- [Amazon Macie](#amazon-macie)
+- [AWS Security Hub](#aws-security-hub)
+- [Amazon Detective](#amazon-detective)
+- [AWS Abuse](#aws-abuse)
+- [Root user privileges](#root-user-privileges)
 
 # AWS Shared responsibility model
 
@@ -241,3 +246,65 @@ More here https://aws.amazon.com/compliance/shared-responsibility-model/
 
 ![15-aws-config.png](./images/15-aws-config.png)
 ![16-aws-config.png](./images/16-aws-config.png)
+
+# Amazon Macie
+
+* Fully managed data security and data privacy service that uses machine learning and patter matching to discover and protect your sensitive data in AWS
+* Macie helps identify and alert you to sensitive data, such as personally identifiable information (PII)
+
+![17-aws-macie.png](./images/17-aws-macie.png)
+
+# AWS Security Hub
+
+* Cental security tool to manage security across several AWS accounts and automate security checks
+* Integrated dashboards showing current security and compliance status to quickly take actions
+* **Automatically aggregates alerts in predefined or personal findings formats from various AWS services & AWS partner tools**
+  * GuardDuty
+  * Inspector
+  * Macie
+  * IAM Access Analyzer
+  * AWS Systems Manager
+  * AWS Firewall Manager
+  * AWS Partner Network Solutions
+* Must first enabled the AWS Config Service
+
+![18-aws-security-hub.png](./images/18-aws-security-hub.png)
+
+![19-aws-security-hub.png](./images/19-aws-security-hub.png)
+
+# Amazon Detective
+
+* GuardDuty, Macie and SecurityHub are used to identify potential security issues, or findings.
+* Sometimes security findings require deeper analysis to isolate the root cause and take action - it is a complex process
+* Amazon Detective analyzes, investigates, and quickly identifies the root cause of security issue or suspicious activities (using ML and graphs)
+* Automatically collects and processes events from VPS flow logs, CloudTrail, GuardDuty and create a unified view
+* Produces visualizations with details and context to get the root cause
+
+# AWS Abuse
+
+* Report suspect AWS resources used for abusive or illegal purpose
+* Abusive & prohibited behaviors are
+  * Spam - received undesired emails from AWS-owned IP address, websites & forums spammed by AWS resources
+  * Port scanning - sending packets to your ports to discover the unsecured ones
+  * DoS or DDoS attacks - AWS owned-IP address attempting to overwhelm or crash your servers/software
+  * Intrusion attempts - logging in on your resources
+  * Hosting objectionable or copyrighted content - distributed illegal or copyrighted content without consent
+  * Distributed malware - AWS resources distributing softwares to harm computers or machines
+* Contact the AWS Abuse team: abuse@amazonaws.com
+
+# Root user privileges
+
+* Root user = Account Owner (created when the account is created)
+* Has completely access to all AWS services and resources
+* Lock away your AWS account root user access keys!
+* Do not use the root account for everyday tasks, even administrative tasks
+* Actions that can be performed only by the root user
+  * Change account settings (account name, email address, root user password, root use access keys)
+  * View certain tax invoices
+  * Close you AWS account
+  * Restore IAM user permissions
+  * Change or cancel AWS Support plan
+  * Register as a seller in Reserved Instance Marketplace
+  * Configure an Amazon S3 bucket to enable MFA
+  * Edit or delete Amazon S3 bucket policy that includes an invalid VPC ID or VPC endpoint ID
+  * Sign up for GovCloud
