@@ -1,3 +1,14 @@
+- [Amazon Rekognition](#amazon-rekognition)
+- [Transcribe](#transcribe)
+- [Polly](#polly)
+- [Translate](#translate)
+- [Lex \& Connect](#lex--connect)
+- [Amazon Comprehend](#amazon-comprehend)
+- [SageMaker](#sagemaker)
+- [Forecast](#forecast)
+- [Kendra](#kendra)
+- [Personalize](#personalize)
+- [Textract](#textract)
 # Amazon Rekognition
 
 * Find objects, people, text, scenes in images and videos using ML
@@ -108,3 +119,9 @@
 
 ![06-textract.png](./images/06-textract.png)
 
+* Extracts data from forms and tables
+* Read and process any type of document (PDFs, images,...)
+* Use cases
+  * Financial services (invoices reports)
+  * Healthcare (medical records, insurance claims)
+  * Public sector (tax forms, ID docs, passports)
