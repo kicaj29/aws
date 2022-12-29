@@ -1,3 +1,19 @@
+- [General Guiding Principles](#general-guiding-principles)
+- [Design Principles](#design-principles)
+- [Well architected framework 6 pillars](#well-architected-framework-6-pillars)
+  - [1 Operational excellence](#1-operational-excellence)
+  - [2 Security](#2-security)
+  - [3 Reliability](#3-reliability)
+  - [4 Performance efficiency](#4-performance-efficiency)
+  - [5 Cost optimization](#5-cost-optimization)
+  - [6 Sustainability](#6-sustainability)
+- [AWS well-architected tool](#aws-well-architected-tool)
+- [Right sizing](#right-sizing)
+- [AWS Ecosystem - free resources](#aws-ecosystem---free-resources)
+- [AWS Knowledge Center](#aws-knowledge-center)
+- [AWS IQ](#aws-iq)
+- [AWS re:Post](#aws-repost)
+
 # General Guiding Principles
 
 * Stop guessing your capacity needs (use auto scaling)
