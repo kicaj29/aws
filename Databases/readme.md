@@ -86,7 +86,7 @@ Aurora is AWS Proprietary database, not open source.
 ## RDS Deployments
 
 * Read replicas
-  * Can create up to 5 read replicas
+  * Can create up to 5 read replicas for Oracle and SQL Server and up to 15 for MySQL, MariaDB and PostgreSQL, more [here](https://aws.amazon.com/rds/features/read-replicas/)
   * Data is only written to the main DB
 ![03-replicas.png](./images/03-replicas.png)
 * Multi-AZ
