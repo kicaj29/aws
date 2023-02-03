@@ -32,7 +32,7 @@
 
 # AppStream 2.0
 
-* Desktop application streaming service
+* **Desktop apps run in the cloud and stream to a web browser which run on a client host**
 * Deliver to any computer, without acquiring, provisioning
 * The application is delivered from within a web browser
 
@@ -77,13 +77,15 @@
 # AppSync
 
 * Store and sync data across mobile and web apps in real-time
-* **Makes use of GraphQL**
+* **Makes use of GraphQL - it is fully managed GraphQL service**
 * Client code can be generated automatically
 * Integrations with DynamoDB / Lambda
 * Real-time subscriptions
 * Offline data synchronization (replaces Cognito Sync)
 * Fine grained security
 * **AWS Amplify can leverage AWS AppSync in the background!**
+
+![18-AppSync.png](./images/18-AppSync.png)
 
 # Amplify
 
@@ -113,6 +115,14 @@
 
 # Disaster Recovery Strategies
 
+[Disaster recovery options in the cloud](https://docs.aws.amazon.com/whitepapers/latest/disaster-recovery-workloads-on-aws/disaster-recovery-options-in-the-cloud.html)
+
+Recovery Time Objective (RTO) - is the goal your organization sets for the maximum length of time it should take to restore normal operations following an outage or data loss.
+
+Recovery Point Objective (RPO) - is your goal for the maximum amount of data the organization can tolerate losing.
+
+![19-DisasterRecovery.png](./images/19-DisasterRecovery.png)
+
 * The cheapest is backup and restore
 ![08-strategies.png](./images/08-strategies.png)
 ![09-strategies.png](./images/09-strategies.png)
@@ -141,6 +151,8 @@
 
 # Application Discovery Service
 
+AWS Application Discovery Service helps you plan your migration to the AWS cloud by collecting usage and configuration data about your on-premises servers.
+
 * Plan migration projects by gathering information about on-premises data centers
 * Server utilization data and dependency mapping are important for migrations
 
@@ -154,6 +166,7 @@
 ## AWS Application Migration Service (MGN)
 
 * The "AWS evolution" of CloudEndure Migration, replacing AWS Server Migration Service (SMS)
+* **AWS Application Migration Service (AWS MGN) is the recommended service for migrations to AWS.**
 * Lift-and-shift (rehost) solution which simplify migrating applications to AWS
 * Converts your physical, virtual, and cloud-based servers to run natively on AWS
 * Supports wide range of platforms, OSes and DBs
