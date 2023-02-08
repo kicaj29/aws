@@ -38,6 +38,7 @@
 
 * Turn text into lifelike speech using deep learning
 * Allowing you to create applications that talk
+* Text-to-Speech (TTS) service
 
 # Translate
 
@@ -47,6 +48,7 @@
 # Lex & Connect
 
 * Amazon Lex: same technology that powers Alexa
+  * Lex is a service for creating **conversational interfaces** using voice and text.
   * Automatic Speech Recognition (ASR) to convert speech to text
   * Natural Language Understanding to recognize the intent of text, calles
   * **Helps build chatbots, call center bots**
