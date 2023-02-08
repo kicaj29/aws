@@ -133,6 +133,8 @@ Recovery Point Objective (RPO) - is your goal for the maximum amount of data the
 
 # Elastic Disaster Recover (DRS)
 
+https://www.youtube.com/watch?v=GAMUCIJR5as
+
 * Used to be named "CloudEndure Disaster Recovery" before AWS bought it
 * Quickly and easily recover your physical, virtual and cloud-based servers into AWS
 * Example: protect your most critical databases (Oracle, MySQL, SQL Server), enterprise apps (SAP), protect your data from ransomware attacks,...

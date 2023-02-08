@@ -108,7 +108,7 @@ Can move between classes manually or using S3 lifecycle configurations.
   * Low-cost object storage meant for archiving/backup
   * Pricing: price for storage + object retrieval cost
   * Instant Retrieval
-    * Millisecond retrieval, great for data accessed once a quarter
+    * Millisecond retrieval, **great for data accessed once a quarter**
     * Minimum storage duration of 90 days
   * Flexible Retrieval (formerly Amazon S3 Glacier)
     * Expedited (1 to 5 minutes), Standard (3 to 5 hours), Bulk (5 to 12 hours) - free
@@ -116,6 +116,10 @@ Can move between classes manually or using S3 lifecycle configurations.
   * Deep Archive - for long term storage
     * Standard (12 hours), bulk (48 hours)
     * Minimum storage duration of 180 days
+  * Glacier Instant Retrieval vs Infrequent access (IA): https://allcloud.io/blog/moving-to-s3-glacier-or-infrequent-access-storage/
+    * Data stored in the S3 Glacier Instant Retrieval storage class offers a cost savings compared to the S3 Standard-IA storage class, with the same latency and throughput performance as the S3 Standard-IA storage class.
+    * S3 Glacier Instant Retrieval has higher data access costs than S3 Standard-IA
+    * https://aws.amazon.com/s3/pricing/
 * Intelligent-Tiering
   * Small monthly monitoring and auto-tiering fee
   * Moves objects automatically between Access Tiers based on usage
