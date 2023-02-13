@@ -150,6 +150,8 @@
   * Up to 75% discount compared to On-demand on hourly rate
   * **1 or 3 yeats commitment**
   * All upfront, partial upfront, no upfront
+  * **Commitment unit: instance**
+  * Predictable usage
 * Spot instances
   *  AWS must have spare capacity available for any surge in customer demand. To offset the loss of idle infrastructure, AWS offers this excess capacity at a massive discount to drive usage.
   * A Spot Instance is an instance that uses spare EC2 capacity that is available for less than the On-Demand price
@@ -158,8 +160,13 @@
   * AWS can “pull the plug” and terminate spot instances with just a 2 minute warning.
 * Dedicated Host
   * On-demand
+  * Physical servers with Amazon EC2 instance capacity that is fully dedicated to your use
   * Reservation for 1 year or 3 years commitment
 * Saving plans as an alternative to save on sustained usage
+  * you do not purchase actual instances but ‌commit to one or three years of On-Demand Instances at a discounted price
+  * **commitment unit: dollar**
+* Reserved instances vs saving plans
+  * ![031-saving-plans-vs-reserved.png](./images/031-saving-plans-vs-reserved.png)
 
 ## Compute Pricing - Lambda and ECS
 

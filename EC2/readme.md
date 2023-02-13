@@ -1,3 +1,33 @@
+# EC2 instance families
+
+* General purpose: provide a balance of compute, memory, and networking resources
+  * application servers, gaming servers, backend servers for enterprise applications, small and medium databases
+  
+* Compute optimized: ideal for compute-bound applications that benefit from high-performance processors
+  * high-performance web servers
+  * compute-intensive applications servers
+  * dedicated gaming servers
+  * batch processing workloads that require processing many transactions in a single group
+  
+* Memory optimized: designed to deliver fast performance for workloads that process large datasets in memory
+  * high-performance database
+  * performing real-time processing of a large amount of unstructured data
+  
+* Accelerate computing:  use hardware accelerators, or coprocessors, to perform some functions more efficiently than is possible in software running on CPUs
+  * floating-point number calculations
+  * graphics processing
+  * data pattern matching
+  * graphics applications
+  * game streaming
+  * application streaming
+  
+* Storage optimized: sequential read and write access to large datasets on local storage
+  * distributed file systems
+  * data warehousing applications
+  * high-frequency online transaction processing (OLTP) systems
+  * deliver tens of thousands of low-latency, random input/output operations per second (IOPS) to applications.
+
+
 # AMI process for creating custom AMIs
 
 * Start an EC2 instance and customize it

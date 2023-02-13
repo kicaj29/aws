@@ -62,6 +62,7 @@ More here https://aws.amazon.com/compliance/shared-responsibility-model/
 * AWS **Shield** Standard: **protects against DDoS attack** for your website and applications, for all customers at no additional costs
   * Provides protection from attacks such as SYN/UDP Floods, Reflection attacks and other layers 3 and 4 attacks
 * AWS Shield Advanced: 24/7 premium DDoS protection, $3000 per month per organization
+  *  Shield Advanced expands the number of supported AWS services and integrates with WAF to support coverage against attacks on Layer 7 (application)
   * Protect against more sophisticated attack on Amazon EC2, ELB, CloudFront, AWS Global Accelerator and Route 53
   * 24/7 access to AWS DDoS response team (DRP)
   * Protect against higher fees during usage spikes due to DDoS
@@ -243,6 +244,7 @@ More here https://aws.amazon.com/compliance/shared-responsibility-model/
 * AWS Config is per-region service
 * Can be aggregated across regions and accounts
 * It is not free service - if it will be enabled then we have to pay
+* **AWS Config vs CloudTrail**: Config is focused on the configuration of your AWS resources and reports with detailed snapshots on how your resources have changed. CloudTrail focuses on the events, or API calls, that drive those changes. It focuses on the user, application, and activity performed on the system
 
 ![15-aws-config.png](./images/15-aws-config.png)
 ![16-aws-config.png](./images/16-aws-config.png)
