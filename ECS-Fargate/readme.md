@@ -5,6 +5,7 @@
 * You must provision & maintain the infrastructure (EC2 instances)
 * AWS takes care of starting/stopping containers
 * Has integrations with the Application Load Balancer
+* ECS vs EKS: https://www.clickittech.com/aws/amazon-ecs-vs-eks/
 
 ![01-ECS-service.png](./images/01-ECS-service.png)
 
