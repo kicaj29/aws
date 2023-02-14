@@ -1036,6 +1036,9 @@ It is possible to create second interface (ENI) and in this way EC2 instance be 
   * traffic if routed based on the location of the user
   * if location can`t be identified it uses a default resource set
   * can be used to serve different content to users from different locations
+* Geoproximity routing
+* [And more here](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-policy.html)
+* [Geoproximity vs Geolocation](https://www.abstractapi.com/guides/geoproximity-vs-geolocation)
 
 ## Route 53 Alias records
 
