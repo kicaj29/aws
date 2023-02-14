@@ -104,6 +104,7 @@ For example security group can be defined in EC2 wizard as one of its steps:
 ![vpc-21-aws-create-ec2-instance.png](images/vpc-21-aws-create-ec2-instance.png)
 
 * **Outbound traffic is allowed by default** - when incoming connection (request) is allowed then by default response is also allowed. Using other worlds: return traffic is allowed by default (if incoming traffic is allowed).
+Also when connection is established by for example EC2 instance then by default this outgoing traffic is allowed.
 
 * **Inbound traffic is implicitly denied** - if there is no rule then the incoming traffic is denied.
 
@@ -162,6 +163,8 @@ This allows supporting scenarios when HTTPS traffic from specific IPs is forbidd
 
 ![vpc-103-ACL-rules-order.png](images/vpc-103-ACL-rules-order.png)
 
+**By default, your account’s default network ACL allows all inbound and outbound traffic, but you can modify it by adding your own rules.**
+
 [Security Group vs ACL](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Security.html)
 
 # Subnet
@@ -194,6 +197,8 @@ Destination nat:
 ![vpc-98-dest-nat.png](images/vpc-98-dest-nat.png)
 
 # Virtual Private Gateway
+
+A virtual private gateway is the VPN endpoint on the Amazon side of your Site-to-Site VPN connection that can be attached to a single VPC. **It uses public Internet.**
 
 From on-prem to cloud:
 ![vpc-105-VirtualPrivateGW-to-cloud.png](images/vpc-105-VirtualPrivateGW-to-cloud.png)   
@@ -281,7 +286,7 @@ First generate some network traffic. Next wait ~10mins/~1min and navigate to log
 
 # Site to Site VPN & Direct Connect
 
-* Site to Site VPN
+* Site to Site VPN (Virtual Private Gateway)
   * Connect an on-premises VPN to AWS
   * The connection is automatically encrypted
   * **Goes over the public Internet**
