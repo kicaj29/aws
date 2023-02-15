@@ -1,22 +1,28 @@
 Amazon Elastic Block Store
 
-# What is an EBS Volumne
+# Instance Store Volumes
+Instance Store Volumes: they are **physically attached** to some EC2 instance types. By default, the root EBS volume (another name of Instance Store Volumes) is deleted when EC2 is stopped. The reason of this is that if we start and stop EC2 instance and start again this new run might use different host than previous run so it will have another storage which is physically attached.
+
+# What is an EBS Volume
 
 * It is a network drive you can attach to your instances while they run (it is not a physical drive). Because it is a network drive there might be a bit of latency.
-* It allows your instacnes to persist data, even after their termination.
+* It allows your instances to persist data, even after their termination.
 * They can only be mounted to a single instance at a time.
-* They are bound to a specific availabilty zone.
+* **They are bound to a specific availability zone** (it is not regional resource)
   * For example: an EBS in us-east-1a cannot be attached to us-east-1b, unless we create a snapshot - then it is possible.
 * Analogy: think ot them as a "network USB stick".
+* Size up to 16 TB
+* Single file can be stored as many blocks - it allows to update only part of the file, partial file updates are possible, S3 does not support it
+* EBS Volumes do not automatically scale if more space is needed
 
 ## EBS - delete on termination
 
-* By default, the root EBS volumne is deleted.
-* By default, any other attached EBS volume is not deleted.
+* By default, attached EBS volume is not deleted.
 ![001-delete-on-termination-attr.png](./images/001-delete-on-termination-attr.png)
 
-## EBS - snashots (backup)
+## EBS - snapshots (backup)
 
+* incremental snapshots
 * make a snapshot (backup) of you EBS volume at point in time
 * not necessary to detach volume to do snapshot, but recommended
 * can copy snapshots across AZ or Region
@@ -36,7 +42,9 @@ Features
 
 * Managed NFS (network file system) that can be mounted on hundreds of EC2 at a time so it makes it **shared filed system**.
 * Works only with Linux EC2 and multi-AZ.
-* Highly available, scalable, expensive (3x gp2), pay per use, no capacity planning
+* Highly available, scalable, expensive (3x gp2), pay per use, no capacity planning.
+* It is regional resource
+* Automatically scales (if more space is needed)
 
 ![003-efs.png](./images/003-efs.png)
 

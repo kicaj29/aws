@@ -19,8 +19,9 @@ The key is compose of prefix and object name: s3://[BUCKET-NAME]/[FOLDER1]/[FOLD
 
 # Limits
 
-* Max object size is 5TB.
+* Max object size is 5TB but **S3 has unlimited storage**
 * If uploading more than 5TB, must use "multi-part upload".
+* Cannot partially update objects - even we change only one bite we have to upload the whole object (such limitation does not exist in EBS - EBS can store a single file in multiple blocks and then only selected blocks are updated).
 
 # Security
 
@@ -90,23 +91,26 @@ Can be specified for the whole bucket or per object (file) or per prefix (using 
 Can move between classes manually or using S3 lifecycle configurations.
 
 * Standard - general purpose
-  * 99.99% availability (52 mins)
+  * 99.999_999_999% availability (52 mins) (11 nines) - this is the probability that object will stay intact during 1 year
   * Used for frequently accessed data
-  * Sustain 2 concurrent facility failures
+  * Sustain 2 concurrent facility failures this is because data is stored in at least 3 AZs
   * Use cases: big data analytics, mobile & gaming applications, content distribution...
 * Infrequent access (IA)  
   * For data that is less frequent accessed, but requires rapid access when needed
   * Lower cost than S3 standard
   * Standard IA
+    * Stores data in at lease 3 AZs
     * 99.9% availability
     * Use cases: disaster recovery, backups
-  * One Zone IS
+  * One Zone IA
+    * Stores data in 1 AZ
     * 99.5% availability
     * High durability (99,999999999%, 11 9s) in a single AZ; data lost when AZ is destroyed
     * Use cases: secondary backup copies on on-prem data, or data you can recreate
 * Glacier
   * Low-cost object storage meant for archiving/backup
   * Pricing: price for storage + object retrieval cost
+  * Can upload directly or via LifeCycle Policy
   * Instant Retrieval
     * Millisecond retrieval, **great for data accessed once a quarter**
     * Minimum storage duration of 90 days
@@ -121,6 +125,7 @@ Can move between classes manually or using S3 lifecycle configurations.
     * S3 Glacier Instant Retrieval has higher data access costs than S3 Standard-IA
     * https://aws.amazon.com/s3/pricing/
 * Intelligent-Tiering
+  * Ideal for data with unknown or changing access patterns
   * Small monthly monitoring and auto-tiering fee
   * Moves objects automatically between Access Tiers based on usage
   * There are no retrieval charges in S3 Intelligent-Tiering
@@ -132,7 +137,8 @@ Can move between classes manually or using S3 lifecycle configurations.
 
 # S3 Object lock
 
-* S3 object lock: adopt a WORM (Write Once - Read Many) model
+* S3 object lock: adopt a WORM (Write Once - Read Many) model - possible in Glacier. It is also possible to lock this policy
+  so no one can change it in the future.
 * Block an object version deletion for a specified amount of time
 
 # S3 Glacier vault lock
