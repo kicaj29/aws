@@ -82,6 +82,10 @@ Aurora is AWS Proprietary database, not open source.
 * Storage will automatically grow in increments of 10GB, up to 64TB
 * Aurora costs more than RDS (20% more) - but is more efficient
 * Not in the free tier
+* Automatic data replication across 6 facilities - so we have 6 copies at any given time
+* Can deploy up to 15 read replicas
+* Continuous backup to S3 - always available backup ready to restore
+* Point-in-time recover
 
 ## RDS Deployments
 
