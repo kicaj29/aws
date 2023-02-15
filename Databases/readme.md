@@ -3,6 +3,7 @@
     - [DynamoDB Accelerator - DAX](#dynamodb-accelerator---dax)
     - [DynamoDB Global Tables](#dynamodb-global-tables)
 - [RDS (Relational Database Service)](#rds-relational-database-service)
+  - [RDS Important points](#rds-important-points)
   - [Advantage over using RDS versus deploying DB on EC2](#advantage-over-using-rds-versus-deploying-db-on-ec2)
     - [Aurora (part of RDS)](#aurora-part-of-rds)
   - [RDS Deployments](#rds-deployments)
@@ -56,6 +57,10 @@
 * MariaDB
 * Oracle
 * Microsoft SQL Server
+
+## RDS Important points
+
+* RDS is not serverless database (for example DynamoDB is server less).
 
 ## Advantage over using RDS versus deploying DB on EC2
 
@@ -163,6 +168,7 @@ Aurora is AWS Proprietary database, not open source.
 * Fully managed, HA with replication across 3 AZ
 * Storage automatically grows in increments of 10GB, up to 64TB
 * Automatically scales to workloads with millions of requests per seconds
+* Great for content management system
 
 # Neptune
 
@@ -216,8 +222,12 @@ Aurora is AWS Proprietary database, not open source.
 * **Database Migration Service**
 * Quick and securely migrate databases to AWS, resilient, self healing
 * The source database remains available during the migration
-* Supports
+* Basic use cases
   * Homogeneous migrations: ex Oracle to Oracle
   * Heterogeneous migrations: ex Microsoft SQL Server to Aurora
+* Other use cases
+  * Development and test database migrations - migrate data to test application against production data without affecting production users
+  * Database consolidation - combining several databases into a single database
+  * Continuous replication - sending ongoing copies of your data to other target sources instead of doing a one-time migration
 
 ![13-DMS.png](./images/13-DMS.png)
