@@ -8,6 +8,12 @@ Additionally if some resources are created using only IAM users (without using r
 
 ## Create role
 
+**Roles are used for temporary permissions - it is easy to assign another role and in this way complete change user permissions.**
+
+**Roles also can be used to map corporate identities to roles - then we even do have create IAM Users. We can federate corporate identities into AWS account.**
+
+**When an identity assumes a role it abandons all previous permissions that it has and it assumes permission of that role.**
+
 Typically this role is created using AWS Console and not using IaC because at this point in time usually we have ony root aws account and usually we do not want store root aws account credentials locally because of security but if there are some reasons it can be also created using IaC.
 IAM user that will assume this role will be used in IaC.
 
