@@ -12,7 +12,7 @@ Additionally if some resources are created using only IAM users (without using r
 
 **Roles also can be used to map corporate identities to roles - then we even do have create IAM Users. We can federate corporate identities into AWS account.**
 
-**When an identity assumes a role it abandons all previous permissions that it has and it assumes permission of that role.**
+**When someone assumes an IAM role, they abandon all previous permissions that they had under a previous role and assume the permissions of the new role.**
 
 Typically this role is created using AWS Console and not using IaC because at this point in time usually we have ony root aws account and usually we do not want store root aws account credentials locally because of security but if there are some reasons it can be also created using IaC.
 IAM user that will assume this role will be used in IaC.
@@ -69,6 +69,8 @@ Next we have to add policy that allows the role to be assumed by any IAM user in
 ![06_create_role.png](./images/06_create_role.png)
 
 ## Create IAM user
+
+**By default, when you create a new IAM user in AWS, it has no permissions associated with it**
 
 ![07_create_user.png](./images/07_create_user.png)
 ![08_create_user.png](./images/08_create_user.png)
