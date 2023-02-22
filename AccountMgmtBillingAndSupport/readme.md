@@ -35,9 +35,10 @@
 * The main account is the master account
 * Cost benefits
   * Consolidated billing across all accounts - single payment method
-  * Pricing benefits from aggregated usage (volume discount for EC2, S3...)
+  * Pricing benefits from aggregated usage (volume discount for EC2, S3...) - bulk discounts
   * Pooling of Reserved EC2 instances for optimal savings
 * API is available to automate AWS account creation
+* Hierarchical groupings of accounts
 * **Restrict account privileges using Service Control Policies (SCP)**
 
 ## Multi Account Strategies

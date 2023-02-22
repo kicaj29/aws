@@ -9,6 +9,7 @@
 - [AWS Certificate Manager (ACM)](#aws-certificate-manager-acm)
 - [Secrets Manager](#secrets-manager)
 - [AWS Artifact (not really a service)](#aws-artifact-not-really-a-service)
+- [Customer Compliance Center](#customer-compliance-center)
 - [Guard Duty](#guard-duty)
 - [Amazon Inspector](#amazon-inspector)
 - [AWS Config](#aws-config)
@@ -69,6 +70,7 @@ More here https://aws.amazon.com/compliance/shared-responsibility-model/
   * Provides protection from attacks such as SYN/UDP Floods, Reflection attacks and other layers 3 and 4 attacks
 * AWS Shield Advanced: 24/7 premium DDoS protection, $3000 per month per organization
   *  Shield Advanced expands the number of supported AWS services and integrates with WAF to support coverage against attacks on Layer 7 (application)
+  * Provides detailed attack diagnostics and the ability to detect and mitigate sophisticated DDoS attacks
   * Protect against more sophisticated attack on Amazon EC2, ELB, CloudFront, AWS Global Accelerator and Route 53
   * 24/7 access to AWS DDoS response team (DRP)
   * Protect against higher fees during usage spikes due to DDoS
@@ -197,9 +199,21 @@ More here https://aws.amazon.com/compliance/shared-responsibility-model/
 * Global Portal that provides customers with on-demand access to AWS compliance documentation and AWS agreements
 * Artifact Reports - allows you to download AWS security and compliance docs from third-party auditors
 * Artifact Agreements - allows you to review, accept and track the status of AWS agreements
+  * Suppose that your company needs to sign an agreement with AWS regarding your use of certain types of information throughout AWS services. You can do this through AWS Artifact Agreements.
 * Can be used to support internal audit or compliance
 
 ![12-aws-artifact.png](./images/12-aws-artifact.png)
+
+# Customer Compliance Center
+
+https://aws.amazon.com/compliance/customer-center/
+
+* In the Customer Compliance Center, you can read customer compliance stories to discover how companies in regulated industries have solved various compliance, governance, and audit challenges.
+* You can also access compliance whitepapers and documentation on topics such as
+  *  AWS answers to key compliance questions
+  *  An overview of AWS risk and compliance
+  *  An auditing security checklist
+*  Additionally, the Customer Compliance Center includes an auditor learning path. This learning path is designed for individuals in auditing, compliance, and legal roles who want to learn more about how their internal operations can demonstrate compliance using the AWS Cloud.
 
 # Guard Duty
 
@@ -213,6 +227,7 @@ More here https://aws.amazon.com/compliance/shared-responsibility-model/
   * VPC Flow Logs - unusual internet traffic, unusual IP address
   * DNS Logs - compromised EC2 instances sending encoded data within DNS queries
   * K8s Audit Logs - suspicious activities and potential EKS cluster compromises
+  * **Because it takes as input only logs it will not impact system performance**
 * **Can setup CloudWatch Event rules to be notified in case of findings**
 * CloudWatch Events rules can target AWS Lambda or SNS
 * Can protect against CryptoCurrency attacks (has a dedicated "finding" for it)
@@ -221,7 +236,12 @@ More here https://aws.amazon.com/compliance/shared-responsibility-model/
 
 # Amazon Inspector
 
-* Automated Security Assessments
+It has 3 main parts:
+* Network configuration reachability piece
+* Amazon agent
+* Security assessment service
+
+* **Automated** Security Assessments
 * For EC2 instances
   * Leveraging the AWS System Manager (SSM) agent
   * Analyze against unintended network accessibility's
