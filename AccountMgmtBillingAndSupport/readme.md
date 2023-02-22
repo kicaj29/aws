@@ -87,6 +87,7 @@
 
 * When you enabled, provides you with
   * Combined Usage - combine the usage across all AWS accounts in the AWS Organization to share the volume pricing, Reserved Instances and Saving Plans
+  * Benefit of consolidated billing is the ability to share bulk discount pricing, Savings Plans, and Reserved Instances across the accounts in your organization. For instance, one account might not have enough monthly usage to qualify for discount pricing. However, when multiple accounts are combined, their aggregated usage may result in a benefit that applies across all accounts in the organization.
   * One Bill - get on bill for all AWS accounts in the AWS Organization
 * The management account can turn off Reserved Instances discount sharing for any account in the AWS Organization, including itself
 
@@ -381,7 +382,7 @@
 
 * Customer Service & Communications - 24x7 access to customer service, documentation, whitepapers, and support forums
 * AWS Trusted Advisor - access to the 7 core trusted advisor checks and guidance to provision your resources following best practices to increase performance and improve security
-* AWS Personal Health Dashboard - a personalized view of the health of AWS services and alerts when your resources are impaced
+* AWS Personal Health Dashboard - a personalized view of the health of AWS services and alerts when your resources are impacted
 
 ## Developer support plan
 

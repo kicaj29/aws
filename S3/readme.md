@@ -195,7 +195,7 @@ Highly-secure, portable offline devices to collect and process data at the edge,
   * Up to 15 nodes
 * Snowmobile
   * It is truck (real truck)
-  * 1 EB = 1 000 PB
+  * 100 PB
   * GPS
   * 24/7 video surveillance
   * No **AWS DataSync** agent

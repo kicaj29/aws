@@ -16,6 +16,8 @@
 - [AWS Step Functions](#aws-step-functions)
 - [AWS Ground Station](#aws-ground-station)
 - [Amazon Pinpoint](#amazon-pinpoint)
+- [AWS Cloud Adoption Framework (AWS CAF)](#aws-cloud-adoption-framework-aws-caf)
+- [Migration strategies](#migration-strategies)
 
 # WorkSpaces
 
@@ -219,3 +221,29 @@ AWS Application Discovery Service helps you plan your migration to the AWS cloud
   * Amazon Pinpoint, you create message templates, delivery schedules, highly-targeted segments, and full campaigns
 
 ![17-ground-station.png](./images/17-ground-station.png)
+
+# AWS Cloud Adoption Framework (AWS CAF)
+
+At the highest level, the AWS Cloud Adoption Framework (AWS CAF) organizes guidance into six areas of focus, called Perspectives.
+
+In general, the **Business, People, and Governance Perspectives** focus on **business** capabilities.
+**Platform, Security, and Operations** Perspectives focus on **technical** capabilities
+
+# Migration strategies
+
+6 strategies for migration:
+
+* Rehosting: also known as **“lift-and-shift”** involves moving applications without changes. 
+In the scenario of a large legacy migration, in which the company is looking to implement its migration and scale quickly to meet a business case, the majority of applications are rehosted. **No code changes.**
+
+* Replatforming: also known as **“lift, tinker, and shift”** involves making a few cloud optimizations to realize a tangible benefit. Optimization is achieved without changing the core architecture of the application. **No code changes.**
+
+* Refactoring/re-architecting: involves reimagining how an application is architected and developed by using cloud-native features. Refactoring is driven by a strong business need to add features, scale, or performance that would otherwise be difficult to achieve in the application’s existing environment
+
+* Repurchasing: involves moving from a traditional license to a software-as-a-service model. For example, a business might choose to implement the repurchasing strategy by migrating from a customer relationship management (CRM) system to Salesforce.com
+
+* Retaining: consists of keeping applications that are critical for the business in the source environment. This might include applications that require major refactoring before they can be migrated, or, work that can be postponed until a later time.
+
+* Retiring: is the process of removing applications that are no longer needed.
+
+

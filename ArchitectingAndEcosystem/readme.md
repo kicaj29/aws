@@ -1,4 +1,5 @@
 - [General Guiding Principles](#general-guiding-principles)
+  - [Advantages of cloud computing (the same as above but with names for AWS Cloud Practitioner Essentials traing)](#advantages-of-cloud-computing-the-same-as-above-but-with-names-for-aws-cloud-practitioner-essentials-traing)
 - [Design Principles](#design-principles)
 - [Well architected framework 6 pillars](#well-architected-framework-6-pillars)
   - [1 Operational excellence](#1-operational-excellence)
@@ -24,6 +25,29 @@
 * Drive architectures using data
 * Improve through game days
   * Simulate applications for flash sale days
+
+## Advantages of cloud computing (the same as above but with names for AWS Cloud Practitioner Essentials traing)
+
+* Trade upfront expense for variable expense
+  Upfront expenses include data centers, physical servers, and other resources that you would need to invest in before using computing resources. 
+  Instead of investing heavily in data centers and servers before you know how you’re going to use them, you can pay only when you consume computing resources
+
+* Benefit from massive economies of scale
+  By using cloud computing, you can achieve a lower variable cost than you can get on your own. 
+  Because usage from hundreds of thousands of customers aggregates in the cloud, providers such as AWS can achieve higher economies of scale. Economies of scale translate into **lower pay-as-you-go prices**
+
+* Stop guessing capacity
+  With cloud computing, you don’t have to predict how much infrastructure capacity you will need before deploying an application
+
+* Increase speed and agility
+  The flexibility of cloud computing makes it easier for you to develop and deploy applications. This flexibility also provides your development teams with more time to experiment and innovate.
+
+* Stop spending money running and maintaining data centers
+  Cloud computing in data centers often requires you to spend more money and time managing infrastructure and servers. 
+  A benefit of cloud computing is the ability to focus less on these tasks and more on your applications and customers.
+
+* Go global in minutes
+  The AWS Cloud global footprint enables you to quickly deploy applications to customers around the world, while providing them with low latency.
 
 # Design Principles
 
