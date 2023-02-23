@@ -28,6 +28,8 @@
   - [Business support plan (24/7)](#business-support-plan-247)
   - [Enterprise On-Ramp Support plan (24/7)](#enterprise-on-ramp-support-plan-247)
   - [Enterprise Support plan (24/7)](#enterprise-support-plan-247)
+- [AWS Pricing/TCO Tools](#aws-pricingtco-tools)
+- [Optimizing your cost with Rightsizing Recommendations](#optimizing-your-cost-with-rightsizing-recommendations)
 # AWS Organizations
 
 * Global Service
@@ -424,3 +426,11 @@
 * Infrastructure Even Management, Well-Architected & Operations Reviews
 * Case severity / response times
   * The same as before with exception that for business-critical system down < 15 mins 
+
+# AWS Pricing/TCO Tools
+
+https://docs.aws.amazon.com/whitepapers/latest/how-aws-pricing-works/aws-pricingtco-tools.html
+
+# Optimizing your cost with Rightsizing Recommendations
+
+https://docs.aws.amazon.com/cost-management/latest/userguide/ce-rightsizing.html

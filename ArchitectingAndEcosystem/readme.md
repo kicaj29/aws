@@ -1,6 +1,7 @@
 - [General Guiding Principles](#general-guiding-principles)
-  - [Advantages of cloud computing (the same as above but with names for AWS Cloud Practitioner Essentials traing)](#advantages-of-cloud-computing-the-same-as-above-but-with-names-for-aws-cloud-practitioner-essentials-traing)
+  - [Six advantages of cloud computing](#six-advantages-of-cloud-computing)
 - [Design Principles](#design-principles)
+- [Cloud architecture design principles](#cloud-architecture-design-principles)
 - [Well architected framework 6 pillars](#well-architected-framework-6-pillars)
   - [1 Operational excellence](#1-operational-excellence)
   - [2 Security](#2-security)
@@ -14,8 +15,14 @@
 - [AWS Knowledge Center](#aws-knowledge-center)
 - [AWS IQ](#aws-iq)
 - [AWS re:Post](#aws-repost)
+- [AWS Cloud Value Proposition](#aws-cloud-value-proposition)
+- [What Is Cloud Economics](#what-is-cloud-economics)
+  - [Total Cost of Ownership (TCO)](#total-cost-of-ownership-tco)
+  - [Cost reduction operations](#cost-reduction-operations)
 
 # General Guiding Principles
+
+https://aws.amazon.com/getting-started/cloud-essentials/
 
 * Stop guessing your capacity needs (use auto scaling)
 * Test systems at production scale
@@ -26,7 +33,9 @@
 * Improve through game days
   * Simulate applications for flash sale days
 
-## Advantages of cloud computing (the same as above but with names for AWS Cloud Practitioner Essentials traing)
+## Six advantages of cloud computing
+
+https://docs.aws.amazon.com/whitepapers/latest/aws-overview/six-advantages-of-cloud-computing.html
 
 * Trade upfront expense for variable expense
   Upfront expenses include data centers, physical servers, and other resources that you would need to invest in before using computing resources. 
@@ -61,6 +70,19 @@
 * Services, not Server
   * Do not use just EC2
   * Use managed services, databases, serverless, etc!
+
+# Cloud architecture design principles
+
+* Design for failure: understanding what and how components fail, and how to architect around failures to add resiliency
+* Decouple components vs monolithic architecture
+  * Monolithic architecture
+    * If one process of the application experiences a spike in demand the entire architecture must be scaled
+    * To update system we have to update always the whole system
+* Implement elasticity in the cloud vs. on-premises
+* Think parallel: serial and sequential processes similar to monolithic, tightly coupled architectures, are incredibly limited.
+  Dependencies can make or break entire processes, any any failure in the chain, means a failure for thw whole job.
+  Thinking parallel is similar to decoupling, but you are looking at how you can divide a job, into its simplest form, and then
+  distribute that load to multiple components (example is load balancer).
 
 # Well architected framework 6 pillars
 
@@ -212,3 +234,40 @@ https://repost.aws/
 * Community members can earn reputation points to build up their community expert status bby providing accepted answers
 * Questions from AWS Premium Support customers that do not receive a response from the community are passed on to AWS Support Engineers
 * It is not intended to be used for questions that are time-sensitive or involve any proprietary information
+
+
+# AWS Cloud Value Proposition
+
+The AWS Cloud Value Proposition has five principles. Keep in mind that these are **different from the Well-Architectured Framework**
+
+* Security: AWS offers multiple Security and Compliance services for various applications. Apart from the Shared Responsibility Model, there are options for configuring extra security measures.
+
+* Agility: Applications can be developed and deployed globally **across multiple geo-locations within minutes**. The speed of experimentation, development and deployment is exponentially higher compared to applications developed on-premises.
+
+* Flexibility: AWS offers **multiple services** for various applications. There are over 200 products that support services to run all kinds of workloads.
+
+* Elasticity: Applications **can scale the resources required for smooth operability** based on the demand — the application capacity is sufficient to deal with the incoming requests while paying for only what they use.
+
+* Cost: AWS makes it easy to scale up and down based on demand and removes the need for an on-premise data centre to reduce costs. By using the pay as you go model, costs incurred can be monitored and reduced.
+
+# What Is Cloud Economics
+
+The term cloud economics refers to studying and analyzing the costs and benefits of cloud computing from a business perspective. For example, cloud economics explores the return on investment (ROI) of switching cloud providers or the total cost of ownership (TCO) of one cloud solution versus another.
+
+## Total Cost of Ownership (TCO)
+
+Comparative total cost of ownership analysis (acquisition and operating costs) for running an infrastructure environment end-to-end on-premises or in a co-location facility versus AWS. TCO analysis is used by our customers in comparing the costs of running an entire infrastructure environment or specific workload on premises or in a co-location facility versus on AWS and in
+paralleling an existing AWS workload with an on premises or co-location setup.
+
+* Operational expenses (opex) - day-to-day expenses, no long-term investment
+* Capital expenses (capex) - long-term investment, for example: purchasing a building, servers, printers.
+* Labor costs associated with on-premises operations - for example network configuration technicians
+* Impact of software licensing costs
+
+
+## Cost reduction operations
+
+* Right-sizing infrastructure
+* Automation
+* Reduce compliance scope
+* Managed Services

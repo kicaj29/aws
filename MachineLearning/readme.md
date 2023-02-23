@@ -9,6 +9,7 @@
 - [Kendra](#kendra)
 - [Personalize](#personalize)
 - [Textract](#textract)
+- [Amazon Augmented AI](#amazon-augmented-ai)
 # Amazon Rekognition
 
 * Find objects, people, text, scenes in images and videos using ML
@@ -127,3 +128,7 @@
   * Financial services (invoices reports)
   * Healthcare (medical records, insurance claims)
   * Public sector (tax forms, ID docs, passports)
+
+# Amazon Augmented AI
+
+Amazon Augmented AI (A2I) allows you to conduct a **human review of machine learning** (ML) systems to guarantee precision.
