@@ -393,6 +393,7 @@ https://aws.amazon.com/organizations/faqs/
 
 * Customer Service & Communications - 24x7 access to customer service, documentation, whitepapers, and support forums
 * AWS Trusted Advisor - access to the 7 core trusted advisor checks and guidance to provision your resources following best practices to increase performance and improve security
+  
 * AWS Personal Health Dashboard - a personalized view of the health of AWS services and alerts when your resources are impacted
 
 ## Developer support plan
