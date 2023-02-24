@@ -193,6 +193,7 @@ Highly-secure, portable offline devices to collect and process data at the edge,
   * Use case: large data cloud migration, DC decommission, disaster recovery
   * No **AWS DataSync** agent
   * Up to 15 nodes
+  * **Natively supports EC2 instances** - you can run Amazon EC2 compute instances hosted on a Snowball Edge with the sbe1, sbe-c, and sbe-g instance types.
 * Snowmobile
   * It is truck (real truck)
   * 100 PB

@@ -335,6 +335,7 @@ https://aws.amazon.com/organizations/faqs/
   * Or monthly, hourly, resource level granularity
   * Choose an optimal **Savings Plan** (to lower prices on your bill)
   * **Forecast usage up to 12 months based on previous usage**
+  * Doesn’t have insight into resource utilization (this is available in AWS Trusted Advisor)
   ![24-cost-explorer.png](./images/24-cost-explorer.png)
   * Sample report - monthly cost by AWS Service
   ![25-cost-explorer.png](./images/25-cost-explorer.png)

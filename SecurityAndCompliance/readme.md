@@ -16,7 +16,7 @@
 - [Amazon Macie](#amazon-macie)
 - [AWS Security Hub](#aws-security-hub)
 - [Amazon Detective](#amazon-detective)
-- [AWS Abuse](#aws-abuse)
+- [AWS Abuse (AWS Trust \& Safety team)](#aws-abuse-aws-trust--safety-team)
 - [Root user privileges](#root-user-privileges)
 
 # AWS Shared responsibility model
@@ -309,7 +309,7 @@ It has 3 main parts:
 * Automatically collects and processes events from VPS flow logs, CloudTrail, GuardDuty and create a unified view
 * Produces visualizations with details and context to get the root cause
 
-# AWS Abuse
+# AWS Abuse (AWS Trust & Safety team)
 
 * Report suspect AWS resources used for abusive or illegal purpose
 * Abusive & prohibited behaviors are
@@ -320,6 +320,7 @@ It has 3 main parts:
   * Hosting objectionable or copyrighted content - distributed illegal or copyrighted content without consent
   * Distributed malware - AWS resources distributing softwares to harm computers or machines
 * Contact the AWS Abuse team: abuse@amazonaws.com
+* If you suspect that AWS resources are used for abusive purposes, contact the **AWS Trust & Safety team** using the Report Amazon AWS abuse form, or by contacting abuse@amazonaws.com
 
 # Root user privileges
 
