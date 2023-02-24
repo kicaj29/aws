@@ -201,6 +201,7 @@ Free tool to review your architectures against the 6 pillars well-architected fr
   * AWS Academy: helps universities teach AWS
 
 * AWS Professional Services & Partner Network
+  * **The AWS Partner Network (APN) is the global partner program for technology and consulting businesses who leverage Amazon Web Services (AWS) to build solutions and services for customers. The APN helps companies build, market, and sell their AWS offerings by providing valuable business, technical, and marketing support**
   * The AWS Professional Services is a global team of experts
   * They work alongside your team and a chosen member of the APN (AWS Partner Network)
   * APN Technology Partners: providing hardware, connectivity, and software
@@ -242,7 +243,7 @@ The AWS Cloud Value Proposition has five principles. Keep in mind that these are
 
 * Security: AWS offers multiple Security and Compliance services for various applications. Apart from the Shared Responsibility Model, there are options for configuring extra security measures.
 
-* Agility: Applications can be developed and deployed globally **across multiple geo-locations within minutes**. The speed of experimentation, development and deployment is exponentially higher compared to applications developed on-premises.
+* Agility: Applications can be developed and deployed globally **across multiple geo-locations within minutes**. **The speed of experimentation**, development and deployment is exponentially higher compared to applications developed on-premises.
 
 * Flexibility: AWS offers **multiple services** for various applications. There are over 200 products that support services to run all kinds of workloads.
 

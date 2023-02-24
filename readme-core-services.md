@@ -133,6 +133,8 @@ regions:
 
 Instance store - if you shout down your server all data will go away, EBS - if you shout down your server all data is still there.
 
+https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/RootDeviceStorage.html
+
 ## Amazon Machine Image (AMI)
 
 **Template for an EC2 instance including configuration, operating system and data.**  
@@ -284,6 +286,7 @@ Elasticity: the ability for the infrastructure supporting an application to grow
   * application load balancer (ALB)
   * network load balancer (NLB)
   * classic load balancer
+  * ALB vs NLB: https://medium.com/awesome-cloud/aws-difference-between-application-load-balancer-and-network-load-balancer-cb8b6cd296a4
 
 ### Scaling on Amazon EC2
 * vertical - scale up (e.g. adding faster CPU), system has to be shutted down to do the change.

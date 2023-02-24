@@ -151,7 +151,7 @@ Aurora is AWS Proprietary database, not open source.
 *** Exam tip: analyze data in S3 using serverless SQL, use Athena**
 
 # QuickSight
-* Serverless machine learning-powered business intelligence service to create interactive dashboards
+* Serverless **machine learning-powered business intelligence** service to create interactive dashboards
 * Fast, automatically scalable, embeddable
 * Use cases
   * BA
@@ -159,6 +159,7 @@ Aurora is AWS Proprietary database, not open source.
   * Perform ad-hoc analysis
   * Get business insights using data
 * Integrated with: RDS, Aurora, Athena, Redshift, S3...
+* **Can be also used to visual AWS costs**
 ![10-quickSight.png](./images/10-quickSight.png)
 
 # DocumentDB

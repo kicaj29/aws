@@ -76,6 +76,7 @@ More here https://aws.amazon.com/compliance/shared-responsibility-model/
   * Protect against higher fees during usage spikes due to DDoS
 * AWS WAF: filter specific requests based on rules
   * Protects your web applications from common web exploits (Layer 7). Layer 7 is HTTP (vs Layer 4 is TCP)
+    * For example can prevent SQL injection 
   * Deploy on ALB, API Gateway, CLoudFront
   * Defines web ACL (Web Access Control List)
     * Rules can include IP addresses, HTTP headers, HTTP body, or URI strings

@@ -1,7 +1,7 @@
 # AWS Batch
 
 * Fully managed batch processing at any scale
-* Efficiently rin 100,000s of computing batch jobs on AWS
+* Efficiently run 100,000s of computing batch jobs on AWS
 * A "batch" job is job with a start and end (opposed to continuous)
 * Batch will dynamically launch EC2 instances of Spot instances
 * AWS Batch provisions the right amount of compute/memory

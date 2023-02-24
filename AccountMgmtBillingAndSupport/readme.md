@@ -153,9 +153,14 @@
 * Reserved instances
   * Up to 75% discount compared to On-demand on hourly rate
   * **1 or 3 yeats commitment**
-  * All upfront, partial upfront, no upfront
+  * Payment options: All upfront, partial upfront, no upfront
   * **Commitment unit: instance**
   * Predictable usage
+  * Amazon EC2 RI instance types
+    * **Standard RIs**: These provide the most significant discount (up to 72% off On-Demand) and are best suited for steady-state usage.
+    * **Convertible RIs**: These provide a discount (up to 54% off On-Demand) and the capability to change the attributes of the RI as long as the exchange results in the creation of Reserved Instances of equal or greater value. Like Standard RIs, Convertible RIs are best suited for steady-state usage.
+    * **Scheduled RIs**: These are available to launch within the time windows you reserve. This option allows you to match your capacity reservation to a predictable recurring schedule that only requires a fraction of a day, a week, or a month.
+  * **Reserved Instance Marketplace**: The Reserved Instance Marketplace is a platform that supports the sale of third-party and AWS customers' unused Standard Reserved Instances, which vary in term lengths and pricing options. For example, you might want to sell Reserved Instances after moving instances to a new AWS Region, changing to a new instance type, ending projects before the term expiration, when your business needs change, or if you have unneeded capacity. https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ri-market-general.html
 * Spot instances
   *  AWS must have spare capacity available for any surge in customer demand. To offset the loss of idle infrastructure, AWS offers this excess capacity at a massive discount to drive usage.
   * A Spot Instance is an instance that uses spare EC2 capacity that is available for less than the On-Demand price
@@ -375,6 +380,7 @@
     * Full check available on the **5 categories**
     * Ability to set CloudWatch alarms when reaching limits
     * Programmatic Access using AWS Support API
+  * **Does not check EC2 instances, for EC2 is used AWS Inspector**
 
 ![26-advisor.png](./images/26-advisor.png)
 
@@ -399,7 +405,7 @@
 
 * Intended to be used if you have production workloads
 * Trusted Advisor - Full set of checks + API access
-* 24x7 phone, email, and chat access to Cloud Support Engineers
+* 24x7 phone, email, and chat access to Cloud Support Engineers (**but they are not Senior Cloud Engineers**)
 * Unlimited cases / unlimited contacts
 * Access to Infrastructure Event Management for additional fee.
 * Case severity / response time
