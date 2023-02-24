@@ -55,6 +55,8 @@
 
 ## Service Control Policies (SCP)
 
+https://aws.amazon.com/organizations/faqs/
+
 * Whitelist or blacklist IAM actions
 * Applied at the OU or Account level
 * **Does not apply to the master account**
