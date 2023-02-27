@@ -267,6 +267,7 @@ https://aws.amazon.com/organizations/faqs/
 # AWS Compute Optimizer
 
 * Global service
+* Can be used to for rightsizing process
 * Reduce costs and improve performance by recommending optimal AWS resources for your workloads
 * Helps you choose optimal configurations and right-size your workloads (over/under provisioned)
 * Use ML to analyze your resources configurations and their utilization CloudWatch metrics

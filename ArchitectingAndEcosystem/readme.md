@@ -247,7 +247,7 @@ The AWS Cloud Value Proposition has five principles. Keep in mind that these are
 
 * Flexibility: AWS offers **multiple services** for various applications. There are over 200 products that support services to run all kinds of workloads.
 
-* Elasticity: Applications **can scale the resources required for smooth operability** based on the demand — the application capacity is sufficient to deal with the incoming requests while paying for only what they use.
+* Elasticity: Applications **can scale the resources required for smooth operability** based on the demand — the application capacity is sufficient to deal with the incoming requests while paying for only what they use. Elasticity is the ability to acquire resources as you need them and release resources when you no longer need them.
 
 * Cost: AWS makes it easy to scale up and down based on demand and removes the need for an on-premise data centre to reduce costs. By using the pay as you go model, costs incurred can be monitored and reduced.
 

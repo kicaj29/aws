@@ -99,6 +99,7 @@
 # Security Groups
 
 A security group defines a collection of IPs that are allowed to connect to your instance and IPs that instance is allowed to connect to. **Security groups are attached at the instance level (EC2) to interfaces (ENI) and can be shared among many instances**. You can even set security group rules to allow access from other security groups instead of by IP. **Security groups are stateful firewalls (it has persistency and can remember traffic from the past)**.
+You cannot block individual IP addresses on Security Groups - format is always like x.y.z.w/network size.
 
 For example security group can be defined in EC2 wizard as one of its steps:
 ![vpc-21-aws-create-ec2-instance.png](images/vpc-21-aws-create-ec2-instance.png)
