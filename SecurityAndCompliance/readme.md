@@ -68,6 +68,7 @@ More here https://aws.amazon.com/compliance/shared-responsibility-model/
 
 * AWS **Shield** Standard: **protects against DDoS attack** for your website and applications, for all customers at no additional costs
   * Provides protection from attacks such as SYN/UDP Floods, Reflection attacks and other layers 3 and 4 attacks
+  * Is available globally on Amazon CloudFront Edge Locations
 * AWS Shield Advanced: 24/7 premium DDoS protection, $3000 per month per organization
   *  Shield Advanced expands the number of supported AWS services and integrates with WAF to support coverage against attacks on Layer 7 (application)
   * Provides detailed attack diagnostics and the ability to detect and mitigate sophisticated DDoS attacks

@@ -12,6 +12,7 @@
   - [Services outside the VPC](#services-outside-the-vpc)
 - [VPC Peering](#vpc-peering)
 - [PrivateLink](#privatelink)
+- [AWS Transit Gateway](#aws-transit-gateway)
 - [Web Application Firewall (WAF)](#web-application-firewall-waf)
 - [VPC Flow logs](#vpc-flow-logs)
   - [Create flow logs](#create-flow-logs)
@@ -99,7 +100,7 @@
 # Security Groups
 
 A security group defines a collection of IPs that are allowed to connect to your instance and IPs that instance is allowed to connect to. **Security groups are attached at the instance level (EC2) to interfaces (ENI) and can be shared among many instances**. You can even set security group rules to allow access from other security groups instead of by IP. **Security groups are stateful firewalls (it has persistency and can remember traffic from the past)**.
-You cannot block individual IP addresses on Security Groups - format is always like x.y.z.w/network size.
+You cannot block individual IP addresses on Security Groups - format is always like x.y.z.w/network size. This is possible on network ACL.
 
 For example security group can be defined in EC2 wizard as one of its steps:
 ![vpc-21-aws-create-ec2-instance.png](images/vpc-21-aws-create-ec2-instance.png)
@@ -182,6 +183,8 @@ A VPC defines a private, logically isolated area for instances, but a **subnet**
 
 # Internet Gateway
 
+An Internet gateway is attached to a VPC and allows inbound traffic from the internet to access the VPC. It is also used as a target in route tables for outbound internet traffic.
+
 **External IP is not visible from level of EC2 instance!** It sees only 10.0.1.23 address.   
 **Internet GW is performing source NAT and destination NAT**.   
 
@@ -241,7 +244,7 @@ More secure approach:
 
 # PrivateLink
 
-AWS PrivateLink provides private connectivity between VPCs and services hosted on AWS or on-premises, securely on the Amazon network. If services are hosted by AWS they have to be in the same region!   
+AWS PrivateLink provides private connectivity between VPCs and services hosted on AWS or on-premises, securely on the Amazon network. **If services are hosted by AWS they have to be in the same region! **  
 
 It is most secure & scalable way to expose a service to 1000s of VPCs.
 
@@ -252,6 +255,14 @@ It works very well when in one AWS account we have load balancer that will be re
 * Step one is create **endpoint service** that connects this service with selected load balancer.
 
 * Second step is to create endpoint that will connect with this service. This endpoint will have own private IP address that`s why later EC2 instances can access the load balancer by providing this IP address. This endpoint has to be created in every client subnet that wants connect with the load balancer.
+
+# AWS Transit Gateway
+
+https://aws.amazon.com/transit-gateway/
+
+AWS Transit Gateway connects your Amazon Virtual Private Clouds (VPCs) and on-premises networks through a central hub. This simplifies your network and puts an end to complex peering relationships. It acts as a cloud router – each new connection is only made once.
+
+As you expand globally, inter-Region **(it can connect VPCs from different regions)** peering connects AWS Transit Gateways together using the AWS global network. Your data is automatically encrypted and never travels over the public internet.
 
 # Web Application Firewall (WAF)
 
@@ -848,6 +859,8 @@ Install putty and import ppk file.
 ![vpc-101-bastion-host-connected-to-private-EC2.png](images/vpc-101-bastion-host-connected-to-private-EC2.png)
 
 ## Create NAT gateway to allow traffic to/from private subnet
+
+A NAT gateway is used for outbound internet access for instances running in a private subnet.
 
 Create NAT gateway (assign new elastic IP):
 

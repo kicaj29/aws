@@ -74,6 +74,9 @@ https://docs.aws.amazon.com/whitepapers/latest/aws-overview/six-advantages-of-cl
 # Cloud architecture design principles
 
 * Design for failure: understanding what and how components fail, and how to architect around failures to add resiliency
+  * Designing for failure is an important part of architecting for cloud workloads and the easiest way to do this when using Amazon EC2 instances is to put the within an **Auto Scaling group** and then place them behind an Elastic Load balancer.   
+  An Auto Scaling group contains a collection of EC2 instances that are treated as a logical grouping for the purposes of automatic scaling and management. An Auto Scaling group also enables you to use Amazon EC2 Auto Scaling features such as **health check** replacements and scaling policies. Both maintaining the number of instances in an Auto Scaling group and automatic scaling are the core functionality of the Amazon EC2 Auto Scaling service.
+
 * Decouple components vs monolithic architecture
   * Monolithic architecture
     * If one process of the application experiences a spike in demand the entire architecture must be scaled

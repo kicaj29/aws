@@ -390,6 +390,8 @@ https://aws.amazon.com/organizations/faqs/
 
 # Support plans
 
+https://aws.amazon.com/premiumsupport/plans/
+
 ## Basic support plan
 
 * Customer Service & Communications - 24x7 access to customer service, documentation, whitepapers, and support forums
