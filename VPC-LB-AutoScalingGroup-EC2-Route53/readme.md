@@ -244,7 +244,7 @@ More secure approach:
 
 # PrivateLink
 
-AWS PrivateLink provides private connectivity between VPCs and services hosted on AWS or on-premises, securely on the Amazon network. **If services are hosted by AWS they have to be in the same region! **  
+AWS PrivateLink provides private connectivity between VPCs and services hosted on AWS or on-premises, securely on the Amazon network. *If services are hosted by AWS they have to be in the same region!*
 
 It is most secure & scalable way to expose a service to 1000s of VPCs.
 

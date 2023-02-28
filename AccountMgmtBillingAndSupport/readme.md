@@ -415,6 +415,7 @@ https://aws.amazon.com/premiumsupport/plans/
 * 24x7 phone, email, and chat access to Cloud Support Engineers (**but they are not Senior Cloud Engineers**)
 * Unlimited cases / unlimited contacts
 * Access to Infrastructure Event Management for additional fee.
+* Access to AWS Health API - you can use the API operations to get information about events that might affect your AWS services and resources
 * Case severity / response time
   * General guidance < 24 business hours
   * System impaired < 12 business hours

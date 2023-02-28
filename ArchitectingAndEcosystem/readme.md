@@ -263,6 +263,8 @@ The term cloud economics refers to studying and analyzing the costs and benefits
 Comparative total cost of ownership analysis (acquisition and operating costs) for running an infrastructure environment end-to-end on-premises or in a co-location facility versus AWS. TCO analysis is used by our customers in comparing the costs of running an entire infrastructure environment or specific workload on premises or in a co-location facility versus on AWS and in
 paralleling an existing AWS workload with an on premises or co-location setup.
 
+To perform a TCO you need to document all of the costs you’re incurring today to run your IT operations. That includes facilities equipment installation and data center security costs. That way you get to compare the full cost of running your IT on-premises today, to running it in the cloud.
+
 * Operational expenses (opex) - day-to-day expenses, no long-term investment
 * Capital expenses (capex) - long-term investment, for example: purchasing a building, servers, printers.
 * Labor costs associated with on-premises operations - for example network configuration technicians

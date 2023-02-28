@@ -136,11 +136,14 @@ Next we can delete created stack to clean up:
 ![19_use_role.png](./images/19_use_role.png)
 
 
-# IAM Access Analyzer
+# IAM Access Analyzer and Access Advisor
 
 https://docs.aws.amazon.com/IAM/latest/UserGuide/what-is-access-analyzer.html
 
 *"IAM Access Analyzer helps you identify the resources in your organization and accounts, such as Amazon S3 buckets or IAM roles, shared with an external entity. This lets you identify unintended access to your resources and data, which is a security risk."*
+
+**Access Analyzer** gives some visibility into existing external access but does not offer any insight into if the permissions are excessive and how to remediate the risk if so. Another AWS tool, **Access Advisor, analyzes usage of access permissions to services by IAM objects such as users, groups, roles and policies**.
+
 
 # Links
 https://aws-blog.de/2021/08/iam-what-happens-when-you-assume-a-role.html   
