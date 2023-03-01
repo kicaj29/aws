@@ -192,12 +192,16 @@ https://aws.amazon.com/organizations/faqs/
 
 ## Storage Pricing - S3
 
+https://aws.amazon.com/s3/pricing/
+
 * Storage class: S3 Standard, S3 Infrequent Access, S3 One-Zone IA, S3 Intelligent Tiering, S3 Glacier and S3 Glacier Deep Archive
 * Number and size of objects: Price can be tiered (based on volume)
 * Number and type of requests
+* You also pay a per GB/month storage fee
 * Data transfer OUT of the S3 region
 * S3 Transfer Acceleration
 * Lifecycle transitions
+* You do not pay for data ingress
 
 ## Storage Pricing - EBS
 
@@ -403,7 +407,7 @@ https://aws.amazon.com/premiumsupport/plans/
 
 * All Basic support plan +
 * Business hours email access to Cloud Support Associates
-* Unlimited cases / 1 primary contact
+* Allows unlimited cases to be open / 1 primary contact
 * Case severity / response times
   * General guidance: < 24 business hours
   * System impaired: < 12 business hours

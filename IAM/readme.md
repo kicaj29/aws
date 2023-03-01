@@ -14,6 +14,8 @@ Additionally if some resources are created using only IAM users (without using r
 
 **When someone assumes an IAM role, they abandon all previous permissions that they had under a previous role and assume the permissions of the new role.**
 
+**You cannot apply multiple roles to a single instance.**
+
 Typically this role is created using AWS Console and not using IaC because at this point in time usually we have ony root aws account and usually we do not want store root aws account credentials locally because of security but if there are some reasons it can be also created using IaC.
 IAM user that will assume this role will be used in IaC.
 

@@ -14,6 +14,7 @@ Instance Store Volumes: they are **physically attached** to some EC2 instance ty
 * Size up to 16 TB
 * Single file can be stored as many blocks - it allows to update only part of the file, partial file updates are possible, S3 does not support it
 * EBS Volumes do not automatically scale if more space is needed
+* Both non-root and root volumes can be encrypted
 
 ## EBS - delete on termination
 

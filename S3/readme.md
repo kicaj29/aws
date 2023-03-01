@@ -1,6 +1,6 @@
 # Important requirements
 
-S3 allows people to store objects (files) in buckets (directories - root directories).
+S3 allows people to store **objects** (files) in **buckets** (directories - root directories).
 
 *  Buckets must have globally unique name (across all accounts)
 *  Buckets are defined at the region level
@@ -110,7 +110,7 @@ Can move between classes manually or using S3 lifecycle configurations.
 * Glacier
   * Low-cost object storage meant for archiving/backup
   * Pricing: price for storage + object retrieval cost
-  * Can upload directly or via LifeCycle Policy
+  * Can upload directly or via LifeCycle Policy (also known as Object lifecycle management)
   * Instant Retrieval
     * Millisecond retrieval, **great for data accessed once a quarter**
     * Minimum storage duration of 90 days

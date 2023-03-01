@@ -43,6 +43,8 @@ Multiple availability zones are included with each AWS Region.
 **At minimum each AWS Region has 2 availability zones.
 At minimum each availability zone has at least one data center. So the smallest amount of data center that would support AWS region is 2.**
 
+AZs are physically separated within a typical metropolitan region and are located in lower risk flood plains.
+
 ![aws-13-regions.png](images/fundamentals/aws-13-regions.png)
 
 https://aws.amazon.com/about-aws/global-infrastructure/regions_az/?p=ngi&loc=2

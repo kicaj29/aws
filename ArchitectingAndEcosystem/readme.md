@@ -188,8 +188,10 @@ Free tool to review your architectures against the 6 pillars well-architected fr
 * AWS blogs: https://aws.amazon.com/blogs/aws
 * AWS forum: https://repost.aws/
 * AWS Whitepapers & guides: https://aws.amazon.com/whitepapers
-* AWS Quick Starts: https://aws.amazon.com/quickstart
-* AWS Solutions: https://aws.amazon.com/solutions/
+* AWS Quick Starts (new name AWS Partner Solutions): https://aws.amazon.com/quickstart
+  * Partner Solutions are **automated reference deployments built** by Amazon Web Services (AWS) solutions architects and AWS Partners
+* AWS Solutions Library: https://aws.amazon.com/solutions/
+  * Vetted solutions and guidance for business and technical use cases
 * AWS Marketplace
   * Digital catalog with thousands of software listings from independent software vendors
   * Examples: Custom AMIs, CloudFormation templates, Software as Service, Containers
