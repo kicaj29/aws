@@ -18,6 +18,8 @@
 - [Amazon Pinpoint](#amazon-pinpoint)
 - [AWS Cloud Adoption Framework (AWS CAF)](#aws-cloud-adoption-framework-aws-caf)
 - [Migration strategies](#migration-strategies)
+- [Simple Workflow Service (SWF)](#simple-workflow-service-swf)
+- [Amazon Elasticsearch Service](#amazon-elasticsearch-service)
 
 # WorkSpaces
 
@@ -246,4 +248,16 @@ In the scenario of a large legacy migration, in which the company is looking to 
 
 * Retiring: is the process of removing applications that are no longer needed.
 
+# Simple Workflow Service (SWF) 
 
+https://docs.aws.amazon.com/amazonswf/latest/developerguide/swf-welcome.html
+
+Amazon Simple Workflow Service (SWF) is a web service that makes it easy to coordinate work across distributed application components. SWF enables applications for a range of use cases, including media processing, web application back-ends, business process workflows, and analytics pipelines, to be designed as a coordination of tasks.
+
+# Amazon Elasticsearch Service
+
+https://aws.amazon.com/what-is/elasticsearch/
+
+Amazon Elasticsearch Service is involved with operational analytics such as application monitoring, log analytics and clickstream analytics. Amazon Elasticsearch Service allows you to search, explore, filter, aggregate, and visualize your data in near real-time.
+
+Cloudwatch can forward logs to three services for now. They are S3 bucket, **Elasticsearch**, and Lambda.

@@ -35,6 +35,7 @@ Features
 * EBS snapshot archive
   * move a snapshot to an "archive tier" that is 75% cheaper
   * takes within 24 to 72 hours for restoring the archive
+  * snapshots are stored on S3
 * Recycle bin for EBS snapshot
   * setup rules to retain deleted snapshots so you can recover the after an accidential deletion
   * specify retention (1 day to 1 year)

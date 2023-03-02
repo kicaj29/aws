@@ -2,7 +2,7 @@
 - [WAF and Shield](#waf-and-shield)
 - [Penetration testing on AWS Cloud](#penetration-testing-on-aws-cloud)
 - [Encryption with KMS (Key Management Service)](#encryption-with-kms-key-management-service)
-- [Encryption CloudHMS](#encryption-cloudhms)
+- [Encryption CloudHSM](#encryption-cloudhsm)
 - [Types of Customer Master Keys (CMK)](#types-of-customer-master-keys-cmk)
 - [KMS Hands On](#kms-hands-on)
   - [KMS Hands On - Customer managed keys](#kms-hands-on---customer-managed-keys)
@@ -127,7 +127,7 @@ More here https://aws.amazon.com/compliance/shared-responsibility-model/
   * S3 glacier
   * Storage gateway
 
-# Encryption CloudHMS
+# Encryption CloudHSM
 
 *  AWS provisions encryption hardware
 *  You manage your own encryption keys entirely (now AWS)
