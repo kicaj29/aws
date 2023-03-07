@@ -72,7 +72,7 @@ More here https://aws.amazon.com/compliance/shared-responsibility-model/
 * AWS Shield Advanced: 24/7 premium DDoS protection, $3000 per month per organization
   *  Shield Advanced expands the number of supported AWS services and integrates with WAF to support coverage against attacks on Layer 7 (application)
   * Provides detailed attack diagnostics and the ability to detect and mitigate sophisticated DDoS attacks
-  * Protect against more sophisticated attack on Amazon EC2, ELB, CloudFront, AWS Global Accelerator and Route 53
+  * **Protect against more sophisticated attack on Amazon EC2, ELB, CloudFront, AWS Global Accelerator and Route 53**
   * 24/7 access to AWS DDoS response team (DRP)
   * Protect against higher fees during usage spikes due to DDoS
 * AWS WAF: filter specific requests based on rules
@@ -138,15 +138,18 @@ More here https://aws.amazon.com/compliance/shared-responsibility-model/
 
 # Types of Customer Master Keys (CMK)
 
+https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#key-mgmt
+
 * Customer Managed CMK
   * Create, manage and used by the customer, can enable and disable
   * Possibility or rotation policy (new key generated every year, old key preserved)
   * Possibility to bring-your-own-key
 * AWS managed CMK
-  * Created, managed and used on the customers of behalf by AWS
+  * Created, managed and used on on your behalf by an AWS
   * Used by AWS services (s3, ebs, redshift etc...)
+  * They are readonly for customer
 * AWS owned CMK
-  * Collection of CMKs that an AWS service owns and manages to use in multiple accounts
+  * Collection of CMKs that an AWS service owns and manages to use in multiple AWS accounts
   * AWS can use those to protect resources in your account (but you cannot view the keys)
 * CloudHSM Keys (customer keystore)
   * Keys generated from your own CloudHSM hardware device
