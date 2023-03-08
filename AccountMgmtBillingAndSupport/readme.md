@@ -14,6 +14,8 @@
   - [Database pricing - RDS](#database-pricing---rds)
   - [Content Delivery - CloudFront](#content-delivery---cloudfront)
   - [Networking costs in AWS per GB - simplified](#networking-costs-in-aws-per-gb---simplified)
+  - [Services that support reservations to optimize costs](#services-that-support-reservations-to-optimize-costs)
+  - [Data transfer](#data-transfer)
 - [Savings Plan Overview](#savings-plan-overview)
 - [AWS Compute Optimizer](#aws-compute-optimizer)
 - [Billing \& Costing Tools Overview](#billing--costing-tools-overview)
@@ -30,6 +32,7 @@
   - [Enterprise Support plan (24/7)](#enterprise-support-plan-247)
 - [AWS Pricing/TCO Tools](#aws-pricingtco-tools)
 - [Optimizing your cost with Rightsizing Recommendations](#optimizing-your-cost-with-rightsizing-recommendations)
+- [Credits](#credits)
 # AWS Organizations
 
 * Global Service
@@ -42,6 +45,9 @@
 * API is available to automate AWS account creation
 * Hierarchical groupings of accounts
 * **Restrict account privileges using Service Control Policies (SCP)**
+* Regarding removing an AWS account from AWS Organizations
+  * The AWS account must be able to operate as a standalone account. Only then it can be removed from AWS organizations.
+  * Restrictions imposed by those SCPs are gone, and the users and roles in the account might have more permissions than they had before.
 
 ## Multi Account Strategies
 
@@ -150,11 +156,11 @@ https://aws.amazon.com/organizations/faqs/
 
 * On-demand instances
   * Minimum billing time of 60s
-  * Pay per second (Linux/Windows) or per hour (other)
+  * Pay per second (Linux/Windows) or per hour (other): https://aws.amazon.com/ec2/pricing/
   * **No long-term commitments**
 * Reserved instances
   * Up to 75% discount compared to On-demand on hourly rate
-  * **1 or 3 yeats commitment**
+  * **1 or 3 yeats commitment**: 3 years term would always be more cost-effective than a 1-year term regardless of options All upfront, partial upfront, no upfront
   * Payment options: All upfront, partial upfront, no upfront
   * **Commitment unit: instance**
   * Predictable usage
@@ -253,6 +259,24 @@ https://aws.amazon.com/s3/pricing/
 
 ![17-pricing.png](./images/17-pricing.png)
 
+## Services that support reservations to optimize costs
+
+* Amazon EC2 Reserved Instances: You can use Amazon EC2 Reserved Instances to reserve capacity and receive a discount on your instance usage compared to running On-Demand instances.
+
+* Amazon DynamoDB Reserved Capacity: If you can predict your need for Amazon DynamoDB read-and-write throughput, Reserved Capacity offers significant savings over the normal price of DynamoDB provisioned throughput capacity.
+
+* Amazon ElastiCache Reserved Nodes: Amazon ElastiCache Reserved Nodes give you the option to make a low, one-time payment for each cache node you want to reserve and, in turn, receive a significant discount on the hourly charge for that node.
+
+* Amazon RDS RIs: Like Amazon EC2 RIs, Amazon RDS RIs can be purchased using No Upfront, Partial Upfront, or All Upfront terms. All Reserved Instance types are available for Aurora, MySQL, MariaDB, PostgreSQL, Oracle, and SQL Server database engines.
+
+* Amazon Redshift Reserved Nodes: If you intend to keep an Amazon Redshift cluster running continuously for a prolonged period, you should consider purchasing reserved-node offerings. These offerings provide significant savings over on-demand pricing, but they require you to reserve compute nodes and commit to paying for those nodes for either a 1- or 3-year duration.
+
+## Data transfer
+
+In most cases, there is no charge for inbound data transfer or data transfer between other AWS services within the same region. Outbound data transfer is aggregated across services and then charged at the outbound data transfer rate.
+
+For example: per AWS pricing, data transfer between S3 and EC2 instances within the same region is not charged.
+
 # Savings Plan Overview
 
 * Commit a certain $ amount per hour for 1 or 3 years
@@ -271,10 +295,10 @@ https://aws.amazon.com/s3/pricing/
 # AWS Compute Optimizer
 
 * Global service
-* Can be used to for rightsizing process
+* **Can be used to for rightsizing process**
 * Reduce costs and improve performance by recommending optimal AWS resources for your workloads
 * Helps you choose optimal configurations and right-size your workloads (over/under provisioned)
-* Use ML to analyze your resources configurations and their utilization CloudWatch metrics
+* Use ML to analyze your resources configurations and their utilization CloudWatch metrics - **historical data**
 * Supported resources
   * EC2 instances
   * EC2 Auto Scaling Groups
@@ -357,7 +381,7 @@ https://aws.amazon.com/s3/pricing/
 ## AWS budgets
 
 * Create budget and send alarms when costs exceeds the budget
-* 3 types of budgets: Usage, Cost, Reservation
+* 3 types of budgets: Usage, Cost, Reservation (alerts when your utilization drops **below** the threshold you define)
 * For Reserved Instances (RI)
   * Track utilization
   * Supports EC2, ElastiCache, RDS, Redshift
@@ -371,7 +395,7 @@ https://aws.amazon.com/s3/pricing/
 * No need to install anything - high level AWS account assessment
 * Analyze your AWS accounts and provides recommendation on **5 categories**
   * Cost optimization
-  * Performance
+  * Performance - trusted Advisor cannot be used to debug performance issues (use X-Ray)
   * Security
   * Fault tolerance
   * Service limits
@@ -417,9 +441,11 @@ https://aws.amazon.com/premiumsupport/plans/
 * Intended to be used if you have production workloads
 * Trusted Advisor - Full set of checks + API access
 * 24x7 phone, email, and chat access to Cloud Support Engineers (**but they are not Senior Cloud Engineers**)
+  * Provides architectural guidance contextual to your specific use-cases
 * Unlimited cases / unlimited contacts
 * Access to Infrastructure Event Management for additional fee.
 * Access to AWS Health API - you can use the API operations to get information about events that might affect your AWS services and resources
+* Access to guidance, configuration, and troubleshooting of AWS interoperability with third-party software
 * Case severity / response time
   * General guidance < 24 business hours
   * System impaired < 12 business hours
@@ -433,6 +459,7 @@ https://aws.amazon.com/premiumsupport/plans/
 * Access to a pool of Technical Account Managers (TAM)
 * Concierge Support Team (for billing and account best practices)
 * Infrastructure Even Management, Well-Architected & Operations Reviews
+* Provides access to online training with self-paced labs
 * Case severity / response times
   * The same as before with exception that for business-critical system down < 30 mins 
 
@@ -452,3 +479,21 @@ https://docs.aws.amazon.com/whitepapers/latest/how-aws-pricing-works/aws-pricing
 # Optimizing your cost with Rightsizing Recommendations
 
 https://docs.aws.amazon.com/cost-management/latest/userguide/ce-rightsizing.html
+
+# Credits
+
+https://www.amazonaws.cn/en/support/faqs/
+https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/useconsolidatedbilling-credits.html
+
+Credits are applied in the following order:
+
+* Choosing the credits to apply
+  * The soonest to expire amongst the credits
+  * The credit with the least number of eligible services
+  * The oldest of all credits
+
+* Choose where to apply your credits
+  * Account that owns the credit is covered for the service charges
+  * Credits are applied towards the AWS account with the highest spend
+  * **Credits are applied to the service with the highest spend within that account**
+  * Credits are applied to the SKU with the highest spend within that service

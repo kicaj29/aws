@@ -125,6 +125,10 @@ https://docs.aws.amazon.com/whitepapers/latest/aws-overview/six-advantages-of-cl
   * Scale horizontally to increase aggregate system availability - distribute requests across multiple, smaller resources to ensure that they do not share a common point of failure
   * Stop guessing capacity - maintain the optimal level to satisfy demand without over or under provisioning - use auto scaling
   * Manage change in automation - use automation to make changes to infrastructure
+* There are three best practice areas for Reliability in the cloud
+  * Foundations
+  * Change Management - being aware of how change affects a system (change management) allows you to plan proactively, and monitoring allows you to quickly identify trends that could lead to capacity issues or SLA breaches.
+  * Failure Management
 
 ![03-reliability.png](./images/03-reliability.png)
 

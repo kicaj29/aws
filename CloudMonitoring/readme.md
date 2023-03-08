@@ -116,7 +116,7 @@ It is possible to react on events happening outside of AWS.
   * Debugging: one big monolith "easy", distributed services "hard"
   * No common views of you entire architecture
 
-* AWS X-Ray visual analysis of our applications
+* AWS X-Ray visual analysis and debug of our applications
   ![09-x-ray.png](./images/09-x-ray.png)
   * Troubleshooting performance (bottlenecks)
   * Understand dependencies in a microservice architecture

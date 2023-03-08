@@ -77,7 +77,7 @@ Can be specified for the whole bucket or per object (file) or per prefix (using 
 
 ## S3 Durability
 
-* High durability (99,999999999%, 11 9s) of objects across multiple AZ.
+* High durability (99,999999999%, 11 9s) **of objects across multiple AZ**.
 * If you store 10M objects with S3, you can on average expect to incur a loss of single object once every 10 000 years.
 * Same for all storage classes.
 
@@ -93,7 +93,7 @@ Can move between classes manually or using S3 lifecycle configurations.
 * Standard - general purpose
   * 99.999_999_999% availability (52 mins) (11 nines) - this is the probability that object will stay intact during 1 year
   * Used for frequently accessed data
-  * Sustain 2 concurrent facility failures this is because data is stored in at least 3 AZs
+  * Sustain 2 concurrent facility failures this is because data is **stored in at least 3 AZs**
   * Use cases: big data analytics, mobile & gaming applications, content distribution...
 * Infrequent access (IA)  
   * For data that is less frequent accessed, but requires rapid access when needed

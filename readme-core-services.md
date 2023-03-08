@@ -525,6 +525,7 @@ Use cases:
 * meets many compliance requirements for infrastructure auditing
 * as a best practice, it should be enabled on every AWS account
 * can be consolidated into an Organizational trail using AWS Organizations
+* by default, the log files delivered by CloudTrail to your S3 bucket are encrypted using server-side encryption with Amazon S3–managed encryption keys (SSE-S3)
 
 Use cases:
 * compliance requirement
@@ -550,7 +551,7 @@ Use cases:
 * continually evaluates infrastructure against a set of rules
 * provides configuration history for infrastructure
 * works against rules that you can customize or even create custom validations
-* includes conformance packs for compliance standards including PCI-DSS
+* includes conformance packs for **compliance standards including PCI-DSS**
 * can work with AWS Organizations for both cross-region and cross-account setup
 * provides remediation steps for infrastructure not meeting criteria
 ## AWS Systems Manager

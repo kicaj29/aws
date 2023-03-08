@@ -31,6 +31,8 @@ There are 2 types of users:
 
 # Regions and Availability Zones and Edge Locations
 
+https://aws.amazon.com/about-aws/global-infrastructure/regions_az/
+
 ## Regions
 Each geographic location has a cluster of data centers that work together - this is called **region**. Region is much more then single data center.
 AWS currently has 22 launched regions (2020) and some of them are public and some are not available to the public.
@@ -40,7 +42,7 @@ Regions operate with smaller units called **availability zones**.
 Availability Zone consists of one or more data centers.
 Multiple availability zones are included with each AWS Region.   
 
-**At minimum each AWS Region has 2 availability zones.
+**At minimum each AWS Region has 3 availability zones.
 At minimum each availability zone has at least one data center. So the smallest amount of data center that would support AWS region is 2.**
 
 AZs are physically separated within a typical metropolitan region and are located in lower risk flood plains.

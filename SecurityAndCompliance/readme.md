@@ -141,15 +141,16 @@ More here https://aws.amazon.com/compliance/shared-responsibility-model/
 https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#key-mgmt
 
 * Customer Managed CMK
+  * A customer Managed (CMK) is a logical representation of a master key. The CMK includes metadata, such as the key ID, creation date, description, and key state. The CMK also contains the key material used to encrypt and decrypt data. These are created and managed by the AWS customer. Access to these can be controlled using the AWS IAM service.
   * Create, manage and used by the customer, can enable and disable
   * Possibility or rotation policy (new key generated every year, old key preserved)
   * Possibility to bring-your-own-key
 * AWS managed CMK
-  * Created, managed and used on on your behalf by an AWS
+  * AWS managed CMKs are CMKs in **your account** that are created, managed, and used on your behalf by an AWS service that is integrated with AWS KMS
   * Used by AWS services (s3, ebs, redshift etc...)
   * They are readonly for customer
 * AWS owned CMK
-  * Collection of CMKs that an AWS service owns and manages to use in multiple AWS accounts
+  * AWS owned CMKs are a collection of CMKs that an AWS service owns and manages for use in **multiple AWS accounts**. **AWS owned CMKs are not in your AWS account**. You cannot view or manage these CMKs.
   * AWS can use those to protect resources in your account (but you cannot view the keys)
 * CloudHSM Keys (customer keystore)
   * Keys generated from your own CloudHSM hardware device
@@ -286,6 +287,8 @@ It has 3 main parts:
 * Macie helps identify and alert you to sensitive data, such as personally identifiable information (PII)
 
 ![17-aws-macie.png](./images/17-aws-macie.png)
+
+Macie automatically provides an inventory of Amazon S3 buckets including a list of unencrypted buckets, publicly accessible buckets, and buckets shared with AWS accounts outside those you have defined in AWS Organizations. Then, Macie applies machine learning and pattern matching techniques to the buckets you select to identify and alert you to sensitive data, such as personally identifiable information (PII)
 
 # AWS Security Hub
 

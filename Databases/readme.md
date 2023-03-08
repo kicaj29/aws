@@ -52,6 +52,7 @@
 ![09-dynamoDB-globalTables.png](./images/09-dynamoDB-globalTables.png)
 
 # RDS (Relational Database Service)
+
 * PostgresSQL
 * MySQL
 * MariaDB
@@ -61,6 +62,7 @@
 ## RDS Important points
 
 * RDS is not serverless database (for example DynamoDB is server less).
+* RDS instances are optimized for memory, performance, or I/O, therefore the performance of AWS managed RDS instance is better than a customer-managed database instance.
 
 ## Advantage over using RDS versus deploying DB on EC2
 

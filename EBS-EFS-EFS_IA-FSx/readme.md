@@ -3,6 +3,7 @@ Amazon Elastic Block Store
 # Instance Store Volumes
 Instance Store Volumes: they are **physically attached** to some EC2 instance types. By default, the root EBS volume (another name of Instance Store Volumes) is deleted when EC2 is stopped. The reason of this is that if we start and stop EC2 instance and start again this new run might use different host than previous run so it will have another storage which is physically attached.
 
+ This is a good option when you need storage with very low latency, but you don't need the data to persist when the instance terminates or you can take advantage of fault-tolerant architectures.
 # What is an EBS Volume
 
 * It is a network drive you can attach to your instances while they run (it is not a physical drive). Because it is a network drive there might be a bit of latency.

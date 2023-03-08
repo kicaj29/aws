@@ -215,9 +215,13 @@ Route propagation can be used to automatically add routes from the VWG to route 
 
 # VPC endpoints to connect with AWS public resources
 
-* allows private access to S3 and dynamo DB
-* gateway type endpoints
-* interface type endpoints
+A VPC endpoint enables you to privately connect your VPC to supported AWS services and VPC endpoint services powered by AWS PrivateLink without requiring an internet gateway, NAT device, VPN connection, or AWS Direct Connect connection. Instances in your VPC do not require public IP addresses to communicate with resources in the service. Traffic between your VPC and the other service does not leave the Amazon network.
+
+There are two types of VPC endpoints: 
+* **interface endpoints**: an interface endpoint is an elastic network interface (ENI) with a private IP address from the IP address range of your subnet that serves as an entry point for traffic destined to a supported service. Interface endpoints are powered by AWS PrivateLink, a technology that enables you to privately access services by using private IP addresses.
+
+* **gateway endpoints**: a gateway endpoint is a gateway that you specify as a target for a route in your route table for traffic destined to a supported AWS service. **Only S3 and DynamoDB support gateway endpoints**, all other services that support VPC Endpoints use a VPC Endpoint Interface.
+
 * local to a region
 * bound to a single VPC
 * multiple endpoints are supported based on route tables
