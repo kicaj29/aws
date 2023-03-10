@@ -6,6 +6,7 @@
 - [AWS Control Tower](#aws-control-tower)
   - [AWS Control Tower Hands On](#aws-control-tower-hands-on)
 - [Pricing Models](#pricing-models)
+  - [Three fundamental drivers of cost with AWS](#three-fundamental-drivers-of-cost-with-aws)
   - [Compute Pricing - EC2](#compute-pricing---ec2)
   - [Compute Pricing - EC2 different models](#compute-pricing---ec2-different-models)
   - [Compute Pricing - Lambda and ECS](#compute-pricing---lambda-and-ecs)
@@ -138,6 +139,12 @@ https://aws.amazon.com/organizations/faqs/
   * Elastic Beanstalk - you pay for created resources
   * Cloud Formation - you pay for created resources
   * Auto Scaling Groups - you pay for created resources
+
+## Three fundamental drivers of cost with AWS
+
+* Compute
+* Storage
+* Outbound data transfer (inbound data transfer into all AWS regions from the internet is free)
 
 ## Compute Pricing - EC2
 
@@ -431,7 +438,7 @@ https://aws.amazon.com/premiumsupport/plans/
 
 * All Basic support plan +
 * Business hours email access to Cloud Support Associates
-* Allows unlimited cases to be open / 1 primary contact
+* Allows unlimited cases to be open / 1 primary contact (one primary contact to open unlimited cases)
 * Case severity / response times
   * General guidance: < 24 business hours
   * System impaired: < 12 business hours

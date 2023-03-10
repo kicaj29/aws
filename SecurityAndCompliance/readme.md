@@ -83,7 +83,8 @@ More here https://aws.amazon.com/compliance/shared-responsibility-model/
     * Rules can include IP addresses, HTTP headers, HTTP body, or URI strings
     * Protects from common attack - SQL injections and XSS (Cross-Site Scripting)
     * Size constraints, geo-match (block countries)
-    * Rate-based rules to count occurrences of events - for DDoS protection, for example user cannot do more than 5 requests per second
+      * You can use the IP address based match rule to block specific geographies. The accuracy of the IP Address to country lookup database varies by Region. Based on recent tests, AWS mentions that the overall accuracy for the IP address to country mapping is 99.8%.
+    * Rate-based rules to count occurrences of events - **for DDoS protection**, for example user cannot do more than 5 requests per second
 * Cloud Front and Route 53
   * Availability protection using global edge network
   * Combined with AWS shield, provides attack mitigation at the edge

@@ -1039,6 +1039,8 @@ It is possible to create second interface (ENI) and in this way EC2 instance be 
 
 ## Routing policies
 
+https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-policy.html
+
 * simple, does not have health check: user -> route 53 -> web server instance (www.mypage.com/10.64.100.200)
 * weighted, has health check
  user1 -> route 53 (90% traffic) -> web server instance (www.mypage.com/10.64.100.200)

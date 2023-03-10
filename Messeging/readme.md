@@ -48,3 +48,7 @@ region = us-east-1
 ## SQS.SampleApp example
 
 Currently this example requires creation of the queue upfront.
+
+# Differences between Amazon SQS, Amazon MQ, and Amazon SNS
+
+https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-difference-from-amazon-mq-sns.html

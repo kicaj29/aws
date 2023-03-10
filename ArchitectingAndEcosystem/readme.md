@@ -219,6 +219,9 @@ Free tool to review your architectures against the 6 pillars well-architected fr
   * AWS Competency Program: AWS Competencies are granted to APN Partners who have demonstrated technical proficiency and proven customer success in specialized areas.
   * AWS Navigate Program: help Partners become bette Partners
 
+* AWS Service Catalog: create, share, organize, and govern your curated **IaC templates**
+  https://aws.amazon.com/servicecatalog/
+
 # AWS Knowledge Center
 
 https://aws.amazon.com/premiumsupport/knowledge-center/

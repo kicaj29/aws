@@ -408,7 +408,7 @@ Block storage designed **to be connected to a single EC2 instance** that can sca
   * SMB
   * Active Directory Integration
   * Windows NTFS
-* utilizes SSD drives for low latency
+* **utilizes SSD drives for low latency**
 
 ## Snowball
 * service to physically migrate petabyte scale data to AWS.
@@ -556,6 +556,7 @@ Use cases:
 * provides remediation steps for infrastructure not meeting criteria
 ## AWS Systems Manager
 >"Provides a unified user interface so you can view operational data from multiple AWS services and allows you to automate operations tasks across your AWS resources"
+* allows to access and manage all AWS Services
 * provides operational data and automation across infrastructure
 * provides multiple tools that make it easier to manage your AWS infrastructure
 * enables automation tasks for common maintenance actions

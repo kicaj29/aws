@@ -16,7 +16,7 @@
 * They both use the AWS global network and its Edge Locations around the world
 * Both services integrated with AWS Shield for DDoS protection
 * **CloudFront** - Content Delivery Network
-  * Improves performance for your cacheable content (such as images and videos)
+  * Improves performance for your cashable content (such as images and videos)
   * **Content is served at the edge**
 * **Global Accelerator**
   * No caching, proxying packets at the edge to applications running in one or more AWS Regions

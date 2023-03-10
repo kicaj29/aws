@@ -255,9 +255,9 @@ AWS Storage Gateway is a bridge between on-premise data and cloud data in S3. Hy
 Use cases: disaster recovery, backup and restore, tiered storage
 
 Types of storage gateways:
-* File - provides a virtual on-premises file server, which enables you to store and retrieve files as objects in Amazon S3
-* Volume - the volume gateway represents the family of gateways that support block-based volumes, previously referred to as gateway-cached and gateway-stored mode
-* Tape - Gateway Virtual Tape Library can be used with popular backup software such as NetBackup, Backup Exec and Veeam. Uses a virtual media changer and tape drives.
+* File - provides a virtual on-premises **file server,** which enables you to store and retrieve files as objects in Amazon S3
+* Volume - the volume gateway represents the family of gateways that support **block-based volumes**, previously referred to as gateway-cached and gateway-stored mode
+* Tape - Gateway Virtual Tape Library **can be used with popular backup software such as** NetBackup, Backup Exec and Veeam. Uses a virtual media changer and tape drives.
 
 
 # S3 Transfer Acceleration

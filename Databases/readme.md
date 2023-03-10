@@ -61,8 +61,11 @@
 
 ## RDS Important points
 
+https://aws.amazon.com/rds/features/multi-az/
+
 * RDS is not serverless database (for example DynamoDB is server less).
 * RDS instances are optimized for memory, performance, or I/O, therefore the performance of AWS managed RDS instance is better than a customer-managed database instance.
+* Amazon RDS Multi-AZ deployments provide enhanced availability and durability for RDS database (DB) instances, making them a natural fit for production database workloads. When you provision a Multi-AZ DB Instance, Amazon RDS automatically creates a primary DB Instance and synchronously replicates the data to a standby instance in a different Availability Zone (AZ).
 
 ## Advantage over using RDS versus deploying DB on EC2
 

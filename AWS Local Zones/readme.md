@@ -1,6 +1,6 @@
 # AWS Local Zones
 
-* Places AWS compute, storage, database, and other selected AWS services **closer to end users to run latency-sensitive applications**
+* Places AWS compute, storage, database, and other selected AWS services **closer to end users to run latency-sensitive applications like for example games**
 * Extend your VPC to more locations - "Extension of an AWS Region"
 * Compatible with EC2, RDS, ECS, EBS, ElastiCache, Direct Connect...
 * Example

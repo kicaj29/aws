@@ -190,6 +190,8 @@ AWS Application Discovery Service helps you plan your migration to the AWS cloud
 
 ![14-FIS.png](./images/14-FIS.png)
 
+The **Acceptable Use Policy** describes prohibited uses of the web services offered by Amazon Web Services, Inc. and its affiliates (the “Services”) and the website located at http://aws.amazon.com (the “AWS Site”). This policy is present at https://aws.amazon.com/aup/ and is updated on a need basis by AWS.
+
 # AWS Step Functions
 
 * Build serverless visual workflow to orchestrate your lambda functions
