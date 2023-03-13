@@ -391,6 +391,9 @@ Block storage designed **to be connected to a single EC2 instance** that can sca
   * cold HDD: is designed for less frequently accessed workloads
 
 ## Elastic File System (EFS)
+
+https://aws.amazon.com/efs/
+
 * fully managed NFS file system
 * **designed for linux workloads**
 * supports up to petabyte scale
@@ -401,6 +404,7 @@ Block storage designed **to be connected to a single EC2 instance** that can sca
 * provides configurable lifecycle data rules (you can transition between *standard* and *infrequent access*)
 * can be network file system that can be attached to multiple instances at the same time
 ![aws-47-s3-efs.png](/images/core-services/aws-47-s3-efs.png)
+* Amazon EC2 instances can access your file system **across AZs, regions, and VPCs**, while on-premises servers can access using AWS Direct Connect or AWS VPN
 
 ## FSx for Windows File Server
 * fully managed native Windows File system

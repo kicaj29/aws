@@ -166,7 +166,7 @@ https://aws.amazon.com/organizations/faqs/
   * Pay per second (Linux/Windows) or per hour (other): https://aws.amazon.com/ec2/pricing/
   * **No long-term commitments**
 * Reserved instances
-  * Up to 75% discount compared to On-demand on hourly rate
+  * Up to 72% discount compared to On-demand on hourly rate
   * **1 or 3 yeats commitment**: 3 years term would always be more cost-effective than a 1-year term regardless of options All upfront, partial upfront, no upfront
   * Payment options: All upfront, partial upfront, no upfront
   * **Commitment unit: instance**
@@ -311,6 +311,7 @@ For example: per AWS pricing, data transfer between S3 and EC2 instances within 
   * EC2 Auto Scaling Groups
   * EBS volumes
   * Lambda functions
+  * ECS services on Fargate (New)
 * Lower your costs by up to 25%
 * Recommendations can be exported to S3
 
@@ -344,6 +345,8 @@ For example: per AWS pricing, data transfer between S3 and EC2 instances within 
     * Defined by the user
     * Starts with Prefix user:
       ![21-allocation-tags.png](./images/21-allocation-tags.png)
+  * For each resource, each tag key must be unique, and each tag key can have only one value
+  * **You must activate both AWS generated tags and user-defined tags separately** before they can appear in Cost Explorer or on a cost allocation report
 
 * Tagging and Resource Groups    
   * Tags are used for organizing resources
@@ -357,16 +360,21 @@ For example: per AWS pricing, data transfer between S3 and EC2 instances within 
   * It is per region group
   ![22-resoruce-groups.png](./images/22-resoruce-groups.png)
 
-* Cost and Usage Report
+* Cost and Usage Reports (**it is part of AWS Billing**)
+
+*AWS Cost and Usage reports provide access to detailed data, enabling you to better analyze and understand your AWS **costs as well as the specific product offerings and usage amounts underlying those costs**. You can customize the content and delivery of your reports and manage them from the reports dashboard.*
+
   * Dive deeper into your AWS costs and usage
   * The AWS Cost and Usage Report contains the most comprehensive set of AWS cost and usage data available, including additional metadata about AWS services, pricing, and reservations (e.g., Amazon EC2 Reserved Instances)
   * The AWS Cost and Usage Report lists AWS usage for each service category used by an account and its IAM users in hourly or daily line items, as well as any tags that you have activated for cost allocation purpose
   * Can be integrated with Athena, Redshift or QuickSight
   ![23-cost-and-usage-reports.png](./images/23-cost-and-usage-reports.png)
+  * **Cost and Usage Reports cannot be used to identify under-utilized EC2 instances.**
+  * You can use Cost and Usage Reports to publish your AWS billing reports to an Amazon Simple Storage Service (Amazon S3) bucket that you own.
 
-* Cost Explorer
+* Cost Explorer (**it is part of AWS Cost Management but here it means all AWS Cost Management module**)
   * Visual, understand, and manage your AWS costs and usage over time
-  * Create custom reports that analyze cost and usage data
+  * Create custom reports that analyze **cost and usage data**
   * **Analyze your data at high level**: total costs and usage **across all accounts**
   * Or monthly, hourly, resource level granularity
   * Choose an optimal **Savings Plan** (to lower prices on your bill)
@@ -375,6 +383,9 @@ For example: per AWS pricing, data transfer between S3 and EC2 instances within 
   ![24-cost-explorer.png](./images/24-cost-explorer.png)
   * Sample report - monthly cost by AWS Service
   ![25-cost-explorer.png](./images/25-cost-explorer.png)
+  * The rightsizing recommendations feature in Cost Explorer helps you identify cost-saving opportunities by downsizing or terminating EC2 instances. You can see all of your underutilized EC2 instances across member accounts in a single view to immediately identify how much you can save: https://docs.aws.amazon.com/cost-management/latest/userguide/ce-rightsizing.html
+  ![032-rightsizing-recommendations.png](./images/032-rightsizing-recommendations.png)
+  * Explorer cannot provide into an S3 bucket (this can be done in *AWS Cost and Usage Reports*)
 
 # Billing alarms and AWS budgets
 
@@ -401,13 +412,11 @@ For example: per AWS pricing, data transfer between S3 and EC2 instances within 
 
 * No need to install anything - high level AWS account assessment
 * Analyze your AWS accounts and provides recommendation on **5 categories**
-  * Cost optimization
+  * Cost optimization: https://docs.aws.amazon.com/awssupport/latest/user/cost-optimization-checks.html
+    * For example: AWS Trusted Advisor checks the Amazon Elastic Compute Cloud (Amazon EC2) instances that were running at any time during the last 14 days and alerts you if the daily CPU utilization was 10% or less and network I/O was 5 MB or less on 4 or more days.
   * Performance - trusted Advisor cannot be used to debug performance issues (use X-Ray)
   * Security
-  * Fault tolerance
-  * Service limits
-* Support plan
-  * 7 core checks - basic & developer support plan
+    * 7 core checks - basic & developer support plan
     * S3 bucket permissions (making sure that a bucket is not public)
     * Security groups - specific ports unrestricted
     * IAM Use (making sure that we have at least one IAM user)
@@ -415,7 +424,9 @@ For example: per AWS pricing, data transfer between S3 and EC2 instances within 
     * EBS - making sure that we do not have public snapshots
     * RDS - making sure that we do not have public snapshots
     * Server Limits
-  * Full checks - business & enterprise support plan
+  * Fault tolerance
+  * Service limits
+  * Full checks - business & enterprise support plan - beyond the seven checks above, there are additional checks (over 60 total) under each category available
     * Full check available on the **5 categories**
     * Ability to set CloudWatch alarms when reaching limits
     * Programmatic Access using AWS Support API
@@ -439,6 +450,7 @@ https://aws.amazon.com/premiumsupport/plans/
 * All Basic support plan +
 * Business hours email access to Cloud Support Associates
 * Allows unlimited cases to be open / 1 primary contact (one primary contact to open unlimited cases)
+* This plan also supports general guidance on how services can be used for various use cases, workloads, or applications. You do not get access to Infrastructure Event Management with this plan
 * Case severity / response times
   * General guidance: < 24 business hours
   * System impaired: < 12 business hours

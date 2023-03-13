@@ -66,6 +66,7 @@ More here https://aws.amazon.com/compliance/shared-responsibility-model/
 
 # WAF and Shield
 
+* Both are global services.
 * AWS **Shield** Standard: **protects against DDoS attack** for your website and applications, for all customers at no additional costs
   * Provides protection from attacks such as SYN/UDP Floods, Reflection attacks and other layers 3 and 4 attacks
   * Is available globally on Amazon CloudFront Edge Locations

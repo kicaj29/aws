@@ -224,6 +224,8 @@ Free tool to review your architectures against the 6 pillars well-architected fr
 
 # AWS Knowledge Center
 
+*"Here are some of the most frequent questions and requests that we receive from AWS customers."*
+
 https://aws.amazon.com/premiumsupport/knowledge-center/
 
 # AWS IQ

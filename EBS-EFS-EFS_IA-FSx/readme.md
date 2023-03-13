@@ -45,7 +45,7 @@ Features
 
 * Managed NFS (network file system) that can be mounted on hundreds of EC2 at a time so it makes it **shared filed system**.
 * Works only with Linux EC2 and multi-AZ.
-* Highly available, scalable, expensive (3x gp2), pay per use, no capacity planning.
+* Highly available (multiple Availability Zones), scalable, expensive (3x gp2), pay per use, no capacity planning.
 * It is regional resource
 * Automatically scales (if more space is needed)
 

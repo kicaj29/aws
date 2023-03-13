@@ -30,6 +30,8 @@
 
 # AMI process for creating custom AMIs
 
+*"The AMI must be in the same region as that of the EC2 instance to be launched. If the AMI exists in a different region, you can copy that AMI to the region where you want to launch the EC2 instance. The region of AMI has no bearing on the performance of the EC2 instance."*
+
 * Start an EC2 instance and customize it
 * Stop the instance (for data integrity)
 * Build an AMI - this will also create EBS snapshot

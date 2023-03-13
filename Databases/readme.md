@@ -102,6 +102,7 @@ Aurora is AWS Proprietary database, not open source.
 * Read replicas
   * Can create up to 5 read replicas for Oracle and SQL Server and up to 15 for MySQL, MariaDB and PostgreSQL, more [here](https://aws.amazon.com/rds/features/read-replicas/)
   * Data is only written to the main DB
+  * Read Replicas are an example of horizontal scaling of resources
 ![03-replicas.png](./images/03-replicas.png)
 * Multi-AZ
   * Failover in case AZ outage (HA)
@@ -125,6 +126,8 @@ Aurora is AWS Proprietary database, not open source.
 
 # Redshift
 
+https://aws.amazon.com/redshift/faqs/
+
 * Is based on PostgresSQL, but it is not used for OLTP (Online transaction processing)
 * It is OLAP - online **analytical** processing (analytics and data warehousing)
 * Load data once every hour, not every second
@@ -134,6 +137,7 @@ Aurora is AWS Proprietary database, not open source.
 * Pay as you go based on the instances provisioned
 * Has a SQL interface for performing the queries
 * BI tools such as AWS Quicksight or Tableau integrate with it
+* It is highly available: customers can now improve availability of Redshift by running their data warehouse in a multi-AZ deployment
 
 # Amazon EMR
 

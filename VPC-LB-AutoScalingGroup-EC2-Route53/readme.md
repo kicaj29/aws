@@ -215,7 +215,7 @@ Route propagation can be used to automatically add routes from the VWG to route 
 
 # VPC endpoints to connect with AWS public resources
 
-A VPC endpoint enables you to privately connect your VPC to supported AWS services and VPC endpoint services powered by AWS PrivateLink without requiring an internet gateway, NAT device, VPN connection, or AWS Direct Connect connection. Instances in your VPC do not require public IP addresses to communicate with resources in the service. Traffic between your VPC and the other service does not leave the Amazon network.
+**A VPC endpoint enables you to privately connect your VPC to supported AWS services **and VPC endpoint services powered by AWS PrivateLink without requiring an internet gateway, NAT device, VPN connection, or AWS Direct Connect connection. Instances in your VPC do not require public IP addresses to communicate with resources in the service. Traffic between your VPC and the other service does not leave the Amazon network.
 
 There are two types of VPC endpoints: 
 * **interface endpoints**: an interface endpoint is an elastic network interface (ENI) with a private IP address from the IP address range of your subnet that serves as an entry point for traffic destined to a supported service. Interface endpoints are powered by AWS PrivateLink, a technology that enables you to privately access services by using private IP addresses.
@@ -1051,7 +1051,9 @@ https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/routing-policy.html
  user1 (NewYork) -> route 53 -> web server instance 1 in us-east-1 (www.mypage.com/10.78.100.221)
  user2 (California) -> route 53 -> web server instance 2 in us-west-1  (www.mypage.com/10.78.100.222)
 * failover routing policy, has health check: if some web server is down then it will not be routed by route 53 service
-![route53-008-routing-policies.png](./images/route53/route53-008-routing-policies.png)
+  * is used when you want to configure **active-passive failover**
+  * failover routing lets you route traffic to a resource when the resource is healthy or to a different resource when the first resource is unhealthy.
+  ![route53-008-routing-policies.png](./images/route53/route53-008-routing-policies.png)
 * geo location, has health check
   * traffic if routed based on the location of the user
   * if location can`t be identified it uses a default resource set

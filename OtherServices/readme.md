@@ -20,6 +20,7 @@
 - [Migration strategies](#migration-strategies)
 - [Simple Workflow Service (SWF)](#simple-workflow-service-swf)
 - [Amazon Elasticsearch Service](#amazon-elasticsearch-service)
+- [Migration Evaluator](#migration-evaluator)
 
 # WorkSpaces
 
@@ -263,3 +264,8 @@ https://aws.amazon.com/what-is/elasticsearch/
 Amazon Elasticsearch Service is involved with operational analytics such as application monitoring, log analytics and clickstream analytics. Amazon Elasticsearch Service allows you to search, explore, filter, aggregate, and visualize your data in near real-time.
 
 Cloudwatch can forward logs to three services for now. They are S3 bucket, **Elasticsearch**, and Lambda.
+
+# Migration Evaluator
+https://aws.amazon.com/migration-evaluator/
+
+*"With Migration Evaluator, your organization can build a data-driven business case for AWS, gets access to AWS expertise, visibility into the costs associated with multiple migration strategies, and insights on how reusing existing software licensing reduces costs further"*

@@ -10,7 +10,7 @@
 - [AWS CodeArtifact](#aws-codeartifact)
 - [AWS CodeStar](#aws-codestar)
 - [AWS Cloud9](#aws-cloud9)
-- [CodeStart & Cloud9 Hands On](#codestart--cloud9-hands-on)
+- [CodeStart \& Cloud9 Hands On](#codestart--cloud9-hands-on)
 - [Systems Manager (SSM)](#systems-manager-ssm)
   - [How Systems Manager work](#how-systems-manager-work)
   - [SSM Session Manager](#ssm-session-manager)
@@ -93,7 +93,7 @@ CloudFormation creates those for you, in the right order, with the exact configu
 
 * We want to deploy our application
 * Works with EC2 instances
-* Works with On-Premises Servers
+* **Works with On-Premises Servers**
 * Servers/Instances must be provisioned and configured ahead of time with the CodeDeploy Agent
 
 ![05-code-deploy.png](./images/05-code-deploy.png)

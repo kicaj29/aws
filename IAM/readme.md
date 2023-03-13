@@ -1,3 +1,12 @@
+- [Assume role](#assume-role)
+  - [Introduction](#introduction)
+  - [Create role](#create-role)
+  - [Create IAM user](#create-iam-user)
+  - [Configure aws credentials file](#configure-aws-credentials-file)
+  - [Usage @Infra role](#usage-infra-role)
+- [IAM Access Analyzer and Access Advisor](#iam-access-analyzer-and-access-advisor)
+- [Access Policies Schema](#access-policies-schema)
+- [Links](#links)
 # Assume role
 
 ## Introduction
@@ -145,6 +154,28 @@ https://docs.aws.amazon.com/IAM/latest/UserGuide/what-is-access-analyzer.html
 *"IAM Access Analyzer helps you identify the resources in your organization and accounts, such as Amazon S3 buckets or IAM roles, shared with an external entity. This lets you identify unintended access to your resources and data, which is a security risk."*
 
 **Access Analyzer** gives some visibility into existing external access but does not offer any insight into if the permissions are excessive and how to remediate the risk if so. Another AWS tool, **Access Advisor, analyzes usage of access permissions to services by IAM objects such as users, groups, roles and policies**.
+
+
+# Access Policies Schema
+
+https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies.html#access_policies-json
+
+Effect, Action are required fields.
+
+Sample policy
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "FirstStatement",
+      "Effect": "Allow",
+      "Action": ["iam:ChangePassword"],
+      "Resource": "*"
+    }
+  ]
+}
+```
 
 
 # Links

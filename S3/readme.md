@@ -259,6 +259,8 @@ Types of storage gateways:
 * Volume - the volume gateway represents the family of gateways that support **block-based volumes**, previously referred to as gateway-cached and gateway-stored mode
 * Tape - Gateway Virtual Tape Library **can be used with popular backup software such as** NetBackup, Backup Exec and Veeam. Uses a virtual media changer and tape drives.
 
+All data transferred between the gateway and AWS storage is encrypted using SSL (for all three types of gateways - File, Volume and Tape Gateways).
+
 
 # S3 Transfer Acceleration
 
