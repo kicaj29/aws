@@ -6,6 +6,7 @@
   * https://medium.com/@datapath_io/what-is-anycast-f37051054ad
   * *Anycast on the other hand allows multiple network devices to advertise the same IP address. On an Anycast network, traffic meant for a specific IP address can be forwarded to any one of a number of origin servers, depending on the distance*
 * The **Edge Locations** send the traffic to your application
+* Global Accelerator improves performance for a wide range of applications over TCP or UDP by proxying packets at the edge to applications running in one or more AWS Regions. **It is good fit for non-HTTP use cases.**
 
 ![01-use-edge-locations.png](./images/01-use-edge-locations.png)
 

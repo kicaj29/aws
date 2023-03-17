@@ -399,6 +399,7 @@ For example: per AWS pricing, data transfer between S3 and EC2 instances within 
 ## AWS budgets
 
 * Create budget and send alarms when costs exceeds the budget
+* Sends an alarm when the actual cost exceeds the budgeted amount or **even when the cost forecast exceeds the budgeted amount**.
 * 3 types of budgets: Usage, Cost, Reservation (alerts when your utilization drops **below** the threshold you define)
 * For Reserved Instances (RI)
   * Track utilization
@@ -409,6 +410,8 @@ For example: per AWS pricing, data transfer between S3 and EC2 instances within 
 * 2 budgets are free, then $0.02/day/budget
 
 # AWS Trusted Advisor
+
+https://aws.amazon.com/premiumsupport/technology/trusted-advisor/
 
 * No need to install anything - high level AWS account assessment
 * Analyze your AWS accounts and provides recommendation on **5 categories**
@@ -465,6 +468,7 @@ https://aws.amazon.com/premiumsupport/plans/
 * Access to Infrastructure Event Management for additional fee.
 * Access to AWS Health API - you can use the API operations to get information about events that might affect your AWS services and resources
 * Access to guidance, configuration, and troubleshooting of AWS interoperability with third-party software
+* You get programmatic access (API Access) to AWS Support Center features to create, manage, and close your support cases.
 * Case severity / response time
   * General guidance < 24 business hours
   * System impaired < 12 business hours

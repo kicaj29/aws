@@ -5,12 +5,15 @@ S3 allows people to store **objects** (files) in **buckets** (directories - root
 *  Buckets must have globally unique name (across all accounts)
 *  Buckets are defined at the region level
 *  S3 looks like a global service but buckets are created in a region
+*  It is key value based object storage service
+*  Stores data in flat non-hierarchical structure
 *  Naming conventions for buckets
    *  No uppercase
    *  No underscore
    *  3-63 length
    *  Not an IP
    *  Must start with lowercase letter or number
+
 
 # Path
 
@@ -88,6 +91,9 @@ Can be specified for the whole bucket or per object (file) or per prefix (using 
 * Example: S3 standard has 99.99% availability = not available 53 minutes a year. More [here](https://blog.imagekit.io/how-do-you-prepare-for-an-aws-s3-outage-e60052937ef3).
 
 ## Classes
+
+https://aws.amazon.com/s3/storage-classes/
+
 Can move between classes manually or using S3 lifecycle configurations.
 
 * Standard - general purpose

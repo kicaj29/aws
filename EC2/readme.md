@@ -137,3 +137,11 @@ We can see now that the builder instance is terminating and new test instance is
 
 Last step is distribution the new image.
 ![030-ec2-image-builder.png](./images/030-ec2-image-builder.png)
+
+
+# EC2 Instance Connect
+
+Amazon EC2 Instance Connect provides a simple and secure way to connect to your instances using Secure Shell (SSH).
+With EC2 Instance Connect, you use AWS Identity and Access Management (IAM) policies and principals to control SSH access to your instances, removing the need to share and manage SSH keys. All connection requests using EC2 Instance Connect are logged to AWS CloudTrail so that you can audit connection requests. **It is browser-based client**.
+
+SSH can be used from a Mac OS, Windows or Linux based computer, but it's not a browser-based client.

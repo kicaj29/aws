@@ -18,6 +18,8 @@
 - [Amazon Detective](#amazon-detective)
 - [AWS Abuse (AWS Trust \& Safety team)](#aws-abuse-aws-trust--safety-team)
 - [Root user privileges](#root-user-privileges)
+- [MFA (Multi-Factor Authentication)](#mfa-multi-factor-authentication)
+- [Credential Reports](#credential-reports)
 
 # AWS Shared responsibility model
 
@@ -70,16 +72,20 @@ More here https://aws.amazon.com/compliance/shared-responsibility-model/
 * AWS **Shield** Standard: **protects against DDoS attack** for your website and applications, for all customers at no additional costs
   * Provides protection from attacks such as SYN/UDP Floods, Reflection attacks and other layers 3 and 4 attacks
   * Is available globally on Amazon CloudFront Edge Locations
+  * As Shield Standard is automatically activated for all AWS customers with no options for any customizations, therefore AWS needs to manage the maintenance and configurations for this service. Hence this service falls under the purview of AWS.
 * AWS Shield Advanced: 24/7 premium DDoS protection, $3000 per month per organization
   *  Shield Advanced expands the number of supported AWS services and integrates with WAF to support coverage against attacks on Layer 7 (application)
   * Provides detailed attack diagnostics and the ability to detect and mitigate sophisticated DDoS attacks
   * **Protect against more sophisticated attack on Amazon EC2, ELB, CloudFront, AWS Global Accelerator and Route 53**
   * 24/7 access to AWS DDoS response team (DRP)
   * Protect against higher fees during usage spikes due to DDoS
+  * It falls under customer responsibility per the AWS Shared Responsibility Model (because customer must enable it)
 * AWS WAF: filter specific requests based on rules
   * Protects your web applications from common web exploits (Layer 7). Layer 7 is HTTP (vs Layer 4 is TCP)
     * For example can prevent SQL injection 
   * Deploy on ALB, API Gateway, CLoudFront
+  * **WAF can block all requests except the ones that you allow** - WAF can block all requests except the ones that you allow. This is useful when you want to serve content for a restricted website whose users are readily identifiable by properties in web requests, such as the IP addresses that they use to browse to the website https://docs.aws.amazon.com/waf/latest/developerguide/waf-rule-action.html
+  ![21-waf-rules.png](./images/21-waf-rules.png)
   * Defines web ACL (Web Access Control List)
     * Rules can include IP addresses, HTTP headers, HTTP body, or URI strings
     * Protects from common attack - SQL injections and XSS (Cross-Site Scripting)
@@ -347,3 +353,17 @@ Macie automatically provides an inventory of Amazon S3 buckets including a list 
   * Configure an Amazon S3 bucket to enable MFA
   * Edit or delete Amazon S3 bucket policy that includes an invalid VPC ID or VPC endpoint ID
   * Sign up for GovCloud
+
+# MFA (Multi-Factor Authentication)
+
+* U2F security key - Universal 2nd Factor (U2F) Security Key is a device that you can plug into a USB port on your computer. U2F is an open authentication standard hosted by the FIDO Alliance. When you enable a U2F security key, you sign in by entering your credentials and then tapping the device instead of manually entering a code.
+
+* Virtual MFA device - This is a software app that runs on a phone or other device and emulates a physical device. The device generates a six-digit numeric code based upon a time-synchronized one-time password algorithm. The user must type a valid code from the device on a second webpage during sign-in. Each virtual MFA device assigned to a user must be unique.
+
+* Hardware MFA device - This is a hardware device that generates a six-digit numeric code based upon a time-synchronized one-time password algorithm. The user must type a valid code from the device on a second webpage during sign-in. Each MFA device assigned to a user must be unique. A user cannot type a code from another user's device to be authenticated.
+
+* SMS text message-based MFA - This is a type of MFA in which the IAM user settings include the phone number of the user's SMS-compatible mobile device. When the user signs in, AWS sends a six-digit numeric code by SMS text message to the user's mobile device. The user is required to type that code on a second webpage during sign-in.
+
+# Credential Reports
+
+You can generate and download a credential report that lists all users in your account and the status of their various credentials, including passwords, access keys, and MFA devices. You can use credential reports to assist in your auditing and compliance efforts. You can use the report to audit the effects of credential lifecycle requirements, such as password and access key rotation. You can provide the report to an external auditor, or grant permissions to an auditor so that he or she can download the report directly.

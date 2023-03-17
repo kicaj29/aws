@@ -34,6 +34,7 @@
 * Can choose the period on which to evaluate an alarm
 * Example: create a billing alarm on the CloudWatch Billing metric
 * Alarm states: OK, INSUFFICIENT_DATA, ALARM
+* It doesn't use projections based on your usage so far in the month - **sends an alarm when the actual cost exceeds a certain threshold.**. It does not use forecasting like in AWS Budgets Alarms
 
 # CloudWatch Logs
 

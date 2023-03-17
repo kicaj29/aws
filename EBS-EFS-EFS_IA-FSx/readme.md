@@ -48,6 +48,7 @@ Features
 * Highly available (multiple Availability Zones), scalable, expensive (3x gp2), pay per use, no capacity planning.
 * It is regional resource
 * Automatically scales (if more space is needed)
+* To access EFS file systems from on-premises, you must have an AWS Direct Connect or AWS VPN connection between your on-premises datacenter and your Amazon VPC. **You mount an EFS file system on your on-premises Linux server** using the standard Linux mount command for mounting a file system
 
 ![003-efs.png](./images/003-efs.png)
 

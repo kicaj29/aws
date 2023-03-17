@@ -103,6 +103,7 @@ Aurora is AWS Proprietary database, not open source.
   * Can create up to 5 read replicas for Oracle and SQL Server and up to 15 for MySQL, MariaDB and PostgreSQL, more [here](https://aws.amazon.com/rds/features/read-replicas/)
   * Data is only written to the main DB
   * Read Replicas are an example of horizontal scaling of resources
+  * Read Replicas are used for **improved read performance**. You can also place your read replica in a different AWS Region closer to your users for better performance. **Using a cross-Region Read Replica** can also help ensure that you get back up and running if you experience a **regional availability issue in case of a disaster**.
 ![03-replicas.png](./images/03-replicas.png)
 * Multi-AZ
   * Failover in case AZ outage (HA)

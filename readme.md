@@ -47,6 +47,8 @@ At minimum each availability zone has at least one data center. So the smallest 
 
 AZs are physically separated within a typical metropolitan region and are located in lower risk flood plains.
 
+AZ is one or more data centers in the same location (region = location).
+
 ![aws-13-regions.png](images/fundamentals/aws-13-regions.png)
 
 https://aws.amazon.com/about-aws/global-infrastructure/regions_az/?p=ngi&loc=2
