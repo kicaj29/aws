@@ -462,7 +462,7 @@ https://aws.amazon.com/premiumsupport/plans/
 
 * Intended to be used if you have production workloads
 * Trusted Advisor - Full set of checks + API access
-* 24x7 phone, email, and chat access to Cloud Support Engineers (**but they are not Senior Cloud Engineers**)
+* 24x7 phone, email, and chat access to Cloud Support Engineers - enhanced technical support (**but they are not Senior Cloud Engineers**)
   * Provides architectural guidance contextual to your specific use-cases
 * Unlimited cases / unlimited contacts
 * Access to Infrastructure Event Management for additional fee.

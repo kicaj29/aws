@@ -145,6 +145,8 @@ https://health.aws.amazon.com/
 
 https://status.aws.amazon.com redirects to https://health.aws.amazon.com/health/home#/account/dashboard/open-issues and here we can see status of all services in all regions https://health.aws.amazon.com/health/status
 
+Service Health Dashboard offers the possibility to subscribe to an RSS feed to be notified of interruptions to each service
+
 ![11-service-health-dashboard.png](./images/11-service-health-dashboard.png)
 
 
@@ -155,3 +157,4 @@ https://phd.aws.amazon.com/ now it is redirected to https://health.aws.amazon.co
 * Provides alerts and remediation guidance when AWS is experiencing events that might impact you
 * While the `Service Health Dashboard` displays the general status of AWS services, `Your Account Health` gives you a personalized view into the performance and availability of the AWS services underlying your AWS resources
 * Displays relevant and timely information to help you manage events in progress and provides proactive notification to help you plan for scheduled activities
+* No RSS feed

@@ -24,6 +24,7 @@ Instance Store Volumes: they are **physically attached** to some EC2 instance ty
 
 ## EBS - snapshots (backup)
 
+* EBS snapshots are stored on S3
 * incremental snapshots
 * make a snapshot (backup) of you EBS volume at point in time
 * not necessary to detach volume to do snapshot, but recommended
@@ -38,7 +39,7 @@ Features
   * takes within 24 to 72 hours for restoring the archive
   * snapshots are stored on S3
 * Recycle bin for EBS snapshot
-  * setup rules to retain deleted snapshots so you can recover the after an accidential deletion
+  * setup rules to retain deleted snapshots so you can recover the after an accidental deletion
   * specify retention (1 day to 1 year)
 
 # EFS - Elastic File System

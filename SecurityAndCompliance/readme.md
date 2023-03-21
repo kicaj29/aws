@@ -205,6 +205,7 @@ https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#key-mgmt
 * Integration with Amazon RDS (MySQL, PostgreSQL, Aurora)
 * Secrets are encrypted using KMS
 * Mostly meant for RDS integrations
+* **It does not generate new secrets/keys**
 
 ![11-secrets-manager.png](./images/11-secrets-manager.png)
 

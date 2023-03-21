@@ -415,15 +415,19 @@ https://aws.amazon.com/efs/
 * **utilizes SSD drives for low latency**
 
 ## Snowball
-* service to physically migrate petabyte scale data to AWS.
+* service to physically migrate **petabyte** scale data to AWS
+* snowballs come in 50 TB (42 usable) and 80 TB (72 usable) sizes
+* you can move a **petabyte of data in as little as 14 Snowballs**.
 * physical device is delivered by AWS
 * you connect the snowball to your network and upload your data
 * device is returned by local carrier
 * AWS receives device and loads your data into S3
 
 ## Snowmobile
-* service to physically migrate exabyte scale data onto AWS.
-* ruggedized shipping container is delivered to your location
+* service to physically migrate **exabyte scale** data onto AWS.
+* each Snowmobile has a total capacity of up to 100 petabytes
+* multiple Snowmobiles can be used in parallel to transfer **exabytes of data**
+* ruggedize shipping container is delivered to your location
 * AWS sets up a connection to your network
 * you load your data on the snowmobile
 * AWS will load data into S3 when the container is received at an AWS location
@@ -560,8 +564,9 @@ Use cases:
 * provides remediation steps for infrastructure not meeting criteria
 ## AWS Systems Manager
 >"Provides a unified user interface so you can view operational data from multiple AWS services and allows you to automate operations tasks across your AWS resources"
+* **Gain Operational Insight and Take Action on AWS Resources.**
 * allows to access and manage all AWS Services
-* provides operational data and automation across infrastructure
+* provides **operational data and automation across infrastructure**
 * provides multiple tools that make it easier to manage your AWS infrastructure
 * enables automation tasks for common maintenance actions
 * gives a secure way to access servers using only AWS credentials
