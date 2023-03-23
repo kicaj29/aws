@@ -322,7 +322,7 @@ Macie automatically provides an inventory of Amazon S3 buckets including a list 
 * GuardDuty, Macie and SecurityHub are used to identify potential security issues, or findings.
 * Sometimes security findings require deeper analysis to isolate the root cause and take action - it is a complex process
 * Amazon Detective analyzes, investigates, and quickly identifies the root cause of security issue or suspicious activities (using ML and graphs)
-* Automatically collects and processes events from VPS flow logs, CloudTrail, GuardDuty and create a unified view
+* Automatically collects and processes events **from VPC flow logs, CloudTrail, GuardDuty** and create a unified view
 * Produces visualizations with details and context to get the root cause
 
 # AWS Abuse (AWS Trust & Safety team)
