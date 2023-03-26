@@ -29,6 +29,7 @@
 * Fast and quickly scalable to thousands of users
 * Secure data - integrates with KMS
 * Pay-as-you-go service with monthly or hourly rates
+* It is global service (not regional)
 
 ![01-work-spaces.png](./images/01-work-spaces.png)
 
@@ -140,7 +141,7 @@ Recovery Point Objective (RPO) - is your goal for the maximum amount of data the
 
 https://www.youtube.com/watch?v=GAMUCIJR5as
 
-* Used to be named "CloudEndure Disaster Recovery" before AWS bought it
+* Used to be named "**CloudEndure Disaster Recovery**" before AWS bought it
 * Quickly and easily recover your physical, virtual and cloud-based servers into AWS
 * Example: protect your most critical databases (Oracle, MySQL, SQL Server), enterprise apps (SAP), protect your data from ransomware attacks,...
 * Continuous block-level replication for your servers

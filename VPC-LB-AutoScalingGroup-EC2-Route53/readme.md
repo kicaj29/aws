@@ -499,6 +499,8 @@ Open in web browser this address ```http://52.53.108.154:3000/``` to see working
 
 ## Scaling EC2 instances
 
+https://docs.aws.amazon.com/autoscaling/ec2/userguide/ec2-auto-scaling-predictive-scaling.html
+
 ### Creating dedicated AMI (image) for EC2 instance
 
 It is possible to created a snapshot of existing instance. Such snapshot can be saved and replicated.

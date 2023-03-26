@@ -86,6 +86,7 @@ CloudFormation creates those for you, in the right order, with the exact configu
 * Supports: Go, Java SE, .NET, Docker etc... Can also write custom platform
 * Beanstalk uses **CloudFormation**
 * Health Monitoring
+* Can be also used to deploy non-web apps
 
 ![04-beanstalk.png](./images/04-beanstalk.png)
 
@@ -127,6 +128,7 @@ CloudFormation creates those for you, in the right order, with the exact configu
 * Benefits
   * Fully managed, compatible with CodeCommit, CodeBuild, CodeDeploy, Elastic Beanstalk
   * Fast delivery & rapid updates
+* It uses CloudWatch Events to detect changes in CodeCommit repos used as source for a pipeline
 
 ![07-code-pipeline.png](./images/07-code-pipeline.png)
 

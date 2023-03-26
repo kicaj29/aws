@@ -20,14 +20,15 @@
 - [Root user privileges](#root-user-privileges)
 - [MFA (Multi-Factor Authentication)](#mfa-multi-factor-authentication)
 - [Credential Reports](#credential-reports)
+- [Services encrypted by default and need no user intervention to enable encryption](#services-encrypted-by-default-and-need-no-user-intervention-to-enable-encryption)
 
 # AWS Shared responsibility model
 
-* AWS responsibility - Security of the Cloud
+* AWS responsibility - **Security of the Cloud**
   * Protecting infrastructure (hardware and software) that run all the AWS Services
   * Managed services like S3, DynamoDB, RDS
   * Maintaining network infrastructure
-* Customer responsibility - Security in the Cloud
+* Customer responsibility - **Security in the Cloud**
   * For EC2 instance customer is responsible for management of the guest OS, firewall & network configuration, IAM
   * Encrypting application data
   * Network configuration and firewall
@@ -83,7 +84,7 @@ More here https://aws.amazon.com/compliance/shared-responsibility-model/
 * AWS WAF: filter specific requests based on rules
   * Protects your web applications from common web exploits (Layer 7). Layer 7 is HTTP (vs Layer 4 is TCP)
     * For example can prevent SQL injection 
-  * Deploy on ALB, API Gateway, CLoudFront
+  * Deploy on ALB, API Gateway, CLoudFront, AWS AppSync
   * **WAF can block all requests except the ones that you allow** - WAF can block all requests except the ones that you allow. This is useful when you want to serve content for a restricted website whose users are readily identifiable by properties in web requests, such as the IP addresses that they use to browse to the website https://docs.aws.amazon.com/waf/latest/developerguide/waf-rule-action.html
   ![21-waf-rules.png](./images/21-waf-rules.png)
   * Defines web ACL (Web Access Control List)
@@ -233,6 +234,7 @@ https://aws.amazon.com/compliance/customer-center/
 # Guard Duty
 
 * Intelligent threat discovery to protect AWS account
+* Threat detection service that **continuously monitors** for malicious activity and unauthorized behavior to protect your AWS accounts, workloads, and data stored in Amazon S3
 * Uses ML algorithms, anomaly detection, 3rd party data
 * One click to enable (30 days trial), no need to install software
 * Input data includes
@@ -368,3 +370,9 @@ Macie automatically provides an inventory of Amazon S3 buckets including a list 
 # Credential Reports
 
 You can generate and download a credential report that lists all users in your account and the status of their various credentials, including passwords, access keys, and MFA devices. You can use credential reports to assist in your auditing and compliance efforts. You can use the report to audit the effects of credential lifecycle requirements, such as password and access key rotation. You can provide the report to an external auditor, or grant permissions to an auditor so that he or she can download the report directly.
+
+# Services encrypted by default and need no user intervention to enable encryption
+
+* CloudTrail logs
+* S3 Glacier
+* AWS Storage Gateway

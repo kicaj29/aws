@@ -26,7 +26,7 @@
 
 # Transcribe
 
-* Automatically convert speech to text
+* Automatically converts speech to text
 * Uses deep learning process called automatic speech recognition (ASR)  to convert speech to text quickly and accurately
 * Automatically removes PII using Redaction
 * Supports Automatic Language Identification for multi-lingual audio
@@ -91,6 +91,7 @@
 * 50% more accurate than looking at the data itself
 * Reduce forecasting time form month to hours
 * Uses cases: Product Demand Planning, Financial Planning, Resource Planning...
+  * Predict the web traffic of a website for the next few weeks
 
 ![03-forecast.png](./images/03-forecast.png)
 

@@ -146,6 +146,7 @@ Can move between classes manually or using S3 lifecycle configurations.
 * S3 object lock: adopt a WORM (Write Once - Read Many) model - possible in Glacier. It is also possible to lock this policy
   so no one can change it in the future.
 * Block an object version deletion for a specified amount of time
+* With S3 Object Lock, users with special permissions can make changes to the Lock policy and delete the data. This is not possible with S3 Glacier Vault Lock.
 
 # S3 Glacier vault lock
 
@@ -180,6 +181,8 @@ Highly-secure, portable offline devices to collect and process data at the edge,
 
 ## Data migration
 
+https://aws.amazon.com/snow/
+
 * Snowcone
   * Small device, portable, computing anywhere, rugged & secure, withstands harsh environments
   * Light (4.5 pounds, 2.1 kg)
@@ -187,6 +190,7 @@ Highly-secure, portable offline devices to collect and process data at the edge,
   * 8 TB of usable storage
   * Must provide own batter/cables
   * Can be sent back to AWS offline, or connect it to Internet and use **AWS DataSync** to send data
+  * You can use Snowcone in backpacks on first responders, or **for IoT**, vehicular, and drone use cases.
 * Snowball edge
   * Big device
   * Move TBs or PBs of data in or out of AWS

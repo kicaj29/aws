@@ -376,7 +376,7 @@ Add missing permissions for index.html:
     * 180 day minimum storage duration change (data must be stored at least 180 days)
     * can be retrieved in hours
     * you pay a retrieval fee per GB retrieved
-    * over 23 times less expensive than S3 Standard Storage Class  
+    * **over 23 times less expensive than S3 Standard Storage Class  **
   
 ## Elastic Block Store (EBS)
 Block storage designed **to be connected to a single EC2 instance** that can scale to support petabytes of data and supports multiple volume types based on need.

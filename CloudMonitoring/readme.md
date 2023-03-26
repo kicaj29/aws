@@ -8,6 +8,8 @@
   - [Additional capabilities](#additional-capabilities)
   - [EventBridge Hands On](#eventbridge-hands-on)
 - [AWS CloudTrail](#aws-cloudtrail)
+    - [AWS CloudTrail Insights](#aws-cloudtrail-insights)
+  - [Three types of events that can be logged in CloudTrail](#three-types-of-events-that-can-be-logged-in-cloudtrail)
   - [AWS CloudTrail Hands On](#aws-cloudtrail-hands-on)
 - [AWS X-Ray](#aws-x-ray)
 - [CodeGuru](#codeguru)
@@ -102,6 +104,21 @@ It is possible to react on events happening outside of AWS.
 * A trail can be applied to All Regions (default) or a single Region
 * If a resource is deleted in AWS, investigate CloudTrail first
 * Entries in the CloudTrail appears after around 5 mins after executing action in AWS
+
+### AWS CloudTrail Insights
+
+Insights events are logged when CloudTrail detects unusual write management API activity in your account. If you have CloudTrail Insights enabled, and CloudTrail detects unusual activity, Insights events are delivered to the destination S3 bucket for your trail. You can also see the type of insight and the incident time period when you view Insights events on the CloudTrail console. Unlike other types of events captured in a CloudTrail trail, Insights events are logged only when CloudTrail detects changes in your account's API usage that differ significantly from the account's typical usage patterns.
+
+CloudTrail Insights can help you detect unusual API activity in your AWS account by raising Insights events. CloudTrail Insights measures your normal patterns of API call volume, also called the baseline, and generates Insights events when the volume is outside normal patterns.
+
+## Three types of events that can be logged in CloudTrail
+
+* management events (only this is enabled by default)
+  * These are also known as control plane operations. Examples include registering devices, configuring rules for routing data, setting up logging etc.
+* data events
+  * Data events provide information about the resource operations performed on or in a resource. These are also known as data plane operations. Data events are often high-volume activities. The following data types are recorded: Amazon S3 object-level API activity, AWS Lambda function execution activity, Amazon S3 object-level API activity on AWS Outposts.
+* CloudTrail Insights events
+  * CloudTrail Insights events capture unusual activity in your AWS account. If you have Insights events enabled, and CloudTrail detects unusual activity, Insights events are logged to a different folder or prefix in the destination S3 bucket for your trail. You can also see the type of insight and the incident time period when you view Insights events on the CloudTrail console.
 
 ## AWS CloudTrail Hands On
 

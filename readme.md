@@ -49,6 +49,8 @@ AZs are physically separated within a typical metropolitan region and are locate
 
 AZ is one or more data centers in the same location (region = location).
 
+All AZ’s in an AWS Region are interconnected with high-bandwidth, low-latency networking, over fully redundant, dedicated metro fiber providing high-throughput, low-latency networking between AZ’s. **All traffic between AZ’s is encrypted.**
+
 ![aws-13-regions.png](images/fundamentals/aws-13-regions.png)
 
 https://aws.amazon.com/about-aws/global-infrastructure/regions_az/?p=ngi&loc=2

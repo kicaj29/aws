@@ -490,7 +490,7 @@ https://aws.amazon.com/premiumsupport/plans/
 
 * Intended to be used if you have mission critical workloads
 * All of Business Support Plan +
-* Access to a designated Technical Account Manager (TAM)
+* Access to a **designated Technical Account Manager** (TAM)
 * Infrastructure Even Management, Well-Architected & Operations Reviews
 * Case severity / response times
   * The same as before with exception that for business-critical system down < 15 mins 
