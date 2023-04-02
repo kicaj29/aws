@@ -64,10 +64,12 @@
 
 https://aws.amazon.com/organizations/faqs/
 
+* **SCP specifies the maximum permissions that can be used by users and roles in your organization`s accounts. An SCP does not grant permissions. You must still use IAM permissions or resources policies to grant permissions.**
 * Whitelist or blacklist IAM actions
 * Applied at the OU or Account level
 * **Does not apply to the master account**
 * SCP is applied to all the Users and Roles of the Account, including Root
+* Attaching an empty SCP to an account is equivalent to attaching a policy that explicitly denies all actions.
 * The SCP does not affect service-linked roles
   * Service-linked roles enable other AWS services to integrate with AWS Organizations and cannot be restricted by SCPs.
 * SCP must have an explicit Allow (does not allow anything by default)
@@ -110,6 +112,7 @@ https://aws.amazon.com/organizations/faqs/
 * Benefits
   * Automate the set up of your environment in a few clicks
   * Automate ongoing policy management using guardrails
+    * Guardrails are pre-packaged SCP and AWS Config governance rules for security, operations, and compliance that customers can select and apply enterprise-wide or to specific groups of accounts
   * Detect policy violations and remediate them
   * Monitor compliance through an interactive dashboard
 * **AWS Control Tower runs on top of AWS Organizations**
@@ -182,10 +185,18 @@ https://aws.amazon.com/organizations/faqs/
   * Up to 90% discount compared to On-demand on hourly rate
   * Bid for unused capacity
   * AWS can “pull the plug” and terminate spot instances with just a 2 minute warning.
-* Dedicated Host
+* [Dedicated Instance](https://aws.amazon.com/ec2/pricing/dedicated-instances/)
+  * Dedicated Instances are Amazon EC2 instances that run in a VPC on hardware that's dedicated to a single customer
+  * Your Dedicated instances are physically isolated at the host hardware level from instances that belong to other AWS accounts
+  * Dedicated instances may share hardware with other instances from the same AWS account that are not Dedicated instances
+  * Pay for Dedicated Instances **On-Demand**, save up to 70% by purchasing **Reserved Instances**, or save up to 90% by purchasing **Spot Instances**.
+* [Dedicated Host](https://aws.amazon.com/ec2/dedicated-hosts/)
   * On-demand
   * Physical servers with Amazon EC2 instance capacity that is fully dedicated to your use
-  * Reservation for 1 year or 3 years commitment
+  * [Pricing options](https://aws.amazon.com/ec2/dedicated-hosts/pricing/) **no spot option**
+    * On-Demand
+    * Reservations (1 or 3 years commitment): reservations can provide up to a 70% discount compared to the On-Demand price
+    * Saving Plans: savings of up to 72% on your AWS compute usage
 * Saving plans as an alternative to save on sustained usage
   * you do not purchase actual instances but ‌commit to one or three years of On-Demand Instances at a discounted price
   * **commitment unit: dollar**
@@ -288,12 +299,12 @@ For example: per AWS pricing, data transfer between S3 and EC2 instances within 
 
 * Commit a certain $ amount per hour for 1 or 3 years
 * Easiest wat to setup long-term commitments on AWS
-* EC2 Saving Plan
+* [EC2 Saving Plan](https://aws.amazon.com/savingsplans/compute-pricing/)
   * Up to 72% discount compared to On-Demand
   * Commit to usage of individual instance families in a region (eg. C5 or M5)
   * Regardless of AZ, size (m5.xl to m5.4xl), OS (Linux/Windows) or tenancy
   * All upfront, partial upfront, no upfront
-* Compute Savings Plan
+* [Compute Savings Plan](https://aws.amazon.com/savingsplans/compute-pricing/)
   * Up to 66% discount compared to On-Demand
   * Regardless to Family, Region, size, OS, tenancy, compute options
   * Compute Options: EC2, Fargate, Lambda
@@ -337,7 +348,7 @@ For example: per AWS pricing, data transfer between S3 and EC2 instances within 
 * Free tier
   ![20-free-tier.png](./images/20-free-tier.png)
 
-* Cost allocation tags to track your AWS costs on a detailed level
+* [Cost allocation tags](https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/cost-alloc-tags.html) to track your AWS costs on a detailed level
   * AWS generated tags
     * Automatically applied to the resource you create
     * Starts with Prefix aws: (e.g. aws:createdBy)
@@ -346,7 +357,7 @@ For example: per AWS pricing, data transfer between S3 and EC2 instances within 
     * Starts with Prefix user:
       ![21-allocation-tags.png](./images/21-allocation-tags.png)
   * For each resource, each tag key must be unique, and each tag key can have only one value
-  * **You must activate both AWS generated tags and user-defined tags separately** before they can appear in Cost Explorer or on a cost allocation report
+  * **You must activate both [AWS generated tags](https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/activate-built-in-tags.html) and [user-defined tags](https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/custom-tags.html) separately** before they can appear in Cost Explorer or on a cost allocation report
 
 * Tagging and Resource Groups    
   * Tags are used for organizing resources
@@ -361,8 +372,15 @@ For example: per AWS pricing, data transfer between S3 and EC2 instances within 
   ![22-resoruce-groups.png](./images/22-resoruce-groups.png)
 
 * Cost and Usage Reports (**it is part of AWS Billing**)
+  * It is global service
 
-*AWS Cost and Usage reports provide access to detailed data, enabling you to better analyze and understand your AWS **costs as well as the specific product offerings and usage amounts underlying those costs**. You can customize the content and delivery of your reports and manage them from the reports dashboard.*
+  *AWS Cost and Usage reports provide access to detailed data, enabling you to better analyze and understand your AWS **costs as well as the specific product offerings and usage amounts underlying those costs**. You can customize the content and delivery of your reports and manage them from the reports dashboard.*
+
+  *AWS Cost and Usage Reports track your AWS usage and provide **estimated charges** associated with your account. Each report contains line items for each unique combination of AWS products, usage type, and operation that you use in your AWS account.*
+
+  ![033-cost-and-usage-report-create.png](./images/033-cost-and-usage-report-create.png)
+  ![034-cost-and-usage-report-create.png](./images/034-cost-and-usage-report-create.png)
+
 
   * Dive deeper into your AWS costs and usage
   * The AWS Cost and Usage Report contains the most comprehensive set of AWS cost and usage data available, including additional metadata about AWS services, pricing, and reservations (e.g., Amazon EC2 Reserved Instances)
@@ -373,6 +391,7 @@ For example: per AWS pricing, data transfer between S3 and EC2 instances within 
   * You can use Cost and Usage Reports to publish your AWS billing reports to an Amazon Simple Storage Service (Amazon S3) bucket that you own.
 
 * Cost Explorer (**it is part of AWS Cost Management but here it means all AWS Cost Management module**)
+  * Global service
   * Visual, understand, and manage your AWS costs and usage over time
   * Create custom reports that analyze **cost and usage data**
   * **Analyze your data at high level**: total costs and usage **across all accounts**
