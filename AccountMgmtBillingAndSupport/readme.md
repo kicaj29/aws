@@ -21,6 +21,8 @@
 - [AWS Compute Optimizer](#aws-compute-optimizer)
 - [Billing \& Costing Tools Overview](#billing--costing-tools-overview)
   - [AWS Billing Dashboard, tags, reports](#aws-billing-dashboard-tags-reports)
+    - [Cost and Usage Reports (**it is part of AWS Billing**)](#cost-and-usage-reports-it-is-part-of-aws-billing)
+    - [Cost Explorer](#cost-explorer)
 - [Billing alarms and AWS budgets](#billing-alarms-and-aws-budgets)
 - [Billing alarms](#billing-alarms)
   - [AWS budgets](#aws-budgets)
@@ -371,7 +373,11 @@ For example: per AWS pricing, data transfer between S3 and EC2 instances within 
   * It is per region group
   ![22-resoruce-groups.png](./images/22-resoruce-groups.png)
 
-* Cost and Usage Reports (**it is part of AWS Billing**)
+### Cost and Usage Reports (**it is part of AWS Billing**)
+  https://docs.aws.amazon.com/cur/latest/userguide/cur-create.html
+
+  
+  * *It can take up to 24 hours for AWS to start delivering reports to your Amazon S3 bucket. After delivery starts, AWS updates the AWS Cost and Usage Reports files at least once a day.*
   * It is global service
 
   *AWS Cost and Usage reports provide access to detailed data, enabling you to better analyze and understand your AWS **costs as well as the specific product offerings and usage amounts underlying those costs**. You can customize the content and delivery of your reports and manage them from the reports dashboard.*
@@ -383,21 +389,25 @@ For example: per AWS pricing, data transfer between S3 and EC2 instances within 
 
 
   * Dive deeper into your AWS costs and usage
-  * The AWS Cost and Usage Report contains the most comprehensive set of AWS cost and usage data available, including additional metadata about AWS services, pricing, and reservations (e.g., Amazon EC2 Reserved Instances)
+  * The AWS Cost and Usage Report contains **the most comprehensive set of AWS cost and usage data available**, including additional metadata about AWS services, pricing, and reservations (e.g., Amazon EC2 Reserved Instances)
   * The AWS Cost and Usage Report lists AWS usage for each service category used by an account and its IAM users in hourly or daily line items, as well as any tags that you have activated for cost allocation purpose
   * Can be integrated with Athena, Redshift or QuickSight
   ![23-cost-and-usage-reports.png](./images/23-cost-and-usage-reports.png)
   * **Cost and Usage Reports cannot be used to identify under-utilized EC2 instances.**
   * You can use Cost and Usage Reports to publish your AWS billing reports to an Amazon Simple Storage Service (Amazon S3) bucket that you own.
 
-* Cost Explorer (**it is part of AWS Cost Management but here it means all AWS Cost Management module**)
+### Cost Explorer
+  * **It is part of AWS Cost Management but here it means all AWS Cost Management module.**
   * Global service
+  * Data available immediately (no need to wait ~24 hours on first report)
   * Visual, understand, and manage your AWS costs and usage over time
   * Create custom reports that analyze **cost and usage data**
   * **Analyze your data at high level**: total costs and usage **across all accounts**
-  * Or monthly, hourly, resource level granularity
+  * Monthly, hourly, resource level granularity
   * Choose an optimal **Savings Plan** (to lower prices on your bill)
-  * **Forecast usage up to 12 months based on previous usage**
+  * **[Forecast usage up to 12 months based on previous usage](https://docs.aws.amazon.com/cost-management/latest/userguide/ce-forecast.html)**
+    * You create a forecast by selecting a future time range for your report
+    * ![035-cost-explorer-forcast.png](./images/035-cost-explorer-forcast.png)
   * Doesn’t have insight into resource utilization (this is available in AWS Trusted Advisor)
   ![24-cost-explorer.png](./images/24-cost-explorer.png)
   * Sample report - monthly cost by AWS Service
