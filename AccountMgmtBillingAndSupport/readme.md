@@ -374,7 +374,8 @@ For example: per AWS pricing, data transfer between S3 and EC2 instances within 
   ![22-resoruce-groups.png](./images/22-resoruce-groups.png)
 
 ### Cost and Usage Reports (**it is part of AWS Billing**)
-  https://docs.aws.amazon.com/cur/latest/userguide/cur-create.html
+  https://docs.aws.amazon.com/cur/latest/userguide/cur-create.html   
+  https://docs.aws.amazon.com/cur/latest/userguide/what-is-cur.html   
 
   
   * *It can take up to 24 hours for AWS to start delivering reports to your Amazon S3 bucket. After delivery starts, AWS updates the AWS Cost and Usage Reports files at least once a day.*
