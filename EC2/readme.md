@@ -1,5 +1,7 @@
 # EC2 instance families
 
+https://aws.amazon.com/ec2/instance-types/
+
 * General purpose: provide a balance of compute, memory, and networking resources
   * application servers, gaming servers, backend servers for enterprise applications, small and medium databases
   
@@ -140,6 +142,8 @@ Last step is distribution the new image.
 
 
 # EC2 Instance Connect
+
+https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Connect-using-EC2-Instance-Connect.html
 
 Amazon EC2 Instance Connect provides a simple and secure way to connect to your instances using Secure Shell (SSH).
 With EC2 Instance Connect, you use AWS Identity and Access Management (IAM) policies and principals to control SSH access to your instances, removing the need to share and manage SSH keys. All connection requests using EC2 Instance Connect are logged to AWS CloudTrail so that you can audit connection requests. **It is browser-based client**.

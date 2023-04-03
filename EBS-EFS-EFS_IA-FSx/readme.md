@@ -7,6 +7,9 @@ https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/InstanceStorage.html
 An instance store provides temporary block-level storage for your instance. This storage is located on disks that are **physically attached** to the host computer. Instance store is ideal for temporary storage of information that changes frequently, such as buffers, caches, scratch data, and other temporary content
 
 This is also good option when you need storage with very low latency, but you don't need the data to persist when the instance terminates or you can take advantage of fault-tolerant architectures.
+
+Backups and replication are your responsibility.
+
 # What is an EBS Volume
 
 * It is a network drive you can attach to your instances while they run (it is not a physical drive). Because it is a network drive there might be a bit of latency.
@@ -17,7 +20,8 @@ This is also good option when you need storage with very low latency, but you do
 * Analogy: think ot them as a "network USB stick".
 * Size up to 16 TB
 * Single file can be stored as many blocks - it allows to update only part of the file, partial file updates are possible, S3 does not support it
-* EBS Volumes do not automatically scale if more space is needed
+* EBS Volumes do not automatically scale if more space is needed: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/step3-increase-size-of-data-volume.html
+  * It can be automated by running custom lambda function: https://aws.amazon.com/blogs/storage/automating-amazon-ebs-volume-resizing-with-aws-step-functions-and-aws-systems-manager/
 * Both non-root and root volumes can be encrypted
 
 ## EBS - delete on termination
@@ -72,7 +76,7 @@ An Amazon EBS-backed instance can be stopped and later restarted without affecti
 * Works only with Linux EC2 and multi-AZ.
 * Highly available (multiple Availability Zones), scalable, expensive (3x gp2), pay per use, no capacity planning.
 * It is regional resource
-* Automatically scales (if more space is needed)
+* **Automatically scales** (if more space is needed, EBS does not automatically scales)
 * To access EFS file systems from on-premises, you must have an AWS Direct Connect or AWS VPN connection between your on-premises datacenter and your Amazon VPC. **You mount an EFS file system on your on-premises Linux server** using the standard Linux mount command for mounting a file system
 
 ![003-efs.png](./images/003-efs.png)
@@ -87,17 +91,6 @@ An Amazon EBS-backed instance can be stopped and later restarted without affecti
 * transparent to the applications accessing EFS
 
 ![003-efs-ia.png](./images/003-efs-ia.png)
-
-# EC2 Instance store
-
-* It is a name of hardware that is attached to the phisical server.
-* Standard EBS volumes are network drives with good but "limited" performance.
-* If you new a high-performance hardware disk, use **EC2 instance store**.
-* Better I/O performance
-* EC2 Instance Store lose their storage if they are stopped (ephemeral)
-* Good for buffer / scratch data / temporary content
-* Risk of data loss if hardware fails
-* Backups and repolication are your responsibility
 
 # Shared responsibility model for EC2 storage
 
