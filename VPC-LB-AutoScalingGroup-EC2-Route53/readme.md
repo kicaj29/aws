@@ -100,7 +100,14 @@
 # Security Groups
 
 A security group defines a collection of IPs that are allowed to connect to your instance and IPs that instance is allowed to connect to. **Security groups are attached at the instance level (EC2) to interfaces (ENI) and can be shared among many instances**. You can even set security group rules to allow access from other security groups instead of by IP. **Security groups are stateful firewalls (it has persistency and can remember traffic from the past)**.
-You cannot block individual IP addresses on Security Groups - format is always like x.y.z.w/network size. This is possible on network ACL.
+
+
+You cannot use individual IP address value: ![vpc-111-security-group-cidr.png](./images/vpc-111-security-group-cidr.png)   
+
+You can do a trick and specify individual IP address using CIDR block, for example: 193.27.211.171/32
+![vpc-112-security-group-cidr.png](./images/vpc-112-security-group-cidr.png)   
+
+**In ACL you can use individual IP address without using CIDR block.**
 
 For example security group can be defined in EC2 wizard as one of its steps:
 ![vpc-21-aws-create-ec2-instance.png](images/vpc-21-aws-create-ec2-instance.png)
@@ -109,6 +116,11 @@ For example security group can be defined in EC2 wizard as one of its steps:
 Also when connection is established by for example EC2 instance then by default this outgoing traffic is allowed.
 
 * **Inbound traffic is implicitly denied** - if there is no rule then the incoming traffic is denied.
+
+* Sample screens
+
+  ![vpc-113-security-no-rules.png](./images/vpc-113-security-no-rules.png)
+  ![vpc-114-security-rules.png](./images/vpc-114-security-rules.png)
 
 * Only **allow rules** are supported!
 
