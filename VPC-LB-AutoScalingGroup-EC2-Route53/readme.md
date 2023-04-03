@@ -163,6 +163,8 @@ Router exist across availability zones and there is no single point of hardware 
 
 Another tool the VPCs use for networking control is the **network access control list**. Each VPC has one access control list, and this acts as an IP filtering table saying which IPs are allowed through the VPC for both incoming and outgoing traffic. Access control lists are kind of like super-powered security groups that apply rules for the entire VPC. **ACL is stateless firewall** - it means that return traffic must be explicitly allowed by rules.
 
+**In ACL you can use individual IP address without using CIDR block.**
+
 **ACL can be assigned to VPC and subnet.** It is not possible to assign ACL to EC2 instance or ENI (Security Groups can be assigned to EC2 instance or ENI).
 
 **For incoming traffic first is always checked ACL and next Security Group rules.** 
