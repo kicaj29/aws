@@ -376,6 +376,7 @@ For example: per AWS pricing, data transfer between S3 and EC2 instances within 
 ### Cost and Usage Reports (**it is part of AWS Billing**)
   https://docs.aws.amazon.com/cur/latest/userguide/cur-create.html   
   https://docs.aws.amazon.com/cur/latest/userguide/what-is-cur.html   
+  https://www.linkedin.com/pulse/aws-cost-report-faint-heart-joshua-moore/   
 
   
   * *It can take up to 24 hours for AWS to start delivering reports to your Amazon S3 bucket. After delivery starts, AWS updates the AWS Cost and Usage Reports files at least once a day.*
@@ -457,13 +458,13 @@ https://aws.amazon.com/premiumsupport/technology/trusted-advisor/
     * EBS - making sure that we do not have public snapshots
     * RDS - making sure that we do not have public snapshots
     * Server Limits
+    * **Does not check EC2 instances, for EC2 is used AWS Inspector**
   * Fault tolerance
   * Service limits
   * Full checks - business & enterprise support plan - beyond the seven checks above, there are additional checks (over 60 total) under each category available
     * Full check available on the **5 categories**
     * Ability to set CloudWatch alarms when reaching limits
     * Programmatic Access using AWS Support API
-  * **Does not check EC2 instances, for EC2 is used AWS Inspector**
 
 ![26-advisor.png](./images/26-advisor.png)
 

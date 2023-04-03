@@ -16,7 +16,7 @@
 
 ![02-cognito.png](./images/02-cognito.png)
 
-# AWS Directory Services
+# AWS Directory Service
 
 * What is Microsoft Active Directory (AD)?
   * Found on any Windows Server with AD Domain Services
@@ -24,17 +24,17 @@
   * Centralized security management, create account, assign permissions
   ![03-AD.png](./images/03-AD.png)
 
-* AWS Managed Microsoft AD
+* [AWS Managed Microsoft AD](https://docs.aws.amazon.com/directoryservice/latest/admin-guide/directory_microsoft_ad.html)
   * Create you own AD in AWS, manage users locally, supports MFA
   * Establish "trust" connections with your on-premise AS
   ![04-AD.png](./images/04-AD.png)
 
-* AD Connector
+* [AD Connector](https://docs.aws.amazon.com/directoryservice/latest/admin-guide/directory_ad_connector.html)
   * Directory gateway (proxy) to redirect to on-premises AD, supports MFA
   * Users are managed on the on-premise AD
   ![05-AD.png](./images/05-AD.png)
 
-* Simple AD
+* [Simple AD](https://docs.aws.amazon.com/directoryservice/latest/admin-guide/directory_simple_ad.html)
   * AD-compatible managed directory on AWS
   * Cannot be joined with on-premise AD
   ![06-AD.png](./images/06-AD.png)

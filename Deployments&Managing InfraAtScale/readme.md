@@ -215,6 +215,8 @@ CloudFormation creates those for you, in the right order, with the exact configu
 
 # Systems Manager (SSM)
 
+![44-systems-manager.png](./images/44-systems-manager.png)
+
 * Helps you manage your EC2 and On-Premises systems at scale
 * Another **Hybrid AWS service**
 * Get operational insights about the state of your infra.

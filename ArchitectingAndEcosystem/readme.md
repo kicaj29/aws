@@ -231,6 +231,8 @@ https://aws.amazon.com/premiumsupport/knowledge-center/
 
 # AWS IQ
 
+Post a project request, select an expert, and pay directly through AWS.
+
 * Quickly find professional help for your AWS projects
 * Engage and pay AWS Certified 3rd party experts for on-demand project work
 * Video-conferencing, contract mgmt, secure collaboration, integrated billing

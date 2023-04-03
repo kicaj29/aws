@@ -1,9 +1,12 @@
 Amazon Elastic Block Store
 
 # Instance Store Volumes
-Instance Store Volumes: they are **physically attached** to some EC2 instance types. By default, the root EBS volume (another name of Instance Store Volumes) is deleted when EC2 is stopped. The reason of this is that if we start and stop EC2 instance and start again this new run might use different host than previous run so it will have another storage which is physically attached.
 
- This is a good option when you need storage with very low latency, but you don't need the data to persist when the instance terminates or you can take advantage of fault-tolerant architectures.
+https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/InstanceStorage.html
+
+An instance store provides temporary block-level storage for your instance. This storage is located on disks that are **physically attached** to the host computer. Instance store is ideal for temporary storage of information that changes frequently, such as buffers, caches, scratch data, and other temporary content
+
+This is also good option when you need storage with very low latency, but you don't need the data to persist when the instance terminates or you can take advantage of fault-tolerant architectures.
 # What is an EBS Volume
 
 * It is a network drive you can attach to your instances while they run (it is not a physical drive). Because it is a network drive there might be a bit of latency.
@@ -41,6 +44,27 @@ Features
 * Recycle bin for EBS snapshot
   * setup rules to retain deleted snapshots so you can recover the after an accidental deletion
   * specify retention (1 day to 1 year)
+
+# Root device storage concepts
+
+https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/RootDeviceStorage.html
+
+When you launch an instance, the **root device volume contains the image used to boot the instance**. When we introduced Amazon EC2, all AMIs were backed by Amazon EC2 instance store, which means the root device for an instance launched from the AMI is an instance store volume created from a template stored in Amazon S3. After we introduced Amazon EBS, we introduced AMIs that are backed by Amazon EBS. This means that the root device for an instance launched from the AMI is an Amazon EBS volume created from an Amazon EBS snapshot.
+
+You can choose between AMIs backed by Amazon EC2 instance store and AMIs backed by Amazon EBS. **We recommend that you use AMIs backed by Amazon EBS**, because they launch faster and use persistent storage.
+
+
+## Instance store-backed instances
+
+Any data on the instance store volumes persists as long as the instance is running, but this data is deleted when the instance is terminated (instance store-backed instances do not support the Stop action) or if it fails (such as if an underlying drive has issues).
+
+After an instance store-backed instance fails or terminates, it cannot be restored. If you plan to use Amazon EC2 instance store-backed instances, we highly recommend that you distribute the data on your instance stores across multiple Availability Zones. You should also back up critical data from your instance store volumes to persistent storage on a regular basis.
+
+## Amazon EBS-backed instances
+
+Instances that use Amazon EBS for the root device automatically have an Amazon EBS volume attached. When you launch an Amazon EBS-backed instance, we create an Amazon EBS volume for each Amazon EBS snapshot referenced by the AMI you use. You can optionally use other Amazon EBS volumes or instance store volumes, depending on the instance type.
+
+An Amazon EBS-backed instance can be stopped and later restarted without affecting data stored in the attached volumes. 
 
 # EFS - Elastic File System
 
