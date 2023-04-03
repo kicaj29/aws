@@ -109,6 +109,8 @@ You can do a trick and specify individual IP address using CIDR block, for examp
 
 **In ACL you can use individual IP address without using CIDR block.**
 
+![vpc-115-acl-format.png](./images/vpc-115-acl-format.png)
+
 For example security group can be defined in EC2 wizard as one of its steps:
 ![vpc-21-aws-create-ec2-instance.png](images/vpc-21-aws-create-ec2-instance.png)
 
