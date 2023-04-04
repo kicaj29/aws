@@ -132,9 +132,9 @@ https://aws.amazon.com/organizations/faqs/
 
 * AWS has 4 pricing models
   * Pay as you go: pay for what you use, remain agile, responsive, meet scale demands
-  * Save when you reserve: minimize risk, predictably mange budgets, comply with long-terms requirements
+  * Save when you reserve (commit): minimize risk, predictably mange budgets, comply with long-terms requirements
     * Reservations are available for EC2 Reserved Instances, DynamoDB Reserved Capacity, ElastiCache Reserved Nodes, RDS Reserved Instances, Redshift Reserved Nodes
-  * Pay less by using more: volume-based discounts
+  * Pay less by using more: volume-based discounts (for services such as S3, pricing is tiered, meaning the more you use, the less you pay per GB).
   * Pay less as AWS grows
 
 * Free services & free tier in AWS
@@ -215,6 +215,8 @@ https://aws.amazon.com/organizations/faqs/
   * EC2 Launch Type Model: no additional fees, you pay for AWS resources stored and created in your application
 * Fargate
   * Fargate Launch Type Model: Pay for vCPU and memory resources allocated to your applications in your containers
+
+Saving plans are supported by lambda: https://aws.amazon.com/about-aws/whats-new/2020/02/aws-lambda-participates-in-compute-savings-plans/
 
 ## Storage Pricing - S3
 
@@ -497,6 +499,7 @@ https://aws.amazon.com/premiumsupport/plans/
   * Provides architectural guidance contextual to your specific use-cases
 * Unlimited cases / unlimited contacts
 * Access to Infrastructure Event Management for additional fee.
+  * **AWS Infrastructure Event Management is a short-term engagement with AWS Support**. AWS Infrastructure Event Management partners with your technical and project resources to gain a deep understanding of your use case and provide architectural and scaling guidance for an event. Common use-case examples for AWS Event Management include advertising launches, new product launches, and infrastructure migrations to AWS.
 * Access to AWS Health API - you can use the API operations to get information about events that might affect your AWS services and resources
 * Access to guidance, configuration, and troubleshooting of AWS interoperability with third-party software
 * You get programmatic access (API Access) to AWS Support Center features to create, manage, and close your support cases.

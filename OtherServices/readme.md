@@ -233,7 +233,9 @@ The **Acceptable Use Policy** describes prohibited uses of the web services offe
 At the highest level, the AWS Cloud Adoption Framework (AWS CAF) organizes guidance into six areas of focus, called Perspectives.
 
 In general, the **Business, People, and Governance Perspectives** focus on **business** capabilities.
-**Platform, Security, and Operations** Perspectives focus on **technical** capabilities
+**Platform, Security, and Operations** Perspectives focus on **technical** capabilities.
+
+It is created by AWS Professional Services.
 
 # Migration strategies
 
@@ -269,4 +271,4 @@ Cloudwatch can forward logs to three services for now. They are S3 bucket, **Ela
 # Migration Evaluator
 https://aws.amazon.com/migration-evaluator/
 
-*"With Migration Evaluator, your organization can build a data-driven business case for AWS, gets access to AWS expertise, visibility into the costs associated with multiple migration strategies, and insights on how reusing existing software licensing reduces costs further"*
+*"With Migration Evaluator, your organization can build a **data-driven business case** for AWS, gets access to AWS expertise, visibility into the costs associated with multiple migration strategies, and insights on how reusing existing software licensing reduces costs further"*

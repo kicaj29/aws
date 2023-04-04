@@ -476,7 +476,7 @@ Use cases:
 * leverages high performance disks and column storage
 * offers the ability to fully encrypt contents
 * provides isolation with a VPC
-* enables querying of exabytes of data in Amazone S3 using Redshift Spectrum
+* enables querying of exabytes of data in Amazon S3 using Redshift Spectrum
 * can be reserved to get greater discount
 ## Amazon Elasticache
 * fully managed (SaaS) in-memory data stores
