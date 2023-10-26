@@ -7,18 +7,20 @@
 - [Access logs](#access-logs)
 - [Replication](#replication)
 - [S3 classes](#s3-classes)
-  * [S3 Durability](#s3-durability)
-  * [S3 Availability](#s3-availability)
-  * [Classes](#classes)
+  - [S3 Durability](#s3-durability)
+  - [S3 Availability](#s3-availability)
+  - [Classes](#classes)
+- [S3 Moving between Store Classes](#s3-moving-between-store-classes)
+- [Amazon S3 analytics – Storage Class Analysis](#amazon-s3-analytics--storage-class-analysis)
 - [S3 Object lock](#s3-object-lock)
 - [S3 Glacier vault lock](#s3-glacier-vault-lock)
 - [S3 Encryption](#s3-encryption)
 - [Shared responsibility model for S3](#shared-responsibility-model-for-s3)
 - [AWS Snow Family](#aws-snow-family)
-  * [Data migration](#data-migration)
-  * [Edge computing](#edge-computing)
-    + [Edge computing devices](#edge-computing-devices)
-  * [AWS OpsHub](#aws-opshub)
+  - [Data migration](#data-migration)
+  - [Edge computing](#edge-computing)
+    - [Edge computing devices](#edge-computing-devices)
+  - [AWS OpsHub](#aws-opshub)
 - [Storage gateway - hybrid cloud](#storage-gateway---hybrid-cloud)
 - [S3 Transfer Acceleration](#s3-transfer-acceleration)
 
@@ -171,6 +173,10 @@ https://docs.aws.amazon.com/AmazonS3/latest/userguide/lifecycle-transition-gener
 
 ![03-moving-between-storage-classes.png](./images/03-moving-between-storage-classes.png)
 
+# Amazon S3 analytics – Storage Class Analysis
+
+* Storage class analysis only provides recommendations for Standard to Standard IA classes.
+* https://docs.aws.amazon.com/AmazonS3/latest/userguide/analytics-storage-class.html
 
 # S3 Object lock
 
