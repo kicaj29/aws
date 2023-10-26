@@ -113,6 +113,10 @@ The key is compose of prefix and object name: s3://[BUCKET-NAME]/[FOLDER1]/[FOLD
     ]
   }
   ```
+  * Default encryption vs bucket policies
+    * SSE-S3 encryption is automatically applied to bew objects stored in S3 bucket
+    * Optionally, you can force encryption using a bucket policy and refuse an API call to PUT an S3  object without encryption headers (SSE-KMS or SSE-C).
+    * **Bucket policies are evaluated before default encryption**
 
 # WebSites
 
