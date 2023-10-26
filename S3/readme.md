@@ -1,3 +1,28 @@
+- [Important requirements](#important-requirements)
+- [Path](#path)
+- [Limits](#limits)
+- [Security](#security)
+- [WebSites](#websites)
+- [Versioning](#versioning)
+- [Access logs](#access-logs)
+- [Replication](#replication)
+- [S3 classes](#s3-classes)
+  * [S3 Durability](#s3-durability)
+  * [S3 Availability](#s3-availability)
+  * [Classes](#classes)
+- [S3 Object lock](#s3-object-lock)
+- [S3 Glacier vault lock](#s3-glacier-vault-lock)
+- [S3 Encryption](#s3-encryption)
+- [Shared responsibility model for S3](#shared-responsibility-model-for-s3)
+- [AWS Snow Family](#aws-snow-family)
+  * [Data migration](#data-migration)
+  * [Edge computing](#edge-computing)
+    + [Edge computing devices](#edge-computing-devices)
+  * [AWS OpsHub](#aws-opshub)
+- [Storage gateway - hybrid cloud](#storage-gateway---hybrid-cloud)
+- [S3 Transfer Acceleration](#s3-transfer-acceleration)
+
+
 # Important requirements
 
 S3 allows people to store **objects** (files) in **buckets** (directories - root directories).
@@ -139,6 +164,12 @@ Can move between classes manually or using S3 lifecycle configurations.
 * Comparison
 
 ![Comparison](./images/01-s3-comparison.png)
+
+# S3 Moving between Store Classes
+
+https://docs.aws.amazon.com/AmazonS3/latest/userguide/lifecycle-transition-general-considerations.html
+
+![03-moving-between-storage-classes.png](./images/03-moving-between-storage-classes.png)
 
 
 # S3 Object lock
