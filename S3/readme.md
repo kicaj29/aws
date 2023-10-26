@@ -2,6 +2,7 @@
 - [Path](#path)
 - [Limits](#limits)
 - [Security](#security)
+  - [Encryption](#encryption)
 - [WebSites](#websites)
 - [Versioning](#versioning)
 - [Access logs](#access-logs)
@@ -59,10 +60,59 @@ The key is compose of prefix and object name: s3://[BUCKET-NAME]/[FOLDER1]/[FOLD
   * NOTE: an IAM principal can access an S3 object if the user IAM permissions allow it OR the resource policy ALLOWS it AND there is no explicit DENY
 * Resource based
   * Bucket policies - bucket wide rules from the S3 console - allow cross account
-  * Object Access Control List (ACL) - finer grain
-  * Bucket ACL - less comment
+  * Object Access Control List (ACL) - finer grain (can be disabled)
+  * Bucket ACL - less common (can be disabled)
 * Encryption
 * Bucket settings for block public access - can be set on account level
+
+## Encryption
+
+* There are 4 methods to encrypt objects
+  * Server Side Encryption (SSE)
+    * Amazon S3-Managed Keys (SSE-S3): enabled by default. Encrypts S3 objects using keys handled, managed, and owned by AWS. AWS user has no access to these keys. Encryption type is AES-256.
+    Must have header `"x-amz-server-side-encryption":"AES256"`.
+    ![04-encryption.png](./images/04-encryption.png)
+    * KMS Keys in AWS KMS (SSE-KMS): leverage AWS Key Management Service (AWS KMS) to manage keys. User control + audit key using CloudTrail. Must have header `"x-amz-server-side-encryption":"aws:kms"`.
+    ![05-encryption.png](./images/05-encryption.png)
+    * SSE-KMS limitation
+      * When you upload an object, it calls `GenerateDataKey` KMS API
+      * When you download, it calls the `Decrypt` KMS API
+      * Count towards the KMS quota per second (5500, 10 000, 30 000 req/s based on the region)
+      * You can request a quota increase using the Service Quotas Console
+      * To avoid this limitation use [**S3 Bucket Keys**](https://docs.aws.amazon.com/AmazonS3/latest/userguide/bucket-key.html)
+    * Customer-Provided Keys (SSE-C): when you want to manage your own encryption keys
+      * Amazon S3 does not store encryption key - after being used the key is discarded
+      * HTTPS must be used, encryption key must be provided in HTTP headers, for every HTTP request made (to be able read this file)
+      ![06-encryption.png](./images/06-encryption.png)
+  * Client-Side Encryption
+
+* Encryption in transit (SSL/TLS)
+  * HTTP - non encrypted
+  * HTTPS - encryption in flight, mandatory for SSE-C
+  * Forcing encryption in transit
+  ![07-encryption.png](./images/07-encryption.png)
+  ```json
+  {
+    "Id": "Policy1698315053418",
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Sid": "Stmt1698315051562",
+        "Action": [
+          "s3:GetObject"
+        ],
+        "Effect": "Deny",
+        "Resource": "arn:aws:s3:::my-bucket/*",
+        "Condition": {
+          "Bool": {
+            "aws:SecureTransport": "false"
+          }
+        },
+        "Principal": "*"
+      }
+    ]
+  }
+  ```
 
 # WebSites
 
@@ -176,6 +226,8 @@ https://docs.aws.amazon.com/AmazonS3/latest/userguide/lifecycle-transition-gener
 # Amazon S3 analytics – Storage Class Analysis
 
 * Storage class analysis only provides recommendations for Standard to Standard IA classes.
+* Report is updated daily
+* 24 to 48 hours to start seeing data analysis
 * https://docs.aws.amazon.com/AmazonS3/latest/userguide/analytics-storage-class.html
 
 # S3 Object lock
