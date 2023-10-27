@@ -8,7 +8,6 @@
     - [Kinesis Data Analytics](#kinesis-data-analytics)
       - [Machine Learning on Kinesis Data Analytics](#machine-learning-on-kinesis-data-analytics)
   - [Kinesis Video Streams](#kinesis-video-streams)
-- [Kinesis Summary - Machine learning](#kinesis-summary---machine-learning)
 
 
 # Kinesis
@@ -164,8 +163,5 @@ https://aws.amazon.com/blogs/aws/announcing-amazon-managed-service-for-apache-fl
   * Amazon Rekognition Video
 * Keep data for 1 hour to 10 years
 
-# Kinesis Summary - Machine learning
-
-* Must use Kinesis Data Stream: create real-time machine learning applications
-* 
+ 
 
