@@ -2,8 +2,9 @@
 
 https://aws.amazon.com/batch/
 
-AWS Batch is a fully managed batch computing service that plans, schedules, and runs your containerized batch or ML workloads across the full range of AWS compute offerings, such as Amazon ECS, Amazon EKS, AWS Fargate, and Spot or On-Demand Instances.
+AWS Batch is a fully managed batch computing service that plans, schedules, and runs your **containerized** batch or ML workloads across the full range of AWS compute offerings, such as Amazon ECS, Amazon EKS, AWS Fargate, and Spot or On-Demand Instances.
 
+* Serverless service
 * Fully managed batch processing at any scale
 * Efficiently run 100,000s of computing batch jobs on AWS
 * A "batch" job is job with a start and end (opposed to continuous)

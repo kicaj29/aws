@@ -196,11 +196,12 @@ The **Acceptable Use Policy** describes prohibited uses of the web services offe
 
 # AWS Step Functions
 
-* Build serverless visual workflow to orchestrate your lambda functions
+* Build serverless visual workflow to **orchestrate** your lambda functions
 * Features: sequence, parallel, conditions, timeouts, error handling
-* Can integrate with EC2, ECS, On-premises servers, API Gateway, SQS, etc...
+* **Can integrate with EC2, ECS, On-premises servers, API Gateway, SQS, etc...**
 * Possibility of implementing human approval feature
 * Use cases: order fulfillment, data processing, web applications, any workflow
+* **Can be used to train/tune ML models**
 
 ![15-step-functions.png](./images/15-step-functions.png)
 
