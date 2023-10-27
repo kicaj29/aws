@@ -4,6 +4,11 @@
     - [Limits to know](#limits-to-know)
   - [Kinesis Data Firehose (also called as delivery stream)](#kinesis-data-firehose-also-called-as-delivery-stream)
 - [Kinesis Data Streams vs Firehose](#kinesis-data-streams-vs-firehose)
+  - [Amazon Managed Service for Apache Flink aka Kinesis Data Analytics](#amazon-managed-service-for-apache-flink-aka-kinesis-data-analytics)
+    - [Kinesis Data Analytics](#kinesis-data-analytics)
+      - [Machine Learning on Kinesis Data Analytics](#machine-learning-on-kinesis-data-analytics)
+  - [Kinesis Video Streams](#kinesis-video-streams)
+- [Kinesis Summary - Machine learning](#kinesis-summary---machine-learning)
 
 
 # Kinesis
@@ -15,7 +20,7 @@
 * Managed service to collect, process and analyze real-time streaming data at any scale
 * **Kinesis Data Streams**: low latency streaming to ingest data at scale from hundreds of thousands of sources (on boarding data)
 * **Kinesis Data Firehose**: load streams into S3, Redshift, ElasticSearch, etc...
-* **Kinesis Data Analytics**: perform real-time analytics on streams using SQL
+* **Amazon Managed Service for Apache Flink aka Kinesis Data Analytics**: perform real-time analytics on streams using SQL
 * **Kinesis Video Streams**: monitor real-time video streams for analytics or ML
 
 ![01.png](./images/01.png)
@@ -94,6 +99,8 @@
 
 # Kinesis Data Streams vs Firehose
 
+![20-data-streams-vs-data-firehose.png](./images/20-data-streams-vs-data-firehose.png)
+
 * Streams - used for building real time apps
   * **Going to write custom code (producer/consumer)**
   * Real time (~200 ms latency for classic, ~70 ms latency for enhanced fan-out)
@@ -107,3 +114,58 @@
   * Automatic scaling
   * No data storage
   * **Has buffer which is used to send the data to the target resource**
+
+## Amazon Managed Service for Apache Flink aka Kinesis Data Analytics
+
+https://aws.amazon.com/blogs/aws/announcing-amazon-managed-service-for-apache-flink-renamed-from-amazon-kinesis-data-analytics/
+
+### Kinesis Data Analytics
+
+* Use cases
+  * Streaming ETL: select columns, make simple transformations, on streaming data
+  * Continuous metric generation: live leader-board for mobile game
+  * Responsive analytics: look for certain criteria and build alerting (filtering)
+
+* Features
+  * Pay only for resources consumed (but it is not cheap)
+  * Serverless; scales automatically
+  * Use IAM permissions to access streaming source and destination(s)
+  * SQL or Flink to write computation
+  * Schema discovery
+  * Lambda can be use for pre-processing
+
+#### Machine Learning on Kinesis Data Analytics
+
+* RANDOM_CUT_FOREST
+  * SQL function used for anomaly detection on numeric columns in a stream
+  * Example: detect anomalous subway ridership during the NYC marathon
+  * Uses recent history to compute model
+  ![18-analytics-ml.png](./images/18-analytics-ml.png)
+* HOTSPOT
+  * locate and return information about relatively dense regions in your data
+  * Example: a collection of overheated servers in data center
+  ![19-analytics-ml.png](./images/19-analytics-ml.png)
+
+![16-analytics.png](./images/16-analytics.png)
+
+![17-analytics.png](./images/17-analytics.png)
+
+## Kinesis Video Streams
+
+![21-video-stream.png](./images/21-video-stream.png)
+
+* Producers
+  * security camera, body-worn camera, AWS DeepLens, smartphone camera, audio feeds, images, RADAR data, RTSP camera.
+  * One producer per video stream
+* Video playback capability
+* Consumers
+  * build you own (MXNet, Tensorflow)
+  * AWS SageMaker
+  * Amazon Rekognition Video
+* Keep data for 1 hour to 10 years
+
+# Kinesis Summary - Machine learning
+
+* Must use Kinesis Data Stream: create real-time machine learning applications
+* 
+
