@@ -454,6 +454,8 @@ https://docs.aws.amazon.com/lambda/latest/dg/configuration-vpc.html#vpc-internet
 
 *"By default, Lambda runs your functions in a secure VPC with access to AWS services and the internet. Lambda owns this VPC, which isn't connected to your account's default VPC. When you connect a function to a VPC in your account, the function can't access the internet unless your VPC provides access."*
 
+It means that AWS lambda by default is not available from Internat, although some tools like AWS Toolkit in VisualStudio by default can create AWS lambda that will be available from Internat because it creates also API GW which is integrated with selected lambda function.
+
 # Links
 https://docs.aws.amazon.com/lambda/latest/dg/csharp-package-cli.html   
 https://www.alexhyett.com/contact-form-lambda-dotnet-core/   
