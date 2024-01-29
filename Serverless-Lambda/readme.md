@@ -7,6 +7,7 @@
   - [SAM to host lambda](#sam-to-host-lambda)
     - [Run localstack on docker desktop set as linux containers - WORKS OK](#run-localstack-on-docker-desktop-set-as-linux-containers---works-ok-1)
     - [Run localstack on docker desktop set as windows containers - DOES NOT WORK](#run-localstack-on-docker-desktop-set-as-windows-containers---does-not-work-1)
+- [Security](#security)
 - [Links](#links)
 
 # Run lambda on localstack with dotnet core 3.1
@@ -446,6 +447,12 @@ Build Failed
 Error: TransferFunction failed to build: The command '/bin/sh -c mkdir -p /build/build_artifacts' returned a non-zero code: 4294967295: failed to shutdown container: container 2d7e5a5987d0c438c4e350e61ba7d10b9be2d7702208ab566c53ef0c82eeafcb encountered an error during hcsshim::System::waitBackground: failure in a Windows system call: The virtual machine or container with the specified identifier is 
 not running. (0xc0370110): subsequent terminate failed container 2d7e5a5987d0c438c4e350e61ba7d10b9be2d7702208ab566c53ef0c82eeafcb encountered an error during hcsshim::System::waitBackground: failure in a Windows system call: The virtual machine or container with the specified identifier is not running. (0xc0370110)
 ```
+
+# Security
+
+https://docs.aws.amazon.com/lambda/latest/dg/configuration-vpc.html#vpc-internet
+
+*"By default, Lambda runs your functions in a secure VPC with access to AWS services and the internet. Lambda owns this VPC, which isn't connected to your account's default VPC. When you connect a function to a VPC in your account, the function can't access the internet unless your VPC provides access."*
 
 # Links
 https://docs.aws.amazon.com/lambda/latest/dg/csharp-package-cli.html   
