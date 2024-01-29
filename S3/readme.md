@@ -1,3 +1,31 @@
+- [Important requirements](#important-requirements)
+- [Path](#path)
+- [Limits](#limits)
+- [Security](#security)
+  - [Encryption](#encryption)
+- [WebSites](#websites)
+- [Versioning](#versioning)
+- [Access logs](#access-logs)
+- [Replication](#replication)
+- [S3 classes](#s3-classes)
+  - [S3 Durability](#s3-durability)
+  - [S3 Availability](#s3-availability)
+  - [Classes](#classes)
+- [S3 Moving between Store Classes](#s3-moving-between-store-classes)
+- [Amazon S3 analytics – Storage Class Analysis](#amazon-s3-analytics--storage-class-analysis)
+- [S3 Object lock](#s3-object-lock)
+- [S3 Glacier vault lock](#s3-glacier-vault-lock)
+- [S3 Encryption](#s3-encryption)
+- [Shared responsibility model for S3](#shared-responsibility-model-for-s3)
+- [AWS Snow Family](#aws-snow-family)
+  - [Data migration](#data-migration)
+  - [Edge computing](#edge-computing)
+    - [Edge computing devices](#edge-computing-devices)
+  - [AWS OpsHub](#aws-opshub)
+- [Storage gateway - hybrid cloud](#storage-gateway---hybrid-cloud)
+- [S3 Transfer Acceleration](#s3-transfer-acceleration)
+
+
 # Important requirements
 
 S3 allows people to store **objects** (files) in **buckets** (directories - root directories).
@@ -32,10 +60,63 @@ The key is compose of prefix and object name: s3://[BUCKET-NAME]/[FOLDER1]/[FOLD
   * NOTE: an IAM principal can access an S3 object if the user IAM permissions allow it OR the resource policy ALLOWS it AND there is no explicit DENY
 * Resource based
   * Bucket policies - bucket wide rules from the S3 console - allow cross account
-  * Object Access Control List (ACL) - finer grain
-  * Bucket ACL - less comment
+  * Object Access Control List (ACL) - finer grain (can be disabled)
+  * Bucket ACL - less common (can be disabled)
 * Encryption
 * Bucket settings for block public access - can be set on account level
+
+## Encryption
+
+* There are 4 methods to encrypt objects
+  * Server Side Encryption (SSE)
+    * Amazon S3-Managed Keys (SSE-S3): enabled by default. Encrypts S3 objects using keys handled, managed, and owned by AWS. AWS user has no access to these keys. Encryption type is AES-256.
+    Must have header `"x-amz-server-side-encryption":"AES256"`.
+    ![04-encryption.png](./images/04-encryption.png)
+    * KMS Keys in AWS KMS (SSE-KMS): leverage AWS Key Management Service (AWS KMS) to manage keys. User control + audit key using CloudTrail. Must have header `"x-amz-server-side-encryption":"aws:kms"`.
+    ![05-encryption.png](./images/05-encryption.png)
+    * SSE-KMS limitation
+      * When you upload an object, it calls `GenerateDataKey` KMS API
+      * When you download, it calls the `Decrypt` KMS API
+      * Count towards the KMS quota per second (5500, 10 000, 30 000 req/s based on the region)
+      * You can request a quota increase using the Service Quotas Console
+      * To avoid this limitation use [**S3 Bucket Keys**](https://docs.aws.amazon.com/AmazonS3/latest/userguide/bucket-key.html)
+    * Customer-Provided Keys (SSE-C): when you want to manage your own encryption keys
+      * Amazon S3 does not store encryption key - after being used the key is discarded
+      * HTTPS must be used, encryption key must be provided in HTTP headers, for every HTTP request made (to be able read this file)
+      ![06-encryption.png](./images/06-encryption.png)
+  * Client-Side Encryption
+
+* Encryption in transit (SSL/TLS)
+  * HTTP - non encrypted
+  * HTTPS - encryption in flight, mandatory for SSE-C
+  * Forcing encryption in transit
+  ![07-encryption.png](./images/07-encryption.png)
+  ```json
+  {
+    "Id": "Policy1698315053418",
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Sid": "Stmt1698315051562",
+        "Action": [
+          "s3:GetObject"
+        ],
+        "Effect": "Deny",
+        "Resource": "arn:aws:s3:::my-bucket/*",
+        "Condition": {
+          "Bool": {
+            "aws:SecureTransport": "false"
+          }
+        },
+        "Principal": "*"
+      }
+    ]
+  }
+  ```
+  * Default encryption vs bucket policies
+    * SSE-S3 encryption is automatically applied to bew objects stored in S3 bucket
+    * Optionally, you can force encryption using a bucket policy and refuse an API call to PUT an S3  object without encryption headers (SSE-KMS or SSE-C).
+    * **Bucket policies are evaluated before default encryption**
 
 # WebSites
 
@@ -140,6 +221,18 @@ Can move between classes manually or using S3 lifecycle configurations.
 
 ![Comparison](./images/01-s3-comparison.png)
 
+# S3 Moving between Store Classes
+
+https://docs.aws.amazon.com/AmazonS3/latest/userguide/lifecycle-transition-general-considerations.html
+
+![03-moving-between-storage-classes.png](./images/03-moving-between-storage-classes.png)
+
+# Amazon S3 analytics – Storage Class Analysis
+
+* Storage class analysis only provides recommendations for Standard to Standard IA classes.
+* Report is updated daily
+* 24 to 48 hours to start seeing data analysis
+* https://docs.aws.amazon.com/AmazonS3/latest/userguide/analytics-storage-class.html
 
 # S3 Object lock
 
