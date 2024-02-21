@@ -5,7 +5,8 @@
   - [Kinesis Data Firehose (also called as delivery stream)](#kinesis-data-firehose-also-called-as-delivery-stream)
 - [Kinesis Data Streams vs Firehose](#kinesis-data-streams-vs-firehose)
   - [Amazon Managed Service for Apache Flink aka Kinesis Data Analytics](#amazon-managed-service-for-apache-flink-aka-kinesis-data-analytics)
-    - [Kinesis Data Analytics](#kinesis-data-analytics)
+    - [Kinesis Data Analytics (Amazon Managed Service for Apache Flink)](#kinesis-data-analytics-amazon-managed-service-for-apache-flink)
+      - [Apache Flink inputs](#apache-flink-inputs)
       - [Machine Learning on Kinesis Data Analytics](#machine-learning-on-kinesis-data-analytics)
   - [Kinesis Video Streams](#kinesis-video-streams)
 
@@ -23,6 +24,8 @@
 * **Kinesis Video Streams**: monitor real-time video streams for analytics or ML
 
 ![01.png](./images/01.png)
+
+NOTE: Apache Flink can read data also from other sources, see [Apache Flink inputs](#apache-flink-inputs)
 
 ## Kinesis Data Streams
 
@@ -118,7 +121,7 @@
 
 https://aws.amazon.com/blogs/aws/announcing-amazon-managed-service-for-apache-flink-renamed-from-amazon-kinesis-data-analytics/
 
-### Kinesis Data Analytics
+### Kinesis Data Analytics (Amazon Managed Service for Apache Flink)
 
 * Use cases
   * Streaming ETL: select columns, make simple transformations, on streaming data
@@ -133,6 +136,12 @@ https://aws.amazon.com/blogs/aws/announcing-amazon-managed-service-for-apache-fl
   * Schema discovery
   * Lambda can be use for pre-processing
 
+#### Apache Flink inputs
+
+![16-analytics.png](./images/16-analytics.png)
+
+![17-analytics.png](./images/17-analytics.png)
+
 #### Machine Learning on Kinesis Data Analytics
 
 * RANDOM_CUT_FOREST
@@ -144,10 +153,6 @@ https://aws.amazon.com/blogs/aws/announcing-amazon-managed-service-for-apache-fl
   * locate and return information about relatively dense regions in your data
   * Example: a collection of overheated servers in data center
   ![19-analytics-ml.png](./images/19-analytics-ml.png)
-
-![16-analytics.png](./images/16-analytics.png)
-
-![17-analytics.png](./images/17-analytics.png)
 
 ## Kinesis Video Streams
 
