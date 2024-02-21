@@ -139,6 +139,8 @@ https://aws.amazon.com/blogs/aws/announcing-amazon-managed-service-for-apache-fl
 
 ![17-analytics.png](./images/17-analytics.png)
 
+NOTE: AWS Lambda can be a destination as well for the Apache Flink (Kinesis Data Analytics)
+
 ## Machine Learning on Kinesis Data Analytics
 
 * RANDOM_CUT_FOREST
