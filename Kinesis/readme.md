@@ -4,7 +4,7 @@
     - [Limits to know](#limits-to-know)
   - [Kinesis Data Firehose (also called as delivery stream)](#kinesis-data-firehose-also-called-as-delivery-stream)
 - [Kinesis Data Streams vs Firehose](#kinesis-data-streams-vs-firehose)
-- [Amazon Managed Service for Apache Flink aka Kinesis Data Analytics](#amazon-managed-service-for-apache-flink-aka-kinesis-data-analytics)
+- [Amazon Managed Service for Apache Flink (MSAF) aka Kinesis Data Analytics](#amazon-managed-service-for-apache-flink-msaf-aka-kinesis-data-analytics)
   - [Apache Flink inputs](#apache-flink-inputs)
   - [Machine Learning on Kinesis Data Analytics](#machine-learning-on-kinesis-data-analytics)
 - [Kinesis Video Streams](#kinesis-video-streams)
@@ -116,9 +116,11 @@ NOTE: Apache Flink can read data also from other sources, see [Apache Flink inpu
   * No data storage
   * **Has buffer which is used to send the data to the target resource**
 
-# Amazon Managed Service for Apache Flink aka Kinesis Data Analytics
+# Amazon Managed Service for Apache Flink (MSAF) aka Kinesis Data Analytics
 
 https://aws.amazon.com/blogs/aws/announcing-amazon-managed-service-for-apache-flink-renamed-from-amazon-kinesis-data-analytics/
+
+Instead of using SQL, you can develop your won Flink application from scratch and load it into MSAF via S2
 
 * Use cases
   * Streaming ETL: select columns, make simple transformations, on streaming data
@@ -161,7 +163,7 @@ NOTE: AWS Lambda can be a destination as well for the Apache Flink (Kinesis Data
 
 * Producers
   * security camera, body-worn camera, AWS DeepLens, smartphone camera, audio feeds, images, RADAR data, RTSP camera.
-  * One producer per video stream
+  * One producer per video stream (if you have 1000 cameras you will have a thousand video streams).
 * Video playback capability
 * Consumers
   * build you own (MXNet, Tensorflow)
