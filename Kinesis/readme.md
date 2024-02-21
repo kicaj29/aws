@@ -5,9 +5,8 @@
   - [Kinesis Data Firehose (also called as delivery stream)](#kinesis-data-firehose-also-called-as-delivery-stream)
 - [Kinesis Data Streams vs Firehose](#kinesis-data-streams-vs-firehose)
   - [Amazon Managed Service for Apache Flink aka Kinesis Data Analytics](#amazon-managed-service-for-apache-flink-aka-kinesis-data-analytics)
-    - [Kinesis Data Analytics (Amazon Managed Service for Apache Flink)](#kinesis-data-analytics-amazon-managed-service-for-apache-flink)
-      - [Apache Flink inputs](#apache-flink-inputs)
-      - [Machine Learning on Kinesis Data Analytics](#machine-learning-on-kinesis-data-analytics)
+    - [Apache Flink inputs](#apache-flink-inputs)
+    - [Machine Learning on Kinesis Data Analytics](#machine-learning-on-kinesis-data-analytics)
   - [Kinesis Video Streams](#kinesis-video-streams)
 
 
@@ -121,8 +120,6 @@ NOTE: Apache Flink can read data also from other sources, see [Apache Flink inpu
 
 https://aws.amazon.com/blogs/aws/announcing-amazon-managed-service-for-apache-flink-renamed-from-amazon-kinesis-data-analytics/
 
-### Kinesis Data Analytics (Amazon Managed Service for Apache Flink)
-
 * Use cases
   * Streaming ETL: select columns, make simple transformations, on streaming data
   * Continuous metric generation: live leader-board for mobile game
@@ -136,18 +133,20 @@ https://aws.amazon.com/blogs/aws/announcing-amazon-managed-service-for-apache-fl
   * Schema discovery
   * Lambda can be use for pre-processing
 
-#### Apache Flink inputs
+### Apache Flink inputs
 
 ![16-analytics.png](./images/16-analytics.png)
 
 ![17-analytics.png](./images/17-analytics.png)
 
-#### Machine Learning on Kinesis Data Analytics
+### Machine Learning on Kinesis Data Analytics
 
 * RANDOM_CUT_FOREST
   * SQL function used for anomaly detection on numeric columns in a stream
   * Example: detect anomalous subway ridership during the NYC marathon
   * Uses recent history to compute model
+  
+  The four red points are anomalies.
   ![18-analytics-ml.png](./images/18-analytics-ml.png)
 * HOTSPOT
   * locate and return information about relatively dense regions in your data
