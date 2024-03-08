@@ -8,33 +8,55 @@
 
 https://aws.amazon.com/ec2/instance-types/
 
-* General purpose: provide a balance of compute, memory, and networking resources
-  * application servers, gaming servers, backend servers for enterprise applications, small and medium databases
+* **General purpose**: provide a balance of compute, memory, and networking resources
+  * Use cases: ideal for applications that use these resources in equal proportions, such as web servers and code repositories.
   
-* Compute optimized: ideal for compute-bound applications that benefit from high-performance processors
-  * high-performance web servers
-  * compute-intensive applications servers
-  * dedicated gaming servers
-  * batch processing workloads that require processing many transactions in a single group
+* **Compute optimized**: ideal for compute-bound applications that benefit from high-performance processors
+  * Use cases:
+    * high-performance web servers
+    * compute-intensive applications servers
+    * dedicated gaming servers
+    * batch processing workloads that require processing many transactions in a single group
+    * scientific modeling
   
-* Memory optimized: designed to deliver fast performance for workloads that process large datasets in memory
-  * high-performance database
-  * performing real-time processing of a large amount of unstructured data
+* **Memory optimized**: designed to deliver fast performance for workloads that process large datasets in memory
+  * Use cases:
+    * high-performance database
+    * performing real-time processing of a large amount of unstructured data
+    * in-memory cache
+    * real-time big-data analytics
   
-* Accelerate computing:  use hardware accelerators, or coprocessors, to perform some functions more efficiently than is possible in software running on CPUs
-  * floating-point number calculations
-  * graphics processing
-  * data pattern matching
-  * graphics applications
-  * game streaming
-  * application streaming
+* **Accelerate computing**:  use hardware accelerators, or coprocessors, to perform some functions more efficiently than is possible in software running on CPUs
+  * Use cases:
+    * machine learning
+    * speech recognition
+    * floating-point number calculations
+    * graphics processing
+    * data pattern matching
+    * graphics applications
+    * game streaming
+    * application streaming
   
-* Storage optimized: sequential read and write access to large datasets on local storage
-  * distributed file systems
-  * data warehousing applications
-  * high-frequency online transaction processing (OLTP) systems
-  * deliver tens of thousands of low-latency, random input/output operations per second (IOPS) to applications.
+* **Storage optimized**: sequential read and write access to large datasets on local storage
+  * Use cases:
+    * NoSQL databases (Cassandra, MongoDB and Redis)
+    * in-memory databases
+    * distributed file systems
+    * data warehousing applications
+    * high-frequency online transaction processing (OLTP) systems
+    * deliver tens of thousands of low-latency, random input/output operations per second (IOPS) to applications.
+* **HPC optimized**: High performance computing (HPC) instances are purpose built to offer the best price performance for running HPC workloads at scale on AWS
+  * Use cases:
+    * complex simulations
+    * deep learning workloads
 
+
+![031-types-syntax.png](./images/031-types-syntax.png)
+
+* First position – c, indicates the instance family. This indicates that this instance belongs to the compute optimized family.
+* Second position – 5, indicates the generation of the instance. This instance belongs to the fifth generation of instances.
+* Remaining letters before the period – in this case, n indicates additional attributes, such as local NVMe storage.
+* After the period – xlarge indicates the instance size. In this example, it's xlarge.
 
 # AMI process for creating custom AMIs
 
