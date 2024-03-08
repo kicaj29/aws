@@ -32,6 +32,7 @@ Roles can be assumed by:
 * IAM users
 * Selected AWS identities like EC2
 * External identity providers
+**NOTE: IAM group cannot assume IAM roles!**
 
 # Assume role
 
