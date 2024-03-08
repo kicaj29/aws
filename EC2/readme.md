@@ -1,3 +1,9 @@
+- [EC2 instance families](#ec2-instance-families)
+- [AMI process for creating custom AMIs](#ami-process-for-creating-custom-amis)
+- [EC2 Image builder](#ec2-image-builder)
+  - [EC2 Image builder hands-on screens](#ec2-image-builder-hands-on-screens)
+- [EC2 Instance Connect](#ec2-instance-connect)
+
 # EC2 instance families
 
 https://aws.amazon.com/ec2/instance-types/

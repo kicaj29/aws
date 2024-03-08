@@ -1,5 +1,6 @@
 - [IAM Roles](#iam-roles)
   - [Assuming multiple IAM roles](#assuming-multiple-iam-roles)
+- [IAM user groups](#iam-user-groups)
 - [Assume role in AWS Console](#assume-role-in-aws-console)
   - [Introduction](#introduction)
   - [Create IAM role](#create-iam-role)
@@ -46,6 +47,12 @@ https://repost.aws/questions/QU-EiIvq3rTGyctiWqMfrSwg/how-to-access-multiple-rol
 *When interacting with AWS resources each request can only be associated with a singular principal. So, if you assume role1 and role2 you can make requests as role1 OR role2 but not as both together. So, if you are trying to perform a single action that requires an aggregate of the permissions of multiple roles, that's a not possible.*
 
 https://stackoverflow.com/questions/48876077/assume-multiple-aws-iam-roles-are-a-single-time#:~:text=1%20Answer&text=Technically%2C%20yes%2C%20there%20is%20a,to%20assume%20a%20different%20identity.
+
+# IAM user groups
+
+An IAM group is a collection of users. All users in the group inherit the permissions assigned to the group. 
+**Permissions can be assigned to user groups but not IAM roles.**
+
 
 # Assume role in AWS Console
 
