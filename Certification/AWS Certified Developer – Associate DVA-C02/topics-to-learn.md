@@ -3,3 +3,4 @@
 * https://github.com/kicaj29/aws/tree/main/ArchitectingAndEcosystem#six-advantages-of-cloud-computing
 * AWS Global Infrastructure
   * https://github.com/kicaj29/aws/tree/main?tab=readme-ov-file#regions-and-availability-zones-and-edge-locations
+  * https://github.com/kicaj29/aws/tree/main?tab=readme-ov-file#choosing-the-right-aws-region

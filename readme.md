@@ -69,7 +69,7 @@ https://aws.amazon.com/about-aws/global-infrastructure/regions_az/?p=ngi&loc=2
 ## AWS Edge Locations
 
 Used as nodes of a global content delivery network (CDN).
-They support to services:
+They support 2 services:
 
 * Amazon CloudFront: AWS CDN.
 * Amazon Route 53: AWS DNS service.
