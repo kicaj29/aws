@@ -1,5 +1,6 @@
 - [IAM Roles](#iam-roles)
-- [Assume role](#assume-role)
+  - [Assuming multiple IAM roles](#assuming-multiple-iam-roles)
+- [Assume role in AWS Console](#assume-role-in-aws-console)
   - [Introduction](#introduction)
   - [Create IAM role](#create-iam-role)
   - [Create IAM user](#create-iam-user)
@@ -18,8 +19,6 @@
 
 **When someone assumes an IAM role, they abandon all previous permissions that they had under a previous role and assume the permissions of the new role.**
 
-**You cannot apply multiple roles to a single instance.**
-
 Typically this role is created using AWS Console and not using IaC because at this point in time usually we have ony root aws account and usually we do not want store root aws account credentials locally because of security but if there are some reasons it can be also created using IaC.
 IAM user that will assume this role will be used in IaC.
 
@@ -34,7 +33,21 @@ Roles can be assumed by:
 * External identity providers
 **NOTE: IAM group cannot assume IAM roles!**
 
-# Assume role
+## Assuming multiple IAM roles
+
+**You cannot apply multiple roles to a single instance.**
+
+https://repost.aws/questions/QU-EiIvq3rTGyctiWqMfrSwg/how-to-access-multiple-roles-from-single-iam-user-simultaneously
+
+*"Technically, you can assume multiple IAM roles at the same time but the permissions will not be aggregated. Assuming an IAM role doesn't change who you are or what permissions you have.
+
+When you assume a role, you are given a new set of temporary credentials to use, instead of "your" credentials -- the credentials you used to assume the role.
+
+When interacting with AWS resources each request can only be associated with a singular principal. So, if you assume role1 and role2 you can make requests as role1 OR role2 but not as both together. So, if you are trying to perform a single action that requires an aggregate of the permissions of multiple roles, that's a not possible."*
+
+https://stackoverflow.com/questions/48876077/assume-multiple-aws-iam-roles-are-a-single-time#:~:text=1%20Answer&text=Technically%2C%20yes%2C%20there%20is%20a,to%20assume%20a%20different%20identity.
+
+# Assume role in AWS Console
 
 ## Introduction
 
