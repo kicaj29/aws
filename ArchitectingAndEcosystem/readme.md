@@ -37,7 +37,7 @@ https://aws.amazon.com/getting-started/cloud-essentials/
 
 https://docs.aws.amazon.com/whitepapers/latest/aws-overview/six-advantages-of-cloud-computing.html
 
-* Trade upfront expense for variable expense  
+* Trade upfront expense for variable expense  (pay-as-you-go)
   Upfront expenses include data centers, physical servers, and other resources that you would need to invest in before using computing resources. 
   Instead of investing heavily in data centers and servers before you know how you’re going to use them, you can pay only when you consume computing resources
 
@@ -51,7 +51,7 @@ https://docs.aws.amazon.com/whitepapers/latest/aws-overview/six-advantages-of-cl
 * Increase speed and agility   
   The flexibility of cloud computing makes it easier for you to develop and deploy applications. This flexibility also provides your development teams with more time to experiment and innovate.
 
-* Stop spending money running and maintaining data centers    
+* Stop spending money running and maintaining data centers  (realize cost savings)
   Cloud computing in data centers often requires you to spend more money and time managing infrastructure and servers. 
   A benefit of cloud computing is the ability to focus less on these tasks and more on your applications and customers.
 

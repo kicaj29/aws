@@ -55,6 +55,13 @@ All AZ’s in an AWS Region are interconnected with high-bandwidth, low-latency 
 
 https://aws.amazon.com/about-aws/global-infrastructure/regions_az/?p=ngi&loc=2
 
+## Choosing the right AWS Region
+
+* Data compliance (eliminator)
+* Latency
+* Pricing
+* Service availability
+
 ## Naming
 
 ![aws-14-regions.png](images/fundamentals/aws-14-regions.png)
