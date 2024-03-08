@@ -21,7 +21,16 @@
 
 There are 2 types of users:
 
-* root: user that was used to initially created aws account, it special permissions which are not available for IAM users like: selecting support plan, deleting the account.
+* root: user that was used to initially created aws account, it special permissions which are not available for IAM users like: selecting support plan, deleting the account. Enable MFA for root user and do not use it for daily tasks.  
+**NOTE: MFA can also be used to control access to specific AWS services APIs.**
+MFA requires two or more authentication methods to verify an identity:
+  * Something you know, such as a user name and password or pin number
+  * Something you have, such as a one-time passcode from a hardware device or mobile app
+  * Something you are, such as a fingerprint or face scanning technology
+  * Supported MFA devices
+    * Virtual MFA
+    * Hardware TOTP (time-based one-time password) token
+    * FIDO security keys: You can plug your FIDO security key into a USB port on your computer and enable it using the instructions that follow.
   
 * IAM: normal user
 

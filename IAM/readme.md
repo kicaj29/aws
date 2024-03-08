@@ -1,6 +1,7 @@
+- [IAM Roles](#iam-roles)
 - [Assume role](#assume-role)
   - [Introduction](#introduction)
-  - [Create role](#create-role)
+  - [Create IAM role](#create-iam-role)
   - [Create IAM user](#create-iam-user)
   - [Configure aws credentials file](#configure-aws-credentials-file)
   - [Usage @Infra role](#usage-infra-role)
@@ -8,15 +9,8 @@
 - [Access Policies Schema](#access-policies-schema)
 - [Managing server certificates in IAM](#managing-server-certificates-in-iam)
 - [Links](#links)
-# Assume role
 
-## Introduction
-
-It is AWS best practice to use roles to grant limited access to certain resources for a limited period of time. Thanks to these IAM users can be deleted and created again to increase security (IAM users credentials are stored in c:\Users\[user-name]\.aws\credentials file).
-
-Additionally if some resources are created using only IAM users (without using role) then we might loose access to these resources if IAM user that created them was deleted. Such resource is EKS then root aws account has to be used to again get access to the EKS but again because of security reasons root aws account should be use as less as possible.
-
-## Create role
+# IAM Roles
 
 **Roles are used for temporary permissions - it is easy to assign another role and in this way complete change user permissions.**
 
@@ -28,6 +22,26 @@ Additionally if some resources are created using only IAM users (without using r
 
 Typically this role is created using AWS Console and not using IaC because at this point in time usually we have ony root aws account and usually we do not want store root aws account credentials locally because of security but if there are some reasons it can be also created using IaC.
 IAM user that will assume this role will be used in IaC.
+
+Other important features of IAM roles:
+* No static login credentials
+* IAM roles are assumed programmatically
+* **Credentials are temporary** for a configurable amount of time
+
+Roles can be assumed by:
+* IAM users
+* Selected AWS identities like EC2
+* External identity providers
+
+# Assume role
+
+## Introduction
+
+It is AWS best practice to use roles to grant limited access to certain resources for a limited period of time. Thanks to these IAM users can be deleted and created again to increase security (IAM users credentials are stored in c:\Users\[user-name]\.aws\credentials file).
+
+Additionally if some resources are created using only IAM users (without using role) then we might loose access to these resources if IAM user that created them was deleted. Such resource is EKS then root aws account has to be used to again get access to the EKS but again because of security reasons root aws account should be use as less as possible.
+
+## Create IAM role
 
 ![01_create_role.png](./images/01_create_role.png)
 
@@ -161,9 +175,15 @@ https://docs.aws.amazon.com/IAM/latest/UserGuide/what-is-access-analyzer.html
 
 https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies.html#access_policies-json
 
-Effect, Action are required fields.
+IAM polices can be applied to AWS identities:
+* users
+* groups
+* roles
 
-Sample policy
+**Effect, Action are required fields.**
+
+Sample policies:
+
 ```json
 {
   "Version": "2012-10-17",
@@ -177,6 +197,33 @@ Sample policy
   ]
 }
 ```
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "DenyS3AccessOutsideMyBoundary",
+      "Effect": "Deny",
+      "Action": [
+        "s3:*"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "StringNotEquals": {
+          "aws:ResourceAccount": [
+            "222222222222"
+          ]
+        }
+      }
+    }
+  ]
+}
+```
+
+* **Version**: The Version element defines the version of the policy language. It specifies the language syntax rules that are needed by AWS to process a policy. To use all the available policy features, include "Version": "2012-10-17" before the "Statement" element in your policies.
+* **Effect**: The Effect element specifies whether the policy will allow or deny access. In this policy, the Effect is "Allow", which means you’re providing access to a particular resource.
+* The **Action** element describes the type of action that should be allowed or denied. In the example policy, the action is "*". This is called a wildcard, and it is used to symbolize every action inside your AWS account.
+* The **Resource** element specifies the object or objects that the policy statement covers. In the policy example, the resource is the wildcard "*". This represents all resources inside your AWS console.
 
 # Managing server certificates in IAM
 
