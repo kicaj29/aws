@@ -17,3 +17,4 @@
 ### Module 2: AWS Compute
 
 * EC2: https://github.com/kicaj29/aws/tree/main/EC2
+* EC2 pricing: https://github.com/kicaj29/aws/tree/main/AccountMgmtBillingAndSupport#compute-pricing---ec2-different-models

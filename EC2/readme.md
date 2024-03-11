@@ -1,4 +1,6 @@
 - [EC2 instance families](#ec2-instance-families)
+- [EC2 instance lifecycle](#ec2-instance-lifecycle)
+  - [Difference between stop and stop-hibernate](#difference-between-stop-and-stop-hibernate)
 - [AMI process for creating custom AMIs](#ami-process-for-creating-custom-amis)
 - [EC2 Image builder](#ec2-image-builder)
   - [EC2 Image builder hands-on screens](#ec2-image-builder-hands-on-screens)
@@ -57,6 +59,23 @@ https://aws.amazon.com/ec2/instance-types/
 * Second position – 5, indicates the generation of the instance. This instance belongs to the fifth generation of instances.
 * Remaining letters before the period – in this case, n indicates additional attributes, such as local NVMe storage.
 * After the period – xlarge indicates the instance size. In this example, it's xlarge.
+
+# EC2 instance lifecycle
+
+![032-life-cycle.png](./images/032-life-cycle.png)
+
+* **Pending**: When you launch an instance, it enters the pending state. **When an instance is pending, billing has not started**. At this stage, the instance is preparing to enter the running state. Pending is where AWS performs all actions needed to set up an instance, such as copying the AMI content to the root device and allocating the necessary networking components.
+* **Running**: When your instance is running, it's ready to use. This is also the stage where billing begins. As soon as an instance is running, you can take other actions on the instance, such as reboot, terminate, stop, and stop-hibernate.
+* **Rebooting**: When you reboot an instance, **it’s different than performing a stop action and then a start action**. Rebooting an instance is equivalent to rebooting an operating system. The instance keeps its public DNS name (IPv4) and private and public IPv4 addresses. An IPv6 address (if applicable) remains on the same host computer and maintains its public and private IP address, in addition to any data on its instance store volume.
+* **Stopping/Stopped**: When you stop your instance, it enters the stopping and then stopped state. This is similar to when you shut down your laptop. You can stop and start an instance if it has an Amazon Elastic Block Store (Amazon EBS) volume as its root device. **When you stop and start an instance, your instance can be placed on a new underlying physical server**. Your instance retains its private IPv4 addresses and if your instance has an IPv6 address, it retains its IPv6 address. **When you put the instance into stop-hibernate**, the instance enters the stopped state, but saves the last information or content into memory, so that the start process is faster.
+You can compare this to how you lock your laptop and shut the lid, but when you open it back up, everything is still in place where you left it.
+* **Terminate**: When you terminate an instance, the instance stores are erased, and you lose both the public IP address and private IP address of the machine. Termination of an instance means that you can no longer access the machine. As soon as the status of an instance changes to shutting down or terminated, you stop incurring charges for that instance.
+
+## Difference between stop and stop-hibernate
+
+When you **stop an instance**, it enters the stopping state until it reaches the stopped state. AWS does not charge usage or data transfer fees for your instance after you stop it. But storage for any Amazon EBS volumes is still charged. While your instance is in the stopped state, you can modify some attributes, like the instance type. When you stop your instance, the data from the instance memory (RAM) is lost.
+
+When you **stop-hibernate an instance**, Amazon EC2 signals the operating system to perform hibernation (suspend-to-disk), which saves the contents from the instance memory (RAM) to the EBS root volume. You can hibernate an instance only if hibernation is turned on and the instance meets the hibernation prerequisites.
 
 # AMI process for creating custom AMIs
 

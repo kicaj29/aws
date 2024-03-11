@@ -192,18 +192,25 @@ https://aws.amazon.com/organizations/faqs/
   * Your Dedicated instances are physically isolated at the host hardware level from instances that belong to other AWS accounts
   * Dedicated instances may share hardware with other instances from the same AWS account that are not Dedicated instances
   * Pay for Dedicated Instances **On-Demand**, save up to 70% by purchasing **Reserved Instances**, or save up to 90% by purchasing **Spot Instances**.
-* [Dedicated Host](https://aws.amazon.com/ec2/dedicated-hosts/)
-  * On-demand
-  * Physical servers with Amazon EC2 instance capacity that is fully dedicated to your use
-  * [Pricing options](https://aws.amazon.com/ec2/dedicated-hosts/pricing/) **no spot option**
-    * On-Demand
-    * Reservations (1 or 3 years commitment): reservations can provide up to a 70% discount compared to the On-Demand price
-    * Saving Plans: savings of up to 72% on your AWS compute usage
 * Saving plans as an alternative to save on sustained usage
   * you do not purchase actual instances but ‌commit to one or three years of On-Demand Instances at a discounted price
   * **commitment unit: dollar**
+  * provide up to 72 percent savings on AWS compute usage
+* Reserved instances
+  * Save up to 75 percent compared to On-Demand Instance pricing.
+  * You can select either a 1-year or 3-year term for each of these options. 
+  * **Standard Reserved Instances**: These provide the most significant discount (up to 72 percent off On-Demand pricing) and are best suited for steady-state usage.
+  * **Convertible Reserved Instances**: These provide a discount (up to 54 percent off On-Demand pricing) and the capability to change the attributes of the Reserved Instance if the exchange results in the creation of Reserved Instances of equal or greater value. Like Standard Reserved Instances, Convertible Reserved Instances are best suited for steady-state usage.
+  * **Scheduled Reserved Instances**: These are available to launch within the time windows that you reserve. With this option, you can match your capacity reservation to a predictable recurring schedule that only requires a fraction of a day, a week, or a month.
 * Reserved instances vs saving plans
   * ![031-saving-plans-vs-reserved.png](./images/031-saving-plans-vs-reserved.png)
+* [Dedicated Host](https://aws.amazon.com/ec2/dedicated-hosts/)
+  * Physical servers with Amazon EC2 instance capacity that is fully dedicated to your use
+  * On-demand
+  * [Pricing options](https://aws.amazon.com/ec2/dedicated-hosts/pricing/) **no spot option**
+    * On-Demand (hourly)
+    * Reservations (1 or 3 years commitment): reservations can provide up to a 70% discount compared to the On-Demand price
+    * Dedicated Hosts can be purchased as a Reservation for up to 70 percent off the On-Demand price.
 
 ## Compute Pricing - Lambda and ECS
 
