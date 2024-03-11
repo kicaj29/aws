@@ -196,12 +196,6 @@ https://aws.amazon.com/organizations/faqs/
   * you do not purchase actual instances but ‌commit to one or three years of On-Demand Instances at a discounted price
   * **commitment unit: dollar**
   * provide up to 72 percent savings on AWS compute usage
-* Reserved instances
-  * Save up to 75 percent compared to On-Demand Instance pricing.
-  * You can select either a 1-year or 3-year term for each of these options. 
-  * **Standard Reserved Instances**: These provide the most significant discount (up to 72 percent off On-Demand pricing) and are best suited for steady-state usage.
-  * **Convertible Reserved Instances**: These provide a discount (up to 54 percent off On-Demand pricing) and the capability to change the attributes of the Reserved Instance if the exchange results in the creation of Reserved Instances of equal or greater value. Like Standard Reserved Instances, Convertible Reserved Instances are best suited for steady-state usage.
-  * **Scheduled Reserved Instances**: These are available to launch within the time windows that you reserve. With this option, you can match your capacity reservation to a predictable recurring schedule that only requires a fraction of a day, a week, or a month.
 * Reserved instances vs saving plans
   * ![031-saving-plans-vs-reserved.png](./images/031-saving-plans-vs-reserved.png)
 * [Dedicated Host](https://aws.amazon.com/ec2/dedicated-hosts/)
