@@ -5,6 +5,7 @@
 - [Routing table](#routing-table)
   - [Typical route table (public and private subnet)](#typical-route-table-public-and-private-subnet)
 - [Network access control list](#network-access-control-list)
+  - [Security Group vs ACL](#security-group-vs-acl)
 - [Subnet](#subnet)
   - [Subnet reserved IP addresses](#subnet-reserved-ip-addresses)
 - [Internet Gateway](#internet-gateway)
@@ -150,7 +151,9 @@ One security group can reference another security group. Thx to this we can say 
 
 Each VPC has one **routing table**, which declares attempted destination IPs and where they should be routed to. For instance, if you want to run all outgoing traffic through a proxy, you can set a routing table rule to automatically send traffic to that IP. This can be a powerful tool for security as you can inspect outgoing traffic and only whitelist safe destinations for traffic.   
 
-Router exist across availability zones and there is no single point of hardware failure that would take this router down.   
+Router exist across availability zones and there is no single point of hardware failure that would take this router down.
+
+https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Route_Tables.html
 
 **Route tables can be assigned also to subnets.**
 
@@ -185,6 +188,10 @@ This allows supporting scenarios when HTTPS traffic from specific IPs is forbidd
 **By default, your account’s default network ACL allows all inbound and outbound traffic, but you can modify it by adding your own rules.**
 
 [Security Group vs ACL](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Security.html)
+
+## Security Group vs ACL
+
+With security groups, everything is blocked by default so you can only use allow rules. Whereas with network ACLs, everything is allowed by default but you can use both allow and deny rules.
 
 # Subnet
 
@@ -760,6 +767,9 @@ Next attach IGW to the created VPC:
 Next add route for Internet traffic:
 
 ![vpc-92-create-public-subnet-route-igw.png](images/vpc-92-create-public-subnet-route-igw.png)
+
+**Destination**: the range of IP addresses where you want traffic to go (destination CIDR).
+**Target**: the gateway, network interface, or connection through which to send the destination traffic; for example, an internet gateway
 
 Next attach this route to public network:
 
