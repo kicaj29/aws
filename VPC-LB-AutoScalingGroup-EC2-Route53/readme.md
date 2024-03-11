@@ -6,6 +6,7 @@
   - [Typical route table (public and private subnet)](#typical-route-table-public-and-private-subnet)
 - [Network access control list](#network-access-control-list)
 - [Subnet](#subnet)
+  - [Subnet reserved IP addresses](#subnet-reserved-ip-addresses)
 - [Internet Gateway](#internet-gateway)
 - [Virtual Private Gateway](#virtual-private-gateway)
 - [VPC endpoints to connect with AWS public resources](#vpc-endpoints-to-connect-with-aws-public-resources)
@@ -192,10 +193,14 @@ A VPC defines a private, logically isolated area for instances, but a **subnet**
 ![vpc-01-subnet.png](images/vpc-01-subnet.png)
 ![vpc-02-subnet-priv-public.png](images/vpc-02-subnet-priv-public.png)
 
-* the first four addresses are reserved within each subnet
-* the highest address is reserved
-* for example: 10.0.1.0/24
-  * reserved addresses are: 10.0.1.0 (subnet address), 10.0.1.1 (reserved for default gateway), 10.0.1.2 (default DNS server), 10.0.1.3 (future use by AWS), and 10.0.1.255 (broad case address)
+## Subnet reserved IP addresses
+
+For example for CIDR 10.0.0.0/22:
+* 10.0.0.0 is network address
+* 10.0.0.1 is VPC local router
+* 10.0.0.2 is DNS server
+* 10.0.0.3 is future use by AWS
+* 10.0.2.255 is network broadcast address
 
 # Internet Gateway
 

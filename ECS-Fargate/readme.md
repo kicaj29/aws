@@ -14,5 +14,6 @@
 * Launch Docker containers on AWS
 * You do not have to provision the infrastructure (no EC2 instances to manage)
 * Serverless offering - AWS just runs containers for you based on the CPU/RAM you need
+* **Can be used for both ECS and EKS**
 
 ![02-Fargate.png](./images/02-Fargate.png)

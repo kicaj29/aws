@@ -18,3 +18,12 @@
 
 * EC2: https://github.com/kicaj29/aws/tree/main/EC2
 * EC2 pricing: https://github.com/kicaj29/aws/tree/main/AccountMgmtBillingAndSupport#compute-pricing---ec2-different-models
+* ECS: https://github.com/kicaj29/aws/tree/main/ECS-Fargate#ecs
+* EKS
+* AWS Fargate: https://github.com/kicaj29/aws/tree/main/ECS-Fargate#fargate
+* AWS Lambda
+
+### Module 3: Introduction to Networking
+
+https://github.com/kicaj29/networking
+https://github.com/kicaj29/aws/tree/main/VPC-LB-AutoScalingGroup-EC2-Route53
