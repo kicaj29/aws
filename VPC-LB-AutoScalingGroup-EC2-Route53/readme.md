@@ -211,7 +211,13 @@ For example for CIDR 10.0.0.0/22:
 
 # Internet Gateway
 
-An Internet gateway is attached to a VPC and allows inbound traffic from the internet to access the VPC. It is also used as a target in route tables for outbound internet traffic.
+An Internet Gateway is attached to a VPC and allows inbound traffic from the internet to access the VPC. It is also used as a target in route tables for outbound internet traffic.
+**It means that IG is necessary for both incoming connections and outgoing connections.**
+For example if route table does not have entry: destination - `0.0.0.0\0` and target - IG then we cannot connect the selected EC2 instance and also this EC2 instance cannot connect to the Internet.
+
+https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Internet_Gateway.html
+
+*An internet gateway enables resources in your public subnets (such as EC2 instances) **to connect to the internet** if the resource has a public IPv4 address or an IPv6 address. Similarly, **resources on the internet can initiate a connection to resources in your subnet** using the public IPv4 address or IPv6 address. For example, an internet gateway enables you to connect to an EC2 instance in AWS using your local computer.*
 
 **External IP is not visible from level of EC2 instance!** It sees only 10.0.1.23 address.   
 **Internet GW is performing source NAT and destination NAT**.   
