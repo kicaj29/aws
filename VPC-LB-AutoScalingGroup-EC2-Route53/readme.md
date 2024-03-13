@@ -101,8 +101,9 @@
 
 # Security Groups
 
-A security group defines a collection of IPs that are allowed to connect to your instance and IPs that instance is allowed to connect to. **Security groups are attached at the instance level (EC2) to interfaces (ENI) and can be shared among many instances**. You can even set security group rules to allow access from other security groups instead of by IP. **Security groups are stateful firewalls (it has persistency and can remember traffic from the past)**.
+https://docs.aws.amazon.com/vpc/latest/userguide/vpc-security-groups.html
 
+A security group defines a collection of IPs that are allowed to connect to your instance and IPs that instance is allowed to connect to. **Security groups are attached at the instance level (EC2) to interfaces (ENI) and can be shared among many instances**. You can even set security group rules to allow access from other security groups instead of by IP. **Security groups are stateful firewalls (it has persistency and can remember traffic from the past)**.
 
 You cannot use individual IP address value: ![vpc-111-security-group-cidr.png](./images/vpc-111-security-group-cidr.png)   
 
@@ -116,6 +117,7 @@ For example security group can be defined in EC2 wizard as one of its steps:
 
 * **Outbound traffic is allowed by default** - when incoming connection (request) is allowed then by default response is also allowed. Using other worlds: return traffic is allowed by default (if incoming traffic is allowed).
 Also when connection is established by for example EC2 instance then by default this outgoing traffic is allowed.
+*Security groups are stateful. For example, if you send a request from an instance, the response traffic for that request is allowed to reach the instance regardless of the inbound security group rules. Responses to allowed inbound traffic are allowed to leave the instance, regardless of the outbound rules.*
 
 * **Inbound traffic is implicitly denied** - if there is no rule then the incoming traffic is denied.
 
@@ -191,7 +193,7 @@ This allows supporting scenarios when HTTPS traffic from specific IPs is forbidd
 
 ## Security Group vs ACL
 
-With security groups, everything is blocked by default so you can only use allow rules. Whereas with network ACLs, everything is allowed by default but you can use both allow and deny rules.
+With security groups establishing incoming connection is blocked, whereas with network ACLs, everything is allowed by default but you can use both allow and deny rules.
 
 # Subnet
 
