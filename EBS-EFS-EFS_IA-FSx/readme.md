@@ -1,4 +1,22 @@
-Amazon Elastic Block Store
+- [File storage vs block storage vs object storage](#file-storage-vs-block-storage-vs-object-storage)
+- [Instance Store Volumes](#instance-store-volumes)
+- [What is an EBS Volume](#what-is-an-ebs-volume)
+  - [EBS - delete on termination](#ebs---delete-on-termination)
+  - [EBS - snapshots (backup)](#ebs---snapshots-backup)
+- [Root device storage concepts](#root-device-storage-concepts)
+  - [Instance store-backed instances](#instance-store-backed-instances)
+  - [Amazon EBS-backed instances](#amazon-ebs-backed-instances)
+- [EFS - Elastic File System](#efs---elastic-file-system)
+- [EFS Infrequent Access (EFS-IA)](#efs-infrequent-access-efs-ia)
+- [Shared responsibility model for EC2 storage](#shared-responsibility-model-for-ec2-storage)
+- [Amazon FSx](#amazon-fsx)
+
+# File storage vs block storage vs object storage
+
+https://aws.amazon.com/compare/the-difference-between-block-file-object-storage/   
+
+
+![008-block-storage-vs-object-storage.png](./images/008-block-storage-vs-object-storage.png)
 
 # Instance Store Volumes
 

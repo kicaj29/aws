@@ -25,5 +25,10 @@
 
 ### Module 3: Introduction to Networking
 
-https://github.com/kicaj29/networking
+https://github.com/kicaj29/networking   
 https://github.com/kicaj29/aws/tree/main/VPC-LB-AutoScalingGroup-EC2-Route53
+
+### Module 4: Storage Types
+
+* https://github.com/kicaj29/aws/tree/main/S3   
+* https://github.com/kicaj29/aws/tree/main/EBS-EFS-EFS_IA-FSx   
