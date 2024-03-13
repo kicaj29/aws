@@ -1,5 +1,5 @@
 - [File storage vs block storage vs object storage](#file-storage-vs-block-storage-vs-object-storage)
-- [Instance Store Volumes](#instance-store-volumes)
+- [EC2 Instance Store Volumes](#ec2-instance-store-volumes)
 - [What is an EBS Volume](#what-is-an-ebs-volume)
   - [EBS - delete on termination](#ebs---delete-on-termination)
   - [EBS - snapshots (backup)](#ebs---snapshots-backup)
@@ -18,13 +18,13 @@ https://aws.amazon.com/compare/the-difference-between-block-file-object-storage/
 
 ![008-block-storage-vs-object-storage.png](./images/008-block-storage-vs-object-storage.png)
 
-# Instance Store Volumes
+# EC2 Instance Store Volumes
 
 https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/InstanceStorage.html
 
 An instance store provides temporary block-level storage for your instance. This storage is located on disks that are **physically attached** to the host computer. Instance store is ideal for temporary storage of information that changes frequently, such as buffers, caches, scratch data, and other temporary content
 
-This is also good option when you need storage with very low latency, but you don't need the data to persist when the instance terminates or you can take advantage of fault-tolerant architectures.
+This is also good option when you need storage with very low latency, but you don't need the data to persist **when the instance stops or terminates** or you can take advantage of fault-tolerant architectures.
 
 Backups and replication are your responsibility.
 
@@ -32,14 +32,17 @@ Backups and replication are your responsibility.
 
 * It is a network drive you can attach to your instances while they run (it is not a physical drive). Because it is a network drive there might be a bit of latency.
 * It allows your instances to persist data, even after their termination.
-* They can only be mounted to a single instance at a time.
+* Typically they are mounted to a single instance at a time.
+  * There is feature called **EBS Multi-Attach** - it depends on EC2 instance type and type of EBS volume, then you can have the same EBS volume attached to multiple EC2 instances.
 * **They are bound to a specific availability zone** (it is not regional resource)
   * For example: an EBS in us-east-1a cannot be attached to us-east-1b, unless we create a snapshot - then it is possible.
 * Analogy: think ot them as a "network USB stick".
-* Size up to 16 TB
+* Size up to 64 TB
 * Single file can be stored as many blocks - it allows to update only part of the file, partial file updates are possible, S3 does not support it
 * EBS Volumes do not automatically scale if more space is needed: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/step3-increase-size-of-data-volume.html
   * It can be automated by running custom lambda function: https://aws.amazon.com/blogs/storage/automating-amazon-ebs-volume-resizing-with-aws-step-functions-and-aws-systems-manager/
+    * Increase volume size (up to 64TB)
+    * Attache multiple EBS volumes to EC2 instance
 * Both non-root and root volumes can be encrypted
 
 ## EBS - delete on termination
