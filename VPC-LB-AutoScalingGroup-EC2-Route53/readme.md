@@ -117,6 +117,7 @@ For example security group can be defined in EC2 wizard as one of its steps:
 
 * **Outbound traffic is allowed by default** - when incoming connection (request) is allowed then by default response is also allowed. Using other worlds: return traffic is allowed by default (if incoming traffic is allowed).
 Also when connection is established by for example EC2 instance then by default this outgoing traffic is allowed.
+
 *Security groups are stateful. For example, if you send a request from an instance, the response traffic for that request is allowed to reach the instance regardless of the inbound security group rules. Responses to allowed inbound traffic are allowed to leave the instance, regardless of the outbound rules.*
 
 * **Inbound traffic is implicitly denied** - if there is no rule then the incoming traffic is denied.
