@@ -168,6 +168,10 @@ https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Route_Tables.html
 
 # Network access control list
 
+https://docs.aws.amazon.com/vpc/latest/userguide/vpc-network-acls.html
+
+*Your VPC automatically comes with a modifiable default network ACL. By default, it allows all inbound and outbound IPv4 traffic and, if applicable, IPv6 traffic.*
+
 Another tool the VPCs use for networking control is the **network access control list**. Each VPC has one access control list, and this acts as an IP filtering table saying which IPs are allowed through the VPC for both incoming and outgoing traffic. Access control lists are kind of like super-powered security groups that apply rules for the entire VPC. **ACL is stateless firewall** - it means that return traffic must be explicitly allowed by rules.
 
 **In ACL you cannot use individual IP address without using CIDR block.**
