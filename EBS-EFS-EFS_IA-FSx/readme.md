@@ -30,6 +30,8 @@ Backups and replication are your responsibility.
 
 # What is an EBS Volume
 
+https://docs.aws.amazon.com/ebs/latest/userguide/what-is-ebs.html
+
 * It is a network drive you can attach to your instances while they run (it is not a physical drive). Because it is a network drive there might be a bit of latency.
 * It allows your instances to persist data, even after their termination.
 * Typically they are mounted to a single instance at a time.
