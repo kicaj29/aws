@@ -137,3 +137,4 @@ An Amazon EBS-backed instance can be stopped and later restarted without affecti
     ![005-FSx-for-Windows.png](./images/005-FSx-for-Windows.png)
 
   * FSx for NetApp ONTAP
+  * FSx for OpenZFS
