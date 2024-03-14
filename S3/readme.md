@@ -1,6 +1,7 @@
 - [Important requirements](#important-requirements)
-- [Path](#path)
+- [Object keys](#object-keys)
 - [Limits](#limits)
+- [Use cases](#use-cases)
 - [Security](#security)
   - [Encryption](#encryption)
 - [WebSites](#websites)
@@ -30,20 +31,25 @@
 
 S3 allows people to store **objects** (files) in **buckets** (directories - root directories).
 
-*  Buckets must have globally unique name (across all accounts)
+*  Each bucket name must be unique across all AWS accounts in all AWS Regions within a partition. A partition is a grouping of Regions, of which AWS currently has three: Standard Regions, China Regions, and AWS GovCloud (US).
 *  Buckets are defined at the region level
 *  S3 looks like a global service but buckets are created in a region
 *  It is key value based object storage service
 *  Stores data in flat non-hierarchical structure
 *  Naming conventions for buckets
    *  No uppercase
-   *  No underscore
+   *  Consist only of letters, numbers, dots (.), and hyphens (-).
    *  3-63 length
-   *  Not an IP
-   *  Must start with lowercase letter or number
+   *  Not an IP address
+   *  Must start with letter or number
+   *  To enable AWS S3 Transfer Acceleration on a bucket or use a virtual hosted-style bucket with SSL, the bucket name must conform to DNS naming requirements and **must not contain dots**
 
 
-# Path
+# Object keys
+
+https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-keys.html
+
+*The object key (or key name) uniquely identifies the object in an Amazon S3 bucket*
 
 The key is compose of prefix and object name: s3://[BUCKET-NAME]/[FOLDER1]/[FOLDER2]/[FILE-NAME], sample key:
 `s3://my-bucket/f1/f2/my_file.txt` - here the prefix is f1/f2
@@ -54,7 +60,18 @@ The key is compose of prefix and object name: s3://[BUCKET-NAME]/[FOLDER1]/[FOLD
 * If uploading more than 5TB, must use "multi-part upload".
 * Cannot partially update objects - even we change only one bite we have to upload the whole object (such limitation does not exist in EBS - EBS can store a single file in multiple blocks and then only selected blocks are updated).
 
+# Use cases
+
+* Backup and storage: Amazon S3 is a natural place to back up files because it is highly redundant. As mentioned in the last lesson, AWS stores your EBS snapshots in Amazon S3 to take advantage of its high availability.
+* Media hosting: Because you can store unlimited objects, and each individual object can be up to 5 TB, Amazon S3 is an ideal location to host video, photo, and music uploads.
+* Software delivery: You can use Amazon S3 to host your software applications that customers can download.
+* Data lakes: Amazon S3 is an optimal foundation for a data lake because of its virtually unlimited scalability. You can increase storage from gigabytes to petabytes of content, paying only for what you use.
+* Static websites: You can configure your S3 bucket to host a static website of HTML, CSS, and client-side scripts.
+* Static content: Because of the limitless scaling, the support for large files, and the fact that you can access any object over the web at any time, Amazon S3 is the perfect place to store static content.
+
 # Security
+
+Everything in Amazon S3 is private by default. This means that all Amazon S3 resources, such as buckets and objects, can only be viewed by the user or AWS account that created that resource.
 
 * User based - IAM policies
   * NOTE: an IAM principal can access an S3 object if the user IAM permissions allow it OR the resource policy ALLOWS it AND there is no explicit DENY
