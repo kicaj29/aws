@@ -2,6 +2,9 @@
 - [EC2 Instance Store Volumes](#ec2-instance-store-volumes)
 - [What is an EBS Volume](#what-is-an-ebs-volume)
   - [EBS - delete on termination](#ebs---delete-on-termination)
+  - [EBS use cases](#ebs-use-cases)
+  - [EBS volume types](#ebs-volume-types)
+  - [Amazon EBS benefits](#amazon-ebs-benefits)
   - [EBS - snapshots (backup)](#ebs---snapshots-backup)
 - [Root device storage concepts](#root-device-storage-concepts)
   - [Instance store-backed instances](#instance-store-backed-instances)
@@ -41,7 +44,7 @@ https://docs.aws.amazon.com/ebs/latest/userguide/what-is-ebs.html
 * Analogy: think ot them as a "network USB stick".
 * Size up to 64 TB
 * Single file can be stored as many blocks - it allows to update only part of the file, partial file updates are possible, S3 does not support it
-* EBS Volumes do not automatically scale if more space is needed: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/step3-increase-size-of-data-volume.html
+* EBS Volumes do not automatically **scale** if more space is needed: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/step3-increase-size-of-data-volume.html
   * It can be automated by running custom lambda function: https://aws.amazon.com/blogs/storage/automating-amazon-ebs-volume-resizing-with-aws-step-functions-and-aws-systems-manager/
     * Increase volume size (up to 64TB)
     * Attache multiple EBS volumes to EC2 instance
@@ -52,13 +55,37 @@ https://docs.aws.amazon.com/ebs/latest/userguide/what-is-ebs.html
 * By default, attached EBS volume is not deleted.
 ![001-delete-on-termination-attr.png](./images/001-delete-on-termination-attr.png)
 
+## EBS use cases
+
+* Operating systems: Boot and root volumes can be used to store an operating system. The root device for an instance launched from an Amazon Machine Image (AMI) is typically an EBS volume. These are commonly referred to as EBS-backed AMIs.
+* Databases: As a storage layer for databases running on Amazon EC2 that will scale with your performance needs and provide consistent and low-latency performance.
+* Enterprise applications: Amazon EBS provides high availability and high durability block storage to run business-critical applications.
+* Big data analytics engines: Amazon EBS offers data persistence, dynamic performance adjustments, and the ability to detach and reattach volumes, so you can resize clusters for big data analytics.
+
+## EBS volume types
+
+* SSD (solid-state drives) volumes: SSDs are used for transactional workloads with frequent read/write operations with small I/O size.
+* HDD (hard-disk drives) volumes: HDDs are used for large streaming workloads that need high throughput performance.
+
+**Both do not support EBS Multi-attach.**
+
+## Amazon EBS benefits
+
+* HA: When you create an EBS volume, it is automatically replicated in its Availability Zone to prevent data loss from single points of failure.
+* Data persistence: Storage persists even when your instance doesn’t.
+* Data encryption: **When activated by the user**, all EBS volumes support encryption.
+* Flexibility: EBS volumes **support on-the-fly changes**. Modify volume type, volume size, and input/output operations per second (IOPS) capacity without stopping your instance.
+* Backups: Amazon EBS provides the ability to create backups of any EBS volume.
+
 ## EBS - snapshots (backup)
 
 * EBS snapshots are stored on S3
-* incremental snapshots
-* make a snapshot (backup) of you EBS volume at point in time
-* not necessary to detach volume to do snapshot, but recommended
-* can copy snapshots across AZ or Region
+  * The backups are stored redundantly in multiple Availability Zones using Amazon S3
+* Incremental snapshots
+  * For example, if you have 10 GB of data on a volume and only 2 GB of data have been modified since your last snapshot, only the 2 GB that have been changed are written to Amazon S3.
+* Make a snapshot (backup) of you EBS volume at point in time
+* Not necessary to detach volume to do snapshot, but recommended
+* Can copy snapshots across AZ or Region
 
 ![002-ebs.png](./images/002-ebs.png)
 
