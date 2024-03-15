@@ -86,6 +86,7 @@ Private/privDoc1.txt
 Private/privDoc2.zip
 Development/project1.xls
 Development/project2.xls
+Development/Dev1/project3.xls
 Finance/Tax2011/document1.pdf
 Finance/Tax2011/document2.pdf
 s3-dg.pdf
