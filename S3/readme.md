@@ -101,7 +101,7 @@ IAM also supports creating user groups and granting group-level permissions that
 
 ![009-s3-iam-policies-no-access.png](./images/009-s3-iam-policies-no-access.png)
 
-* **Step 4**: gran group-level permissions
+* **Step 4**: grant group-level permissions
 
   * List all buckets owned by the parent aws account. To do so, Bob and Alice must have permission for the `s3:ListAllMyBuckets` action. Create policy `test-jacek-s3-list-buckets`.
   
