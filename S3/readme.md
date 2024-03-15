@@ -221,7 +221,7 @@ IAM also supports creating user groups and granting group-level permissions that
   }
   ```
   Now Alice can download the files, upload files and also create folders.
-  ![020-s3-iam-policies.png](./images/020-s3-iam-policies.png)
+  ![021-s3-iam-policies.png](./images/021-s3-iam-policies.png)
 
 * User based - IAM policies
   * NOTE: an IAM principal can accessas an S3 object if the user IAM permissions allow it OR the resource policy ALLOWS it AND there is no explicit DENY
