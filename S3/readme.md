@@ -78,7 +78,7 @@ Everything in Amazon S3 is private by default. This means that all Amazon S3 res
 
 https://docs.aws.amazon.com/AmazonS3/latest/userguide/walkthrough1.html
 
-* Step 1: create bucket `jacek-test-iam-policies`
+* **Step 1**: create bucket `jacek-test-iam-policies`
 
 Object keys:
 ```
@@ -93,15 +93,15 @@ s3-dg.pdf
 You have two users, Alice and Bob. You want Alice to access only the Development folder, and you want Bob to access only the Finance folder. You want to keep the Private folder content private. 
 IAM also supports creating user groups and granting group-level permissions that apply to all users in the group.
 
-* Step 2: create Alice and Bob users and add them to `test-jacek-consultants` user group.
+* **Step 2**: create Alice and Bob users and add them to `test-jacek-consultants` user group.
 
 ![008-s3-iam-policies.png](./images/008-s3-iam-policies.png)
 
-* Step 3: try sign in as Alice and Bob and see that you do not have any access to S3 
+* **Step 3**: try sign in as Alice and Bob and see that you do not have any access to S3 
 
 ![009-s3-iam-policies-no-access.png](./images/009-s3-iam-policies-no-access.png)
 
-* Step 4: gran group-level permissions
+* **Step 4**: gran group-level permissions
 
   * List all buckets owned by the parent aws account. To do so, Bob and Alice must have permission for the `s3:ListAllMyBuckets` action. Create policy `test-jacek-s3-list-buckets`.
   
