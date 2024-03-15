@@ -223,6 +223,50 @@ IAM also supports creating user groups and granting group-level permissions that
   Now Alice can download the files, upload files and also create folders.
   ![021-s3-iam-policies.png](./images/021-s3-iam-policies.png)
 
+* **Step 5.3**: Explicitly deny IAM user Alice permissions to any other folders in the bucket
+
+  **If there is any other policy (bucket policy or ACL) that grants Alice access to any other folders in the bucket, this explicit deny overrides those permissions - DENY ALWAYS WIN!**
+
+  Update inline policy:
+
+  ```json
+  {
+    "Version": "2012-10-17",
+    "Statement":[
+      {
+         "Sid":"AllowListBucketIfSpecificPrefixIsIncludedInRequest",
+         "Action":["s3:ListBucket"],
+         "Effect":"Allow",
+         "Resource":["arn:aws:s3:::jacek-test-iam-policies"],
+         "Condition":{
+            "StringLike":{"s3:prefix":["Development/*"]
+            }
+         }
+      },
+      {
+        "Sid":"AllowUserToReadWriteObjectDataInDevelopmentFolder", 
+        "Action":["s3:GetObject", "s3:PutObject"],
+        "Effect":"Allow",
+        "Resource":["arn:aws:s3:::jacek-test-iam-policies/Development/*"]
+      },
+      {
+        "Sid": "ExplicitlyDenyAnyRequestsForAllOtherFoldersExceptDevelopment",
+        "Action": ["s3:ListBucket"],
+        "Effect": "Deny",
+        "Resource": ["arn:aws:s3:::jacek-test-iam-policies"],
+        "Condition":{ "StringNotLike": {"s3:prefix":["Development/*",""] },
+                      "Null"         : {"s3:prefix":false }
+          }
+      }      
+    ]
+  }  
+  ```
+
+  * **The Null conditional expression** ensures that requests from Alice include the prefix parameter. The prefix parameter requires folder-like access. If you send a request without the prefix parameter, Amazon S3 returns all the object keys.
+  https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_condition_operators.html#Conditions_Null
+  
+  * **The StringNotLike conditional expression** ensures that if the value of the prefix parameter is specified and is not Development/*, the request fails.
+
 * User based - IAM policies
   * NOTE: an IAM principal can accessas an S3 object if the user IAM permissions allow it OR the resource policy ALLOWS it AND there is no explicit DENY
 * Resource based
