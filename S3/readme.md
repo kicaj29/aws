@@ -105,56 +105,56 @@ IAM also supports creating user groups and granting group-level permissions that
 
   * List all buckets owned by the parent aws account. To do so, Bob and Alice must have permission for the `s3:ListAllMyBuckets` action. Create policy `test-jacek-s3-list-buckets`.
   
-  ```json
-  {
-    "Version": "2012-10-17",
-    "Statement": [
-      {
-        "Sid": "AllowGroupToSeeBucketListInTheConsole",
-        "Action": ["s3:ListAllMyBuckets"],
-        "Effect": "Allow",
-        "Resource": ["arn:aws:s3:::*"]
-      }
-    ]
-  }
-  ```
-  ![010-s3-iam-policies.png](./images/010-s3-iam-policies.png)
-  ![011-s3-iam-policies.png](./images/011-s3-iam-policies.png)
-  ![012-s3-iam-policies.png](./images/012-s3-iam-policies.png)
+    ```json
+    {
+      "Version": "2012-10-17",
+      "Statement": [
+        {
+          "Sid": "AllowGroupToSeeBucketListInTheConsole",
+          "Action": ["s3:ListAllMyBuckets"],
+          "Effect": "Allow",
+          "Resource": ["arn:aws:s3:::*"]
+        }
+      ]
+    }
+    ```
+    ![010-s3-iam-policies.png](./images/010-s3-iam-policies.png)
+    ![011-s3-iam-policies.png](./images/011-s3-iam-policies.png)
+    ![012-s3-iam-policies.png](./images/012-s3-iam-policies.png)
 
-  **Now Alice and Bob can see all the buckets:** 
-  ![014-s3-iam-policies.png](./images/014-s3-iam-policies.png)
+    **Now Alice and Bob can see all the buckets:** 
+    ![014-s3-iam-policies.png](./images/014-s3-iam-policies.png)
 
   * List root-level items, folders, and objects in the `jacek-test-iam-policies` bucket. To do so, Bob and Alice must have permission for the `s3:ListBucket` action on the `jacek-test-iam-policies` bucket. Create a new policy `test-jacek-s3-list-buckets` and attach it to the user group, unattach from the user group previous policy.   
 
-  To ensure that they see only the root-level content, you add a condition that users must specify an empty prefix in the request — that is, they are not allowed to double-click any of the root-level folders. Finally, you add a condition to require folder-style access by requiring user requests to include the delimiter parameter with the value "/"
+    To ensure that they see only the root-level content, you add a condition that users must specify an empty prefix in the request — that is, they are not allowed to double-click any of the root-level folders. Finally, you add a condition to require folder-style access by requiring user requests to include the delimiter parameter with the value "/"
 
-  When you choose a bucket on the Amazon S3 console, the console first sends the GET Bucket location request to find the AWS Region where the bucket is deployed. Then the console uses the Region-specific endpoint for the bucket to send the GET Bucket (List Objects) request - **that's why `s3:GetBucketLocation` is also needed.**
+    When you choose a bucket on the Amazon S3 console, the console first sends the GET Bucket location request to find the AWS Region where the bucket is deployed. Then the console uses the Region-specific endpoint for the bucket to send the GET Bucket (List Objects) request - **that's why `s3:GetBucketLocation` is also needed.**
 
-  ```json
-  {
-    "Version": "2012-10-17",
-    "Statement": [
-      {
-        "Sid": "AllowGroupToSeeBucketListAndAlsoAllowGetBucketLocationRequiredForListBucket",
-        "Action": [ "s3:ListAllMyBuckets", "s3:GetBucketLocation" ],
-        "Effect": "Allow",
-        "Resource": [ "arn:aws:s3:::*"  ]
-      },
-      {
-        "Sid": "AllowRootLevelListingOfCompanyBucket",
-        "Action": ["s3:ListBucket"],
-        "Effect": "Allow",
-        "Resource": ["arn:aws:s3:::jacek-test-iam-policies"],
-        "Condition":{ 
-          "StringEquals":{
-            "s3:prefix":[""], "s3:delimiter":["/"]
+    ```json
+    {
+      "Version": "2012-10-17",
+      "Statement": [
+        {
+          "Sid": "AllowGroupToSeeBucketListAndAlsoAllowGetBucketLocationRequiredForListBucket",
+          "Action": [ "s3:ListAllMyBuckets", "s3:GetBucketLocation" ],
+          "Effect": "Allow",
+          "Resource": [ "arn:aws:s3:::*"  ]
+        },
+        {
+          "Sid": "AllowRootLevelListingOfCompanyBucket",
+          "Action": ["s3:ListBucket"],
+          "Effect": "Allow",
+          "Resource": ["arn:aws:s3:::jacek-test-iam-policies"],
+          "Condition":{ 
+            "StringEquals":{
+              "s3:prefix":[""], "s3:delimiter":["/"]
+            }
           }
         }
-      }
-    ] 
-  }
-  ```
+      ] 
+    }
+    ```
   * Test access for Alice and Bob.
 
   Now Alice and Bob has access to the top level objects of the `jacek-test-iam-policies` bucket but they cannot go deeper.
