@@ -262,10 +262,43 @@ IAM also supports creating user groups and granting group-level permissions that
   }  
   ```
 
-  * **The Null conditional expression** ensures that requests from Alice include the prefix parameter. The prefix parameter requires folder-like access. If you send a request without the prefix parameter, Amazon S3 returns all the object keys.
-  https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_condition_operators.html#Conditions_Null
-  
+  * **The Null conditional expression** ensures that requests from Alice include the prefix parameter. The prefix parameter requires folder-like access. **If you send a request without the prefix parameter, Amazon S3 returns all the object keys.**
+  https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_condition_operators.html#Conditions_Null   
+  https://stackoverflow.com/questions/48368340/what-is-the-purpose-of-the-second-effectdeny-conditionnull-statement-of-thi
+
   * **The StringNotLike conditional expression** ensures that if the value of the prefix parameter is specified and is not Development/*, the request fails.
+
+* **Step 6**: Grant IAM user Bob specific permissions
+
+  In similar way you can define permissions for Bob for `Finance` folder.
+
+* **Step 7**: Secure the private folder
+
+  You don't want any of the users in this example to access the content of the Private folder. How do you ensure that you don't accidentally grant a user permission to it? You add a policy that explicitly denies access to the folder. An explicit deny overrides any other permissions.
+
+  Extend policy assgined to the user groups by 2 new elements:
+
+  * Explicitly deny any action on resources in the Private folder (companybucket/Private/*):
+    ```json
+    {
+      "Sid": "ExplictDenyAccessToPrivateFolderToEveryoneInTheGroup",
+      "Action": ["s3:*"],
+      "Effect": "Deny",
+      "Resource":["arn:aws:s3:::jacek-test-iam-policies/Private/*"]
+    }
+    ```
+  * You also deny permission for the list objects action when the request specifies the Private/ prefix.
+    ```json
+    {
+      "Sid": "DenyListBucketOnPrivateFolder",
+      "Action": ["s3:ListBucket"],
+      "Effect": "Deny",
+      "Resource": ["arn:aws:s3:::*"],
+      "Condition":{
+          "StringLike":{"s3:prefix":["Private/"]}
+      }
+    }    
+    ```
 
 * User based - IAM policies
   * NOTE: an IAM principal can accessas an S3 object if the user IAM permissions allow it OR the resource policy ALLOWS it AND there is no explicit DENY
