@@ -3,6 +3,7 @@
 - [Limits](#limits)
 - [Use cases](#use-cases)
 - [Security](#security)
+  - [S3 and IAM polices](#s3-and-iam-polices)
   - [Encryption](#encryption)
 - [WebSites](#websites)
 - [Versioning](#versioning)
@@ -62,16 +63,69 @@ The key is compose of prefix and object name: s3://[BUCKET-NAME]/[FOLDER1]/[FOLD
 
 # Use cases
 
-* Backup and storage: Amazon S3 is a natural place to back up files because it is highly redundant. As mentioned in the last lesson, AWS stores your EBS snapshots in Amazon S3 to take advantage of its high availability.
-* Media hosting: Because you can store unlimited objects, and each individual object can be up to 5 TB, Amazon S3 is an ideal location to host video, photo, and music uploads.
+* **Backup and storage**: Amazon S3 is a natural place to back up files because it is highly redundant. As mentioned in the last lesson, AWS stores your EBS snapshots in Amazon S3 to take advantage of its high availability.
+* **Media hosting**: Because you can store unlimited objects, and each individual object can be up to 5 TB, Amazon S3 is an ideal location to host video, photo, and music uploads.
 * Software delivery: You can use Amazon S3 to host your software applications that customers can download.
-* Data lakes: Amazon S3 is an optimal foundation for a data lake because of its virtually unlimited scalability. You can increase storage from gigabytes to petabytes of content, paying only for what you use.
-* Static websites: You can configure your S3 bucket to host a static website of HTML, CSS, and client-side scripts.
-* Static content: Because of the limitless scaling, the support for large files, and the fact that you can access any object over the web at any time, Amazon S3 is the perfect place to store static content.
+* **Data lakes**: Amazon S3 is an optimal foundation for a data lake because of its virtually unlimited scalability. You can increase storage from gigabytes to petabytes of content, paying only for what you use.
+* **Static websites**: You can configure your S3 bucket to host a static website of HTML, CSS, and client-side scripts.
+* **Static content**: Because of the limitless scaling, the support for large files, and the fact that you can access any object over the web at any time, Amazon S3 is the perfect place to store static content.
 
 # Security
 
 Everything in Amazon S3 is private by default. This means that all Amazon S3 resources, such as buckets and objects, can only be viewed by the user or AWS account that created that resource.
+
+## S3 and IAM polices
+
+https://docs.aws.amazon.com/AmazonS3/latest/userguide/walkthrough1.html
+
+* Step 1: create bucket `jacek-test-iam-policies`
+
+Object keys:
+```
+Private/privDoc1.txt
+Private/privDoc2.zip
+Development/project1.xls
+Development/project2.xls
+Finance/Tax2011/document1.pdf
+Finance/Tax2011/document2.pdf
+s3-dg.pdf
+```
+You have two users, Alice and Bob. You want Alice to access only the Development folder, and you want Bob to access only the Finance folder. You want to keep the Private folder content private. 
+IAM also supports creating user groups and granting group-level permissions that apply to all users in the group.
+
+* Step 2: create Alice and Bob users and add them to `test-jacek-consultants` user group.
+
+![008-s3-iam-policies.png](./images/008-s3-iam-policies.png)
+
+* Step 3: try sign in as Alice and Bob and see that you do not have any access to S3 
+
+* Step 4: gran group-level permissions
+
+  * List all buckets owned by the parent aws account. To do so, Bob and Alice must have permission for the `s3:ListAllMyBuckets` action. Create policy `test-jacek-s3-list-buckets`.
+  
+  ```json
+  {
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Sid": "AllowGroupToSeeBucketListInTheConsole",
+        "Action": ["s3:ListAllMyBuckets"],
+        "Effect": "Allow",
+        "Resource": ["arn:aws:s3:::*"]
+      }
+    ]
+  }
+  ```
+  ![010-s3-iam-policies.png](./images/010-s3-iam-policies.png)
+  ![011-s3-iam-policies.png](./images/011-s3-iam-policies.png)
+  ![012-s3-iam-policies.png](./images/012-s3-iam-policies.png)
+
+  **Now Alice and Bob can see all the buckets:** 
+  ![013-s3-iam-policies.png](./images/013-s3-iam-policies.png)
+
+  * List root-level items, folders, and objects in the `jacek-test-iam-policies` bucket. To do so, Bob and Alice must have permission for the `s3:ListBucket` action on the `jacek-test-iam-policies` bucket.
+
+![009-s3-iam-policies-no-access.png](./images/009-s3-iam-policies-no-access.png)
 
 * User based - IAM policies
   * NOTE: an IAM principal can access an S3 object if the user IAM permissions allow it OR the resource policy ALLOWS it AND there is no explicit DENY
