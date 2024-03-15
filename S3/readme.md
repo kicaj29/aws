@@ -125,7 +125,7 @@ IAM also supports creating user groups and granting group-level permissions that
     **Now Alice and Bob can see all the buckets:** 
     ![014-s3-iam-policies.png](./images/014-s3-iam-policies.png)
 
-  * List root-level items, folders, and objects in the `jacek-test-iam-policies` bucket. To do so, Bob and Alice must have permission for the `s3:ListBucket` action on the `jacek-test-iam-policies` bucket. Create a new policy `test-jacek-s3-list-buckets` and attach it to the user group, unattach from the user group previous policy.   
+  * List root-level items of the bucket, folders, and objects in the `jacek-test-iam-policies` bucket. To do so, Bob and Alice must have permission for the `s3:ListBucket` action on the `jacek-test-iam-policies` bucket. Create a new policy `test-jacek-s3-list-buckets` and attach it to the user group, unattach from the user group previous policy.   
 
     To ensure that they see only the root-level content, you add a condition that users must specify an empty prefix in the request — that is, they are not allowed to double-click any of the root-level folders. Finally, you add a condition to require folder-style access by requiring user requests to include the delimiter parameter with the value "/"
 
