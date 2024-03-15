@@ -99,6 +99,8 @@ IAM also supports creating user groups and granting group-level permissions that
 
 * Step 3: try sign in as Alice and Bob and see that you do not have any access to S3 
 
+![009-s3-iam-policies-no-access.png](./images/009-s3-iam-policies-no-access.png)
+
 * Step 4: gran group-level permissions
 
   * List all buckets owned by the parent aws account. To do so, Bob and Alice must have permission for the `s3:ListAllMyBuckets` action. Create policy `test-jacek-s3-list-buckets`.
@@ -124,8 +126,6 @@ IAM also supports creating user groups and granting group-level permissions that
   ![013-s3-iam-policies.png](./images/013-s3-iam-policies.png)
 
   * List root-level items, folders, and objects in the `jacek-test-iam-policies` bucket. To do so, Bob and Alice must have permission for the `s3:ListBucket` action on the `jacek-test-iam-policies` bucket.
-
-![009-s3-iam-policies-no-access.png](./images/009-s3-iam-policies-no-access.png)
 
 * User based - IAM policies
   * NOTE: an IAM principal can access an S3 object if the user IAM permissions allow it OR the resource policy ALLOWS it AND there is no explicit DENY
