@@ -125,10 +125,45 @@ IAM also supports creating user groups and granting group-level permissions that
   **Now Alice and Bob can see all the buckets:** 
   ![014-s3-iam-policies.png](./images/014-s3-iam-policies.png)
 
-  * List root-level items, folders, and objects in the `jacek-test-iam-policies` bucket. To do so, Bob and Alice must have permission for the `s3:ListBucket` action on the `jacek-test-iam-policies` bucket.
+  * List root-level items, folders, and objects in the `jacek-test-iam-policies` bucket. To do so, Bob and Alice must have permission for the `s3:ListBucket` action on the `jacek-test-iam-policies` bucket. Create a new policy `test-jacek-s3-list-buckets` and attach it to the user group, unattach from the user group previous policy.   
+
+  To ensure that they see only the root-level content, you add a condition that users must specify an empty prefix in the request — that is, they are not allowed to double-click any of the root-level folders. Finally, you add a condition to require folder-style access by requiring user requests to include the delimiter parameter with the value "/"
+
+  ```json
+  {
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Sid": "AllowGroupToSeeBucketListAndAlsoAllowGetBucketLocationRequiredForListBucket",
+        "Action": [ "s3:ListAllMyBuckets", "s3:GetBucketLocation" ],
+        "Effect": "Allow",
+        "Resource": [ "arn:aws:s3:::*"  ]
+      },
+      {
+        "Sid": "AllowRootLevelListingOfCompanyBucket",
+        "Action": ["s3:ListBucket"],
+        "Effect": "Allow",
+        "Resource": ["arn:aws:s3:::jacek-test-iam-policies"],
+        "Condition":{ 
+          "StringEquals":{
+            "s3:prefix":[""], "s3:delimiter":["/"]
+          }
+        }
+      }
+    ] 
+  }
+  ```
+  * Test access for Alice and Bob.
+
+  Now Alice and Bob has access to the top level objects of the `jacek-test-iam-policies` bucket but they cannot go deeper.
+  Also they cannot go to detials of the top level objects which are files.
+
+  ![015-s3-iam-policies.png](./images/015-s3-iam-policies.png)
+  ![016-s3-iam-policies.png](./images/016-s3-iam-policies.png)
+
 
 * User based - IAM policies
-  * NOTE: an IAM principal can access an S3 object if the user IAM permissions allow it OR the resource policy ALLOWS it AND there is no explicit DENY
+  * NOTE: an IAM principal can accessas an S3 object if the user IAM permissions allow it OR the resource policy ALLOWS it AND there is no explicit DENY
 * Resource based
   * Bucket policies - bucket wide rules from the S3 console - allow cross account
   * Object Access Control List (ACL) - finer grain (can be disabled)
