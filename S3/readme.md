@@ -129,6 +129,8 @@ IAM also supports creating user groups and granting group-level permissions that
 
   To ensure that they see only the root-level content, you add a condition that users must specify an empty prefix in the request — that is, they are not allowed to double-click any of the root-level folders. Finally, you add a condition to require folder-style access by requiring user requests to include the delimiter parameter with the value "/"
 
+  When you choose a bucket on the Amazon S3 console, the console first sends the GET Bucket location request to find the AWS Region where the bucket is deployed. Then the console uses the Region-specific endpoint for the bucket to send the GET Bucket (List Objects) request - **that's why `s3:GetBucketLocation` is also needed.**
+
   ```json
   {
     "Version": "2012-10-17",
