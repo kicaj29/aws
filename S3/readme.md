@@ -123,7 +123,7 @@ IAM also supports creating user groups and granting group-level permissions that
   ![012-s3-iam-policies.png](./images/012-s3-iam-policies.png)
 
   **Now Alice and Bob can see all the buckets:** 
-  ![014-s3-iam-policies.png](./images/013-s3-iam-policies.png)
+  ![014-s3-iam-policies.png](./images/014-s3-iam-policies.png)
 
   * List root-level items, folders, and objects in the `jacek-test-iam-policies` bucket. To do so, Bob and Alice must have permission for the `s3:ListBucket` action on the `jacek-test-iam-policies` bucket.
 
