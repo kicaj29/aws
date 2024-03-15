@@ -188,12 +188,40 @@ IAM also supports creating user groups and granting group-level permissions that
     }
     ```
 
-    Now Alice can list content of `Development` folder. It includes also all subfolders and files but withouth possbility of
-    downloading the files.
+    Now Alice can list content of `Development` folder. **It includes also all subfolders and files but withouth possbility of downloading the files**.
     ![018-s3-iam-policies.png](./images/018-s3-iam-policies.png)
     ![019-s3-iam-policies.png](./images/019-s3-iam-policies.png)
     ![020-s3-iam-policies.png](./images/020-s3-iam-policies.png)
 
+* **Step 5.2**: Grant IAM user Alice permissions to get and put objects in the development folder.
+
+  Update inline policy:
+
+  ```json
+  {
+    "Version": "2012-10-17",
+    "Statement":[
+      {
+         "Sid":"AllowListBucketIfSpecificPrefixIsIncludedInRequest",
+         "Action":["s3:ListBucket"],
+         "Effect":"Allow",
+         "Resource":["arn:aws:s3:::jacek-test-iam-policies"],
+         "Condition":{
+            "StringLike":{"s3:prefix":["Development/*"]
+            }
+         }
+      },
+      {
+        "Sid":"AllowUserToReadWriteObjectDataInDevelopmentFolder", 
+        "Action":["s3:GetObject", "s3:PutObject"],
+        "Effect":"Allow",
+        "Resource":["arn:aws:s3:::jacek-test-iam-policies/Development/*"]
+      }
+    ]
+  }
+  ```
+  Now Alice can download the files, upload files and also create folders.
+  ![020-s3-iam-policies.png](./images/020-s3-iam-policies.png)
 
 * User based - IAM policies
   * NOTE: an IAM principal can accessas an S3 object if the user IAM permissions allow it OR the resource policy ALLOWS it AND there is no explicit DENY
