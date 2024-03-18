@@ -393,12 +393,19 @@ URL address can be: `<bucket-name>.s3-website-<AWS-region>.amazonaws.com` or `<b
 
 # Versioning
 
+* By default it is disabled
 * It is enabled at the bucket level
 * Same key overwrite will increment the "version": 1,2,3...
 * Protects against unintended deletes (ability to restore version)
 * Easy roll back to previous version
 * **Any file the is not versioned prior to enabling versioning will have version "null"**
 * Suspending versioning does not delete previous versions
+* Deleting an object does not remove the object permanently. Instead, Amazon S3 puts a marker on the object that shows that you tried to delete it. If you want to restore the object, you can remove the marker and the object is reinstated.
+* To reduce your Amazon S3 bill, you might want to delete previous versions of your objects when they are no longer needed.
+* Versioning states
+  * **Unversioned** (default): No new and existing objects in the bucket have a version.
+  * **Enabled**: Versioning is enabled for all objects in the bucket. After you version-enable a bucket, it can never return to an unversioned state. However, you can suspend versioning on that bucket.
+  * **Suspended**: Versioning is suspended for new objects. All new objects in the bucket will not have a version. However, all existing objects keep their object versions.
 
 # Access logs
 
