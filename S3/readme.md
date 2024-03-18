@@ -4,6 +4,8 @@
 - [Use cases](#use-cases)
 - [Security](#security)
   - [S3 and IAM polices](#s3-and-iam-polices)
+  - [S3 and bucket policies](#s3-and-bucket-policies)
+  - [S3 and ACL](#s3-and-acl)
   - [Encryption](#encryption)
 - [WebSites](#websites)
 - [Versioning](#versioning)
@@ -73,6 +75,8 @@ The key is compose of prefix and object name: s3://[BUCKET-NAME]/[FOLDER1]/[FOLD
 # Security
 
 Everything in Amazon S3 is private by default. This means that all Amazon S3 resources, such as buckets and objects, can only be viewed by the user or AWS account that created that resource.
+
+https://aws.amazon.com/blogs/security/iam-policies-and-bucket-policies-and-acls-oh-my-controlling-access-to-s3-resources/
 
 ## S3 and IAM polices
 
@@ -299,6 +303,23 @@ IAM also supports creating user groups and granting group-level permissions that
       }
     }    
     ```
+
+## S3 and bucket policies
+
+* https://docs.aws.amazon.com/AmazonS3/latest/userguide/bucket-policies.html   
+  **Only the bucket owner can associate a policy with a bucket. The permissions attached to the bucket apply to all of the objects in the bucket that are owned by the bucket owner. These permissions do not apply to objects that are owned by other AWS accounts.**
+* https://docs.aws.amazon.com/AmazonS3/latest/userguide/example-bucket-policies.html   
+* https://docs.aws.amazon.com/AmazonS3/latest/userguide/access-policy-language-overview.html   
+  **In a bucket policy, the principal is the user, account, service, or other entity that is the recipient of this permission.**
+
+
+## S3 and ACL
+
+An S3 ACL is a sub-resource that’s attached to every S3 bucket and object. It defines which AWS accounts or groups are granted access and the type of access. You can attach S3 ACLs **to both buckets and individual objects within a bucket** to manage permissions for those objects. As a general rule, AWS recommends that you use S3 bucket policies or IAM policies for access control.** S3 ACLs are a legacy access control mechanism that predates IAM.**
+By default, object ownership is set to the bucket owner enforced setting, and all ACLs are disabled.
+
+![022-s3-acl.png](./images/022-s3-acl.png)
+![023-s3-acl.png](./images/023-s3-acl.png)
 
 * User based - IAM policies
   * NOTE: an IAM principal can accessas an S3 object if the user IAM permissions allow it OR the resource policy ALLOWS it AND there is no explicit DENY
