@@ -32,4 +32,7 @@ https://github.com/kicaj29/aws/tree/main/VPC-LB-AutoScalingGroup-EC2-Route53
 
 * https://github.com/kicaj29/aws/tree/main/S3   
 * https://github.com/kicaj29/aws/tree/main/EBS-EFS-EFS_IA-FSx   
-* https://github.com/kicaj29/aws/tree/main/S3   
+
+### Module 5: Databases on AWS
+
+* https://github.com/kicaj29/aws/tree/main/Databases
