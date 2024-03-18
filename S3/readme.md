@@ -5,6 +5,7 @@
 - [Security](#security)
   - [S3 and IAM polices](#s3-and-iam-polices)
   - [S3 and bucket policies](#s3-and-bucket-policies)
+  - [Use cases S3 IAM policies vs S3 bucket policies](#use-cases-s3-iam-policies-vs-s3-bucket-policies)
   - [S3 and ACL](#s3-and-acl)
   - [Encryption](#encryption)
 - [WebSites](#websites)
@@ -313,6 +314,17 @@ IAM also supports creating user groups and granting group-level permissions that
   **In a bucket policy, the principal is the user, account, service, or other entity that is the recipient of this permission.**
 
 
+## Use cases S3 IAM policies vs S3 bucket policies
+
+* IAM policies
+  * You have many buckets with different permission requirements. Instead of defining many different S3 bucket policies, you can use IAM policies.
+  * You want all policies to be in a centralized location. By using IAM policies, you can manage all policy information in one location.
+* S3 policies
+  * You need a simple way to do **cross-account access to Amazon S3**, without using IAM roles.
+  * Your IAM policies bump up against the defined size limit. S3 bucket policies have a larger size limit.
+    * IAM 2 KB for users, 5 KB for groups, and 10 KB for roles
+    * Bucket policies limit is 20KB
+
 ## S3 and ACL
 
 An S3 ACL is a sub-resource that’s attached to every S3 bucket and object. It defines which AWS accounts or groups are granted access and the type of access. You can attach S3 ACLs **to both buckets and individual objects within a bucket** to manage permissions for those objects. As a general rule, AWS recommends that you use S3 bucket policies or IAM policies for access control.** S3 ACLs are a legacy access control mechanism that predates IAM.**
@@ -320,15 +332,6 @@ By default, object ownership is set to the bucket owner enforced setting, and al
 
 ![022-s3-acl.png](./images/022-s3-acl.png)
 ![023-s3-acl.png](./images/023-s3-acl.png)
-
-* User based - IAM policies
-  * NOTE: an IAM principal can accessas an S3 object if the user IAM permissions allow it OR the resource policy ALLOWS it AND there is no explicit DENY
-* Resource based
-  * Bucket policies - bucket wide rules from the S3 console - allow cross account
-  * Object Access Control List (ACL) - finer grain (can be disabled)
-  * Bucket ACL - less common (can be disabled)
-* Encryption
-* Bucket settings for block public access - can be set on account level
 
 ## Encryption
 
@@ -442,45 +445,54 @@ https://aws.amazon.com/s3/storage-classes/
 
 Can move between classes manually or using S3 lifecycle configurations.
 
-* Standard - general purpose
+* **Standard** - general purpose
   * 99.999_999_999% availability (52 mins) (11 nines) - this is the probability that object will stay intact during 1 year
   * Used for frequently accessed data
   * Sustain 2 concurrent facility failures this is because data is **stored in at least 3 AZs**
   * Use cases: big data analytics, mobile & gaming applications, content distribution...
-* Infrequent access (IA)  
-  * For data that is less frequent accessed, but requires rapid access when needed
+* **Infrequent Access (IA)**
+  * For data that is **less frequent** accessed, but requires archive instance access tier
   * Lower cost than S3 standard
-  * Standard IA
+  * **Standard IA**
     * Stores data in at lease 3 AZs
     * 99.9% availability
     * Use cases: disaster recovery, backups
-  * One Zone IA
+  * **One Zone IA**
     * Stores data in 1 AZ
     * 99.5% availability
     * High durability (99,999999999%, 11 9s) in a single AZ; data lost when AZ is destroyed
     * Use cases: secondary backup copies on on-prem data, or data you can recreate
-* Glacier
+* **Glacier**
   * Low-cost object storage meant for archiving/backup
   * Pricing: price for storage + object retrieval cost
   * Can upload directly or via LifeCycle Policy (also known as Object lifecycle management)
-  * Instant Retrieval
+  * **Instant Retrieval**
     * Millisecond retrieval, **great for data accessed once a quarter**
     * Minimum storage duration of 90 days
-  * Flexible Retrieval (formerly Amazon S3 Glacier)
-    * Expedited (1 to 5 minutes), Standard (3 to 5 hours), Bulk (5 to 12 hours) - free
+    * Data stored in this storage class offers a cost savings of up to **68 percent compared to the S3 Standard-IA storage class**, with the same latency and throughput performance
+  * **Flexible Retrieval** (formerly Amazon S3 Glacier)
+    * Offers low-cost storage for archived data that is **accessed 1–2 times per year**
+    * **Expedited** (1 to 5 minutes), **Standard** (3 to 5 hours), **Bulk** (5 to 12 hours) - free
     * Minimum storage duration of 90 days
-  * Deep Archive - for long term storage
-    * Standard (12 hours), bulk (48 hours)
+  * **Deep Archive** - for long term storage
+    * Good for data that might be accessed once or twice a year
+    * **Standard (default)** (12 hours), **Bulk** (48 hours)
     * Minimum storage duration of 180 days
-  * Glacier Instant Retrieval vs Infrequent access (IA): https://allcloud.io/blog/moving-to-s3-glacier-or-infrequent-access-storage/
+  * **Glacier Instant Retrieval vs Infrequent access (IA)**: https://allcloud.io/blog/moving-to-s3-glacier-or-infrequent-access-storage/
     * Data stored in the S3 Glacier Instant Retrieval storage class offers a cost savings compared to the S3 Standard-IA storage class, with the same latency and throughput performance as the S3 Standard-IA storage class.
     * S3 Glacier Instant Retrieval has higher data access costs than S3 Standard-IA
     * https://aws.amazon.com/s3/pricing/
-* Intelligent-Tiering
+* **Intelligent-Tiering**
   * Ideal for data with unknown or changing access patterns
   * Small monthly monitoring and auto-tiering fee
   * Moves objects automatically between Access Tiers based on usage
   * There are no retrieval charges in S3 Intelligent-Tiering
+  * S3 Intelligent-Tiering stores objects in three tiers
+    * Frequent access tier
+    * Infrequent access tier
+    * Archive instance access tier
+* **S3 on Outposts**
+  * Amazon S3 on Outposts delivers object storage to your on-premises AWS Outposts environment using S3 API's and features
 
 * Comparison
 
