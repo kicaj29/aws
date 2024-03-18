@@ -16,7 +16,7 @@
   - [S3 Durability](#s3-durability)
   - [S3 Availability](#s3-availability)
   - [Classes](#classes)
-- [S3 Moving between Store Classes](#s3-moving-between-store-classes)
+- [Storage lifecycle: moving between stored classes](#storage-lifecycle-moving-between-stored-classes)
 - [Amazon S3 analytics – Storage Class Analysis](#amazon-s3-analytics--storage-class-analysis)
 - [S3 Object lock](#s3-object-lock)
 - [S3 Glacier vault lock](#s3-glacier-vault-lock)
@@ -505,11 +505,22 @@ Can move between classes manually or using S3 lifecycle configurations.
 
 ![Comparison](./images/01-s3-comparison.png)
 
-# S3 Moving between Store Classes
+# Storage lifecycle: moving between stored classes
+
+When you define a lifecycle configuration for an object or group of objects, you can choose to automate between two types of actions: transition and expiration.
+
+* **Transition actions** define when objects should transition to another storage class
+* **Expiration actions** define when objects expire and should be permanently deleted.
+
+Lifecycle rules are created at the bucket level.
+![025-s3-life-cycle.png](./images/025-s3-life-cycle.png)
+
 
 https://docs.aws.amazon.com/AmazonS3/latest/userguide/lifecycle-transition-general-considerations.html
 
 ![03-moving-between-storage-classes.png](./images/03-moving-between-storage-classes.png)
+
+![024-s3-life-cycle.png](./images/024-s3-life-cycle.png)
 
 # Amazon S3 analytics – Storage Class Analysis
 
