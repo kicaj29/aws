@@ -20,7 +20,6 @@
 - [Amazon S3 analytics – Storage Class Analysis](#amazon-s3-analytics--storage-class-analysis)
 - [S3 Object lock](#s3-object-lock)
 - [S3 Glacier vault lock](#s3-glacier-vault-lock)
-- [S3 Encryption](#s3-encryption)
 - [Shared responsibility model for S3](#shared-responsibility-model-for-s3)
 - [AWS Snow Family](#aws-snow-family)
   - [Data migration](#data-migration)
@@ -542,12 +541,6 @@ https://docs.aws.amazon.com/AmazonS3/latest/userguide/lifecycle-transition-gener
 * **Lock the policy for future edits (can no longer be changed)**
   * For example: I want upload and object to s3 and make sure then no one will ever be able to delete this file (even admins cannot delete it)
 * Helpful for compliance and data retention
-
-# S3 Encryption
-
-* No encryption
-* Server-side encryption (server encrypts the file after receiving it)
-* Client-side encryption (user encrypts the file before uploading it)
 
 # Shared responsibility model for S3
 
