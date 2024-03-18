@@ -59,10 +59,10 @@ https://docs.aws.amazon.com/ebs/latest/userguide/what-is-ebs.html
 
 ## EBS use cases
 
-* Operating systems: Boot and root volumes can be used to store an operating system. The root device for an instance launched from an Amazon Machine Image (AMI) is typically an EBS volume. These are commonly referred to as EBS-backed AMIs.
-* Databases: As a storage layer for databases running on Amazon EC2 that will scale with your performance needs and provide consistent and low-latency performance.
-* Enterprise applications: Amazon EBS provides high availability and high durability block storage to run business-critical applications.
-* Big data analytics engines: Amazon EBS offers data persistence, dynamic performance adjustments, and the ability to detach and reattach volumes, so you can resize clusters for big data analytics.
+* **Operating systems**: Boot and root volumes can be used to store an operating system. The root device for an instance launched from an Amazon Machine Image (AMI) is typically an EBS volume. These are commonly referred to as EBS-backed AMIs.
+* **Databases**: As a storage layer for databases running on Amazon EC2 that will scale with your performance needs and provide consistent and low-latency performance.
+* **Enterprise applications**: Amazon EBS provides high availability and high durability block storage to run business-critical applications.
+* **Big data analytics engines**: Amazon EBS offers data persistence, dynamic performance adjustments, and the ability to detach and reattach volumes, so you can resize clusters for big data analytics.
 
 ## EBS volume types
 
