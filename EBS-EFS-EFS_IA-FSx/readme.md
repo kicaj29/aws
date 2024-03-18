@@ -25,7 +25,7 @@ https://aws.amazon.com/compare/the-difference-between-block-file-object-storage/
 
 https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/InstanceStorage.html
 
-An instance store provides temporary block-level storage for your instance. This storage is located on disks that are **physically attached** to the host computer. Instance store is ideal for temporary storage of information that changes frequently, such as buffers, caches, scratch data, and other temporary content
+An instance store provides **temporary block-level storage for your instance**. This storage is located on disks that are **physically attached** to the host computer. Instance store is ideal for temporary storage of information that changes frequently, such as buffers, caches, scratch data, and other temporary content
 
 This is also good option when you need storage with very low latency, but you don't need the data to persist **when the instance stops or terminates** or you can take advantage of fault-tolerant architectures.
 
@@ -41,6 +41,7 @@ https://docs.aws.amazon.com/ebs/latest/userguide/what-is-ebs.html
   * There is feature called **EBS Multi-Attach** - it depends on EC2 instance type and type of EBS volume, then you can have the same EBS volume attached to multiple EC2 instances.
 * **They are bound to a specific availability zone** (it is not regional resource)
   * For example: an EBS in us-east-1a cannot be attached to us-east-1b, unless we create a snapshot - then it is possible.
+  * EBS volumes are replicated across multiple servers in a single Availability Zone.
 * Analogy: think ot them as a "network USB stick".
 * Size up to 64 TB
 * Single file can be stored as many blocks - it allows to update only part of the file, partial file updates are possible, S3 does not support it
@@ -49,6 +50,7 @@ https://docs.aws.amazon.com/ebs/latest/userguide/what-is-ebs.html
     * Increase volume size (up to 64TB)
     * Attache multiple EBS volumes to EC2 instance
 * Both non-root and root volumes can be encrypted
+* **You pay for what you provision** (you have to provision storage in advance). In EFS you pay only for what you use.
 
 ## EBS - delete on termination
 
@@ -122,12 +124,16 @@ An Amazon EBS-backed instance can be stopped and later restarted without affecti
 
 # EFS - Elastic File System
 
+* It is file storage.
 * Managed NFS (network file system) that can be mounted on hundreds of EC2 at a time so it makes it **shared filed system**.
-* Works only with Linux EC2 and multi-AZ.
+* It is the only cloud-native shared file system with fully automatic lifecycle management.
+* Works **only with Linux EC2 and multi-AZ**.
 * Highly available (multiple Availability Zones), scalable, expensive (3x gp2), pay per use, no capacity planning.
 * It is regional resource
 * **Automatically scales** (if more space is needed, EBS does not automatically scales)
+  * Without needing to provision storage
 * To access EFS file systems from on-premises, you must have an AWS Direct Connect or AWS VPN connection between your on-premises datacenter and your Amazon VPC. **You mount an EFS file system on your on-premises Linux server** using the standard Linux mount command for mounting a file system
+* You pay only for what you use.
 
 ![003-efs.png](./images/003-efs.png)
 
