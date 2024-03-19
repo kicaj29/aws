@@ -1,12 +1,17 @@
+- [Unmanaged databases vs managed databases](#unmanaged-databases-vs-managed-databases)
 - [NoSQL Databases (non relational databases)](#nosql-databases-non-relational-databases)
   - [DynamoDB](#dynamodb)
     - [DynamoDB Accelerator - DAX](#dynamodb-accelerator---dax)
     - [DynamoDB Global Tables](#dynamodb-global-tables)
-- [RDS (Relational Database Service)](#rds-relational-database-service)
+- [Amazon RDS (Relational Database Service)](#amazon-rds-relational-database-service)
   - [RDS Important points](#rds-important-points)
   - [Advantage over using RDS versus deploying DB on EC2](#advantage-over-using-rds-versus-deploying-db-on-ec2)
     - [Aurora (part of RDS)](#aurora-part-of-rds)
   - [RDS Deployments](#rds-deployments)
+  - [Backup data](#backup-data)
+    - [Automated backups](#automated-backups)
+    - [Manual snapshots](#manual-snapshots)
+  - [Security](#security)
 - [ElastiCache](#elasticache)
 - [Redshift](#redshift)
 - [Amazon EMR](#amazon-emr)
@@ -20,6 +25,10 @@
   - [Glue Data Catalog](#glue-data-catalog)
 - [DMS](#dms)
 
+
+# Unmanaged databases vs managed databases
+
+![14-unmanaged-vs-managed.png](./images/14-unmanaged-vs-managed.png)
 
 # NoSQL Databases (non relational databases)
 ## DynamoDB
@@ -51,13 +60,17 @@
 
 ![09-dynamoDB-globalTables.png](./images/09-dynamoDB-globalTables.png)
 
-# RDS (Relational Database Service)
+# Amazon RDS (Relational Database Service)
 
 * PostgresSQL
 * MySQL
 * MariaDB
 * Oracle
 * Microsoft SQL Server
+* IBM Db2
+
+![15-db-list.png](./images/15-db-list.png)
+
 
 ## RDS Important points
 
@@ -65,7 +78,7 @@ https://aws.amazon.com/rds/features/multi-az/
 
 * RDS is not serverless database (for example DynamoDB is server less).
 * RDS instances are optimized for memory, performance, or I/O, therefore the performance of AWS managed RDS instance is better than a customer-managed database instance.
-* Amazon RDS Multi-AZ deployments provide enhanced availability and durability for RDS database (DB) instances, making them a natural fit for production database workloads. When you provision a Multi-AZ DB Instance, Amazon RDS automatically creates a primary DB Instance and synchronously replicates the data to a standby instance in a different Availability Zone (AZ).
+* Amazon RDS Multi-AZ deployments provide enhanced availability and durability for RDS database (DB) instances, making them a natural fit for production database workloads. When you provision a **Multi-AZ DB Instance**, Amazon RDS **automatically creates a primary DB Instance and synchronously replicates the data to a standby instance in a different Availability Zone (AZ)**.
 * Amazon RDS creates and saves automated backups of your DB instance or Multi-AZ DB cluster during the backup window of your database. https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_WorkingWithAutomatedBackups.html
 * DB instances for Amazon RDS for MySQL, MariaDB, PostgreSQL, Oracle, and Microsoft SQL Server use Amazon Elastic Block Store (Amazon EBS) volumes for database and log storage. https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_Storage.html
 
@@ -102,21 +115,42 @@ Aurora is AWS Proprietary database, not open source.
 
 ## RDS Deployments
 
-* Read replicas
+**When you create a DB instance, you select the Amazon Virtual Private Cloud (Amazon VPC)** your databases will live in. Then, you select the subnets that will be designated for your DB. This is called a DB subnet group, and it has at least two Availability Zones in its Region. 
+
+* **Read replicas**
   * Can create up to 5 read replicas for Oracle and SQL Server and up to 15 for MySQL, MariaDB and PostgreSQL, more [here](https://aws.amazon.com/rds/features/read-replicas/)
   * Data is only written to the main DB
   * Read Replicas are an example of horizontal scaling of resources
   * Read Replicas are used for **improved read performance**. You can also place your read replica in a different AWS Region closer to your users for better performance. **Using a cross-Region Read Replica** can also help ensure that you get back up and running if you experience a **regional availability issue in case of a disaster**.
 ![03-replicas.png](./images/03-replicas.png)
-* Multi-AZ
+* **Multi-AZ**
   * Failover in case AZ outage (HA)
   * Only one AZ as failover
 ![04-multiAZ.png](./images/04-multiAZ.png)
-* Multi-region (read replicas)
+![16-primary-secondary.png](./images/16-primary-secondary.png)
+* **Multi-region (read replicas)**
   * Disaster recover in case of region issue
   * Local performance for global reads
   * Replication cost
 ![05-multiRegion.png](./images/05-multiRegion.png)
+
+## Backup data
+
+### Automated backups
+
+* Automated backups are turned on by default. This backs up your entire DB instance (not just individual databases on the instance) and your transaction logs.
+* **Retaining backups**: Automated backups are retained **between 0 and 35 days**. You might ask yourself, “Why set automated backups for 0 days?” The 0 days setting stops automated backups from happening. If you set it to 0, it will also delete all existing automated backups. This is not ideal. The benefit of automated backups that you can do point-in-time recovery.
+* **Point-in-time recovery**: his creates a new DB instance using data restored from a specific point in time. This restoration method provides more granularity by restoring the full backup and rolling back transactions up to the specified time range
+
+### Manual snapshots
+
+If you want to keep your automated backups longer than 35 days, use manual snapshots. Manual snapshots are similar to taking Amazon EBS snapshots, except you manage them in the Amazon RDS console. These are backups that you can initiate at any time. They exist until you delete them.
+
+## Security
+
+* Network ACLs and security groups help users dictate the flow of traffic.
+* If you want to restrict the actions and resources others can access, you can use AWS Identity and Access Management (IAM) policies
+  * For example you can determine whe can create, describe, modify and delete DB instances, tag resources, or modify security groups.
 
 # ElastiCache
 
