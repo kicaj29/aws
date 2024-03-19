@@ -30,6 +30,7 @@
     - [ALB (Application Load Balancer)](#alb-application-load-balancer)
     - [NLB (Network Load Balancer)](#nlb-network-load-balancer)
     - [GLB (Gateway Load Balancer)](#glb-gateway-load-balancer)
+  - [Selecting between ELB types](#selecting-between-elb-types)
 - [Other AWS networking stuff](#other-aws-networking-stuff)
 - [Create VPC with 2 public subnets](#create-vpc-with-2-public-subnets)
   - [Create EC2 instances that will be connected to created VPC](#create-ec2-instances-that-will-be-connected-to-created-vpc)
@@ -437,7 +438,30 @@ That’s why ELB supports two types of health checks as follows:
 * **Support sticky sessions**: If requests must be sent to the same backend server because the application is stateful, use the sticky session feature. This feature uses an HTTP cookie to remember which server to send the traffic to across connections.
 
 ### NLB (Network Load Balancer)
+
+A Network Load Balancer is ideal for load balancing TCP and UDP traffic. It functions at Layer 4 of the OSI model, routing connections from a target in the target group based on IP protocol data.
+
+* **Sticky sessions**: Routes requests from the same client to the same target.
+* **Low latency**: Offers low latency for latency-sensitive applications.
+* **Source IP address**: Preserves the client-side source IP address.
+* **Static IP address**: Automatically provides a static IP address per Availability Zone (subnet).
+* **Elastic IP address support**: Lets users assign a custom, fixed IP address per Availability Zone (subnet).
+* **DNS failover**: Uses Amazon Route 53 to direct traffic to load balancer nodes in other zones.
+
 ### GLB (Gateway Load Balancer)
+
+A Gateway Load Balancer helps you to deploy, scale, and manage your third-party appliances, such as firewalls, intrusion detection and prevention systems, and deep packet inspection systems
+
+It provides a gateway for distributing traffic across multiple virtual appliances while scaling them up and down based on demand.
+
+* **HA**: Ensures high availability and reliability by routing traffic through healthy virtual appliances.
+* **Monitoring**: Can be monitored using CloudWatch metrics.
+* **Streamlined deployments**: Can deploy a new virtual appliance by selecting it in the AWS Marketplace.
+* **Private connectivity**: Connects internet gateways, virtual private clouds (VPCs), and other network resources over a private network.
+
+## Selecting between ELB types
+
+![elb-118-comparison.png](./images/elb-118-comparison.png)
 
 # Other AWS networking stuff
 
