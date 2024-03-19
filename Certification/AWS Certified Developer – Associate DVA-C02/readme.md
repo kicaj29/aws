@@ -40,8 +40,12 @@ https://github.com/kicaj29/aws/tree/main/VPC-LB-AutoScalingGroup-EC2-Route53
 ### Module 6: Monitoring, load balancing, and scaling
 
 * https://github.com/kicaj29/aws/tree/main/CloudMonitoring   
+
 * https://github.com/kicaj29/aws/tree/main/GlobalApplicationArchitecture
+
 * https://github.com/kicaj29/aws/tree/main/VPC-LB-AutoScalingGroup-EC2-Route53#elastic-load-balancing-elb
 * https://github.com/kicaj29/aws/tree/main/VPC-LB-AutoScalingGroup-EC2-Route53#scaling-ec2-instances   
 * https://github.com/kicaj29/aws/blob/main/readme-core-services.md#elastic-load-balancing   
+  
+* https://github.com/kicaj29/aws/tree/main/VPC-LB-AutoScalingGroup-EC2-Route53#ec2-auto-scaling-group
 * https://github.com/kicaj29/aws/tree/main/VPC-LB-AutoScalingGroup-EC2-Route53#create-autoscaling-group-using-created-launch-configuration
