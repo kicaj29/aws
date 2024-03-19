@@ -178,7 +178,8 @@ If you want to keep your automated backups longer than 35 days, use manual snaps
 * All user data stored in DynamoDB is fully encrypted at rest. DynamoDB encryption at rest provides enhanced security by encrypting all your data at rest using encryption keys stored in AWS Key Management Service (AWS KMS).
 * IAM administrators control who can be authenticated and authorized to use DynamoDB resources. You can use IAM to manage access permissions and implement security policies.
 * As a managed service, DynamoDB is protected by the AWS global network security procedures.
-* When activity occurs in DynamoDB, that activity is recorded in a CloudTrail event. For ongoing record of events in DynamoDB and in your AWS account, create a trail to deliver log files to an S3 bucket.
+* When activity occurs in DynamoDB, that activity is recorded in a CloudTrail event. For ongoing record of events in DynamoDB and in your AWS account, create a trail to deliver log files to an S3 bucket. CloudTrail events are generated automatically, no need to enable it.
+  ![17-dynamodb-cloud-trail.png](./images/17-dynamodb-cloud-trail.png)
 
 ## ElastiCache
 
