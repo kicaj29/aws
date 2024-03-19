@@ -13,13 +13,17 @@
     - [Manual snapshots](#manual-snapshots)
   - [Security](#security)
 - [Purpose-Built Databases](#purpose-built-databases)
+  - [Amazon Keyspaces (for Apache Cassandra)](#amazon-keyspaces-for-apache-cassandra)
+  - [DynamoDB](#dynamodb-1)
   - [ElastiCache](#elasticache)
+  - [Amazon MemoryDB for Redis](#amazon-memorydb-for-redis)
   - [Redshift](#redshift)
   - [Amazon EMR](#amazon-emr)
   - [Athena](#athena)
   - [QuickSight](#quicksight)
   - [DocumentDB](#documentdb)
   - [Neptune](#neptune)
+  - [Amazon Timestream](#amazon-timestream)
   - [QLDB (Quantum Ledger Database)](#qldb-quantum-ledger-database)
   - [Amazon Managed Blockchain](#amazon-managed-blockchain)
   - [Glue](#glue)
@@ -155,15 +159,32 @@ If you want to keep your automated backups longer than 35 days, use manual snaps
 
 # Purpose-Built Databases
 
+## Amazon Keyspaces (for Apache Cassandra)
+
+* Scalable, highly available, and managed Apache Cassandra compatible database service
+* Apache Cassandra is a popular option for high-scale applications that need top-tier performance
+* Amazon Keyspaces is a good option for high-volume applications with straightforward access patterns
+
+## DynamoDB
+
+* Fully managed NoSQL database that provides fast, consistent performance at any scale
+* DynamoDB has become the database of choice for two categories of applications: high-scale applications and serverless applications.
+* Key-value pair tables.
+* Charges based on the usage of the table and the amount of data that you are reading from the table, not by the hour or by the second
+
 ## ElastiCache
 
-* The same way RDS is to get managed Relational Databases
-* ElastiCache is to get managed Redis or Memcached
+* ElastiCache is to get managed **Redis or Memcached**
 * Caches are in-memory databases with high performance, low latency
 * Helps reduce load off databases for read intensive workloads
 * AWS takes care of OS maintenance / patching, optimizations, setup, configuration, monitoring, failure recovery and backups
 
 ![06-elastiCache.png](./images/06-elastiCache.png)
+
+## Amazon MemoryDB for Redis
+
+* MemoryDB is a Redis-compatible, **durable**, in-memory database service that delivers ultra-fast performance
+* You can use MemoryDB as a fully managed, primary database to build high-performance applications.
 
 ## Redshift
 
@@ -234,6 +255,13 @@ https://aws.amazon.com/redshift/faqs/
 * Can store up to billions of relations and query the graph with milliseconds latency
 * HA with replications across multiple AZs
 * Great for knowledge graphs (Wikipedia), fraud detection, recommendation engines, social networking
+
+## Amazon Timestream
+
+* Fast, scalable, and serverless time series database service for Internet of Things (IoT) and operational applications
+* It makes it easy to store and analyze trillions of events per day up to 1,000 times faster and for as little as one-tenth of the cost of relational databases
+* Time series data is a sequence of data points recorded over a time interval
+* It is used for measuring events that change over time, such as stock prices over time or temperature measurements over time
 
 ## QLDB (Quantum Ledger Database)
 
