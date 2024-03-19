@@ -29,6 +29,7 @@
   - [Amazon Managed Blockchain](#amazon-managed-blockchain)
   - [Glue](#glue)
     - [Glue Data Catalog](#glue-data-catalog)
+- [Choosing the Right Database Service](#choosing-the-right-database-service)
 - [DMS](#dms)
 
 
@@ -164,6 +165,8 @@ If you want to keep your automated backups longer than 35 days, use manual snaps
 
 * Scalable, highly available, and managed Apache Cassandra compatible database service
 * Apache Cassandra is a popular option for high-scale applications that need top-tier performance
+  * Cassandra is a NoSQL distributed database
+  * Counted among their strengths are horizontal scalability, distributed architectures, and a flexible approach to schema definition
 * Amazon Keyspaces is a good option for high-volume applications with straightforward access patterns
 
 ## DynamoDB
@@ -304,6 +307,10 @@ https://aws.amazon.com/redshift/faqs/
 
 * Catalog of datasets in AWS infrastructure (column names, field name, field type, etc.)
 * Can be used by Athena, Redshift, EMR
+
+# Choosing the Right Database Service
+
+![18-comparison.png](./images/18-comparison.png)
 
 # DMS
 
