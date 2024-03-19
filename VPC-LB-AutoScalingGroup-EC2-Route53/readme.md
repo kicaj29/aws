@@ -31,6 +31,7 @@
     - [NLB (Network Load Balancer)](#nlb-network-load-balancer)
     - [GLB (Gateway Load Balancer)](#glb-gateway-load-balancer)
   - [Selecting between ELB types](#selecting-between-elb-types)
+- [EC2 Auto Scaling Group](#ec2-auto-scaling-group)
 - [Other AWS networking stuff](#other-aws-networking-stuff)
 - [Create VPC with 2 public subnets](#create-vpc-with-2-public-subnets)
   - [Create EC2 instances that will be connected to created VPC](#create-ec2-instances-that-will-be-connected-to-created-vpc)
@@ -462,6 +463,10 @@ It provides a gateway for distributing traffic across multiple virtual appliance
 ## Selecting between ELB types
 
 ![elb-118-comparison.png](./images/elb-118-comparison.png)
+
+# EC2 Auto Scaling Group
+
+* **Automatic scaling**
 
 # Other AWS networking stuff
 

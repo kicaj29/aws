@@ -44,3 +44,4 @@ https://github.com/kicaj29/aws/tree/main/VPC-LB-AutoScalingGroup-EC2-Route53
 * https://github.com/kicaj29/aws/tree/main/VPC-LB-AutoScalingGroup-EC2-Route53#elastic-load-balancing-elb
 * https://github.com/kicaj29/aws/tree/main/VPC-LB-AutoScalingGroup-EC2-Route53#scaling-ec2-instances   
 * https://github.com/kicaj29/aws/blob/main/readme-core-services.md#elastic-load-balancing   
+* https://github.com/kicaj29/aws/tree/main/VPC-LB-AutoScalingGroup-EC2-Route53#create-autoscaling-group-using-created-launch-configuration
