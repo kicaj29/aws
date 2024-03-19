@@ -36,3 +36,5 @@ https://github.com/kicaj29/aws/tree/main/VPC-LB-AutoScalingGroup-EC2-Route53
 ### Module 5: Databases on AWS
 
 * https://github.com/kicaj29/aws/tree/main/Databases
+
+### Module 6: Monitoring, load balancing, and scaling
