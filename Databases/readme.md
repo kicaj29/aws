@@ -12,17 +12,18 @@
     - [Automated backups](#automated-backups)
     - [Manual snapshots](#manual-snapshots)
   - [Security](#security)
-- [ElastiCache](#elasticache)
-- [Redshift](#redshift)
-- [Amazon EMR](#amazon-emr)
-- [Athena](#athena)
-- [QuickSight](#quicksight)
-- [DocumentDB](#documentdb)
-- [Neptune](#neptune)
-- [QLDB (Quantum Ledger Database)](#qldb-quantum-ledger-database)
-- [Amazon Managed Blockchain](#amazon-managed-blockchain)
-- [Glue](#glue)
-  - [Glue Data Catalog](#glue-data-catalog)
+- [Purpose-Built Databases](#purpose-built-databases)
+  - [ElastiCache](#elasticache)
+  - [Redshift](#redshift)
+  - [Amazon EMR](#amazon-emr)
+  - [Athena](#athena)
+  - [QuickSight](#quicksight)
+  - [DocumentDB](#documentdb)
+  - [Neptune](#neptune)
+  - [QLDB (Quantum Ledger Database)](#qldb-quantum-ledger-database)
+  - [Amazon Managed Blockchain](#amazon-managed-blockchain)
+  - [Glue](#glue)
+    - [Glue Data Catalog](#glue-data-catalog)
 - [DMS](#dms)
 
 
@@ -152,7 +153,9 @@ If you want to keep your automated backups longer than 35 days, use manual snaps
 * If you want to restrict the actions and resources others can access, you can use AWS Identity and Access Management (IAM) policies
   * For example you can determine whe can create, describe, modify and delete DB instances, tag resources, or modify security groups.
 
-# ElastiCache
+# Purpose-Built Databases
+
+## ElastiCache
 
 * The same way RDS is to get managed Relational Databases
 * ElastiCache is to get managed Redis or Memcached
@@ -162,7 +165,7 @@ If you want to keep your automated backups longer than 35 days, use manual snaps
 
 ![06-elastiCache.png](./images/06-elastiCache.png)
 
-# Redshift
+## Redshift
 
 https://aws.amazon.com/redshift/faqs/
 
@@ -177,7 +180,7 @@ https://aws.amazon.com/redshift/faqs/
 * BI tools such as AWS Quicksight or Tableau integrate with it
 * It is highly available: customers can now improve availability of Redshift by running their data warehouse in a multi-AZ deployment
 
-# Amazon EMR
+## Amazon EMR
 
 * Stands for "Elastic MapReduce"
 * EMR helps creating **Hadoop** clusters (Big Data) to analyze and process vast amount of data
@@ -187,7 +190,7 @@ https://aws.amazon.com/redshift/faqs/
 * Auto-scaling and integrated with Spot instances
 * Use cases: data processing, machine learning, web indexing, big data
 
-# Athena
+## Athena
 
 * Serverless query service to perform analytics again S3 objects
 * Use standard SQL language to query the files
@@ -197,7 +200,7 @@ https://aws.amazon.com/redshift/faqs/
 * Use cases: business intelligence, analytics, reporting, analyze & query VPC Flow Logs, ELB Logs, CloudTrails etc.
 *** Exam tip: analyze data in S3 using serverless SQL, use Athena**
 
-# QuickSight
+## QuickSight
 * Serverless **machine learning-powered business intelligence** service to create interactive dashboards
 * Fast, automatically scalable, embeddable
 * Use cases
@@ -209,7 +212,7 @@ https://aws.amazon.com/redshift/faqs/
 * **Can be also used to visual AWS costs**
 ![10-quickSight.png](./images/10-quickSight.png)
 
-# DocumentDB
+## DocumentDB
 
 * Aurora is as "AWS-implementation" of PostgresSQL/MySQL
 * DocumentDB is the same for **MongoDB**
@@ -218,7 +221,7 @@ https://aws.amazon.com/redshift/faqs/
 * Automatically scales to workloads with millions of requests per seconds
 * Great for content management system
 
-# Neptune
+## Neptune
 
 * Fully managed graph database
 * A popular graph dataset would be a social network
@@ -232,7 +235,7 @@ https://aws.amazon.com/redshift/faqs/
 * HA with replications across multiple AZs
 * Great for knowledge graphs (Wikipedia), fraud detection, recommendation engines, social networking
 
-# QLDB (Quantum Ledger Database)
+## QLDB (Quantum Ledger Database)
 
 * A ledger is a book recording financial transactions
 * Fully managed, serverless, HA, replication across 3 AZ
@@ -243,7 +246,7 @@ https://aws.amazon.com/redshift/faqs/
 * Manipulate data using SQL
 * Difference with Amazon Managed Blockchain: **no decentralization component**, in accordance with financial regulations rules
 
-# Amazon Managed Blockchain
+## Amazon Managed Blockchain
 
 * Blockchain makes it possible to build applications where multiple parties can execute transactions **without the need for a trusted, central authority.**
 * Can be used to:
@@ -252,7 +255,7 @@ https://aws.amazon.com/redshift/faqs/
 * Compatible with the frameworks Hyperledger Fabric and Ethereum
 * It is decentralized
 
-# Glue
+## Glue
 
 * Managed extract, transform, and load (ETL) service
 * Useful to prepare and transform data for analytics
@@ -260,7 +263,7 @@ https://aws.amazon.com/redshift/faqs/
 
 ![12-Glue.png](./images/12-Glue.png)
 
-## Glue Data Catalog
+### Glue Data Catalog
 
 * Catalog of datasets in AWS infrastructure (column names, field name, field type, etc.)
 * Can be used by Athena, Redshift, EMR
