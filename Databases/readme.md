@@ -15,6 +15,7 @@
 - [Purpose-Built Databases](#purpose-built-databases)
   - [Amazon Keyspaces (for Apache Cassandra)](#amazon-keyspaces-for-apache-cassandra)
   - [DynamoDB](#dynamodb-1)
+    - [DynamoDB security](#dynamodb-security)
   - [ElastiCache](#elasticache)
   - [Amazon MemoryDB for Redis](#amazon-memorydb-for-redis)
   - [Redshift](#redshift)
@@ -171,6 +172,13 @@ If you want to keep your automated backups longer than 35 days, use manual snaps
 * DynamoDB has become the database of choice for two categories of applications: high-scale applications and serverless applications.
 * Key-value pair tables.
 * Charges based on the usage of the table and the amount of data that you are reading from the table, not by the hour or by the second
+
+### DynamoDB security
+
+* All user data stored in DynamoDB is fully encrypted at rest. DynamoDB encryption at rest provides enhanced security by encrypting all your data at rest using encryption keys stored in AWS Key Management Service (AWS KMS).
+* IAM administrators control who can be authenticated and authorized to use DynamoDB resources. You can use IAM to manage access permissions and implement security policies.
+* As a managed service, DynamoDB is protected by the AWS global network security procedures.
+* When activity occurs in DynamoDB, that activity is recorded in a CloudTrail event. For ongoing record of events in DynamoDB and in your AWS account, create a trail to deliver log files to an S3 bucket.
 
 ## ElastiCache
 
