@@ -22,6 +22,14 @@
 - [Site to Site VPN \& Direct Connect](#site-to-site-vpn--direct-connect)
 - [AWS Client VPN](#aws-client-vpn)
 - [AWS Transient Gateway](#aws-transient-gateway)
+- [Elastic Load Balancing (ELB)](#elastic-load-balancing-elb)
+  - [ELB features](#elb-features)
+  - [Health checks](#health-checks)
+  - [ELB components](#elb-components)
+  - [Types of load balancers](#types-of-load-balancers)
+    - [ALB (Application Load Balancer)](#alb-application-load-balancer)
+    - [NLB (Network Load Balancer)](#nlb-network-load-balancer)
+    - [GLB (Gateway Load Balancer)](#glb-gateway-load-balancer)
 - [Other AWS networking stuff](#other-aws-networking-stuff)
 - [Create VPC with 2 public subnets](#create-vpc-with-2-public-subnets)
   - [Create EC2 instances that will be connected to created VPC](#create-ec2-instances-that-will-be-connected-to-created-vpc)
@@ -378,6 +386,58 @@ First generate some network traffic. Next wait ~10mins/~1min and navigate to log
 * Works with DirectConnect Gateway, VPN connections
 
 ![transient-gateway.png](./images/transient-gateway.png)
+
+# Elastic Load Balancing (ELB)
+
+* ELB is regional service, so you don't have to worry about maintaining nodes in each availability zone or having to configure high availability yourself
+
+## ELB features
+
+* It can **distribute incoming application traffic** across EC2 instances, containers, IP addresses, and Lambda functions.
+* **Hybrid mode**: because ELB can load balance to IP addresses, it can work in a hybrid mode, which means it also load balances to on-premises servers.
+* **High availability**: ELB is highly available. The only option you must ensure is that the load balancer's targets are deployed across multiple Availability Zones
+* **Scalability**: In terms of scalability, ELB automatically scales to meet the demand of the incoming traffic. It handles the incoming traffic and sends it to your backend application.
+
+## Health checks
+
+That’s why ELB supports two types of health checks as follows:
+
+* Establishing a connection to a backend EC2 instance using TCP and marking the instance as available if the connection is successful
+
+* Making an HTTP or HTTPS request to a webpage that you specify and validating that an HTTP response code is returned.
+  ![elb-116.png](./images/elb-116.png)
+
+## ELB components
+
+![elb-117-components.png](./images/elb-117-components.png)
+
+* **Rule**: to associate a target group to a listener, you muse use a rule. Rules are made up of 2 conditions. The first condition is the source IP address of the client (ALB can handle also URL path). The second condition decided which target group to send the traffic to.
+* **Listener**: the client connects to the listener. This is often called client side. To define a listener, a port must be provided in addition to the protocol, depending on the load balancer type. There can be many listeners for a single load balancer.
+* **Target group**: the backend services, or server side, are defined in one or more target groups. This is where you define the type of backend you want to direct traffic to, such as EC2 instance, Lambda functions, ir IP addresses. Also, a health check must be defined for each target group.
+
+## Types of load balancers
+
+### ALB (Application Load Balancer)
+
+* An Application Load Balancer functions at Layer 7 of the Open Systems Interconnection (OSI) model
+* It is ideal for load balancing HTTP and HTTPS traffic.
+* After the load balancer receives a request, it evaluates the listener rules in priority order to determine which rule to apply. **It then routes traffic to targets based on the request content**.
+
+* **Routes traffic based on the request data**: An Application Load Balancer makes routing decisions based on the HTTP and HTTPS protocol. For example, the ALB could use the URL path (/upload) and host, HTTP headers and method, or the source IP address of the client. This facilitates granular routing to target groups.
+* **Sends responses directly to the client**: An Application Load Balancer can reply directly to the client with a fixed response, such as a custom HTML page. It can also send a redirect to the client. This is useful when you must redirect to a specific website or redirect a request from HTTP to HTTPS. It removes that work from your backend servers.
+* **Uses TLS offloading**: An Application Load Balancer understands HTTPS traffic. To pass HTTPS traffic through an Application Load Balancer, an SSL certificate is provided one of the following ways. This ensures that the traffic between the client and Application Load Balancer is encrypted.
+  * Importing a certificate by way of IAM or ACM services
+  * Creating a certificate for free using ACM
+* **Authenticates users**: An Application Load Balancer can authenticate users before they can pass through the load balancer. The Application Load Balancer uses the OpenID Connect (OIDC) protocol and integrates with other AWS services to support protocols, such as the following:
+  * SAML
+  * Lightweight Directory Access Protocol (LDAP)
+  * Microsoft Active Directory
+  * Others
+* **Secure traffic**: To prevent traffic from reaching the load balancer, you configure a **security group** to specify the supported IP address ranges.
+* **Support sticky sessions**: If requests must be sent to the same backend server because the application is stateful, use the sticky session feature. This feature uses an HTTP cookie to remember which server to send the traffic to across connections.
+
+### NLB (Network Load Balancer)
+### GLB (Gateway Load Balancer)
 
 # Other AWS networking stuff
 
