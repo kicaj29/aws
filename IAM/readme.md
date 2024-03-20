@@ -16,7 +16,7 @@
 
 **Roles are used for temporary permissions - it is easy to assign another role and in this way complete change user permissions.**
 
-**Roles also can be used to map corporate identities to roles - then we even do have create IAM Users. We can federate corporate identities into AWS account.**
+**Roles also can be used to map corporate identities to roles - then we even do not have create IAM Users. We can federate corporate identities into AWS account.**
 
 **When someone assumes an IAM role, they abandon all previous permissions that they had under a previous role and assume the permissions of the new role.**
 
