@@ -31,7 +31,7 @@
     - [NLB (Network Load Balancer)](#nlb-network-load-balancer)
     - [GLB (Gateway Load Balancer)](#glb-gateway-load-balancer)
   - [Selecting between ELB types](#selecting-between-elb-types)
-- [EC2 Auto Scaling Group](#ec2-auto-scaling-group)
+- [EC2 Auto Scaling](#ec2-auto-scaling)
   - [ELB with Amazon EC2 Auto Scaling](#elb-with-amazon-ec2-auto-scaling)
   - [Configure Amazon EC2 Auto Scaling components](#configure-amazon-ec2-auto-scaling-components)
     - [Launch templates](#launch-templates)
@@ -470,7 +470,7 @@ It provides a gateway for distributing traffic across multiple virtual appliance
 
 ![elb-118-comparison.png](./images/elb-118-comparison.png)
 
-# EC2 Auto Scaling Group
+# EC2 Auto Scaling
 
 The Amazon EC2 Auto Scaling service adds and removes capacity to keep a steady and predictable performance at the lowest possible cost.
 
