@@ -32,6 +32,12 @@
     - [GLB (Gateway Load Balancer)](#glb-gateway-load-balancer)
   - [Selecting between ELB types](#selecting-between-elb-types)
 - [EC2 Auto Scaling Group](#ec2-auto-scaling-group)
+  - [ELB with Amazon EC2 Auto Scaling](#elb-with-amazon-ec2-auto-scaling)
+  - [Configure Amazon EC2 Auto Scaling components](#configure-amazon-ec2-auto-scaling-components)
+    - [Launch templates](#launch-templates)
+    - [Launch configuration](#launch-configuration)
+    - [Amazon EC2 Auto Scaling groups](#amazon-ec2-auto-scaling-groups)
+    - [Scaling policies](#scaling-policies)
 - [Other AWS networking stuff](#other-aws-networking-stuff)
 - [Create VPC with 2 public subnets](#create-vpc-with-2-public-subnets)
   - [Create EC2 instances that will be connected to created VPC](#create-ec2-instances-that-will-be-connected-to-created-vpc)
@@ -466,7 +472,75 @@ It provides a gateway for distributing traffic across multiple virtual appliance
 
 # EC2 Auto Scaling Group
 
-* **Automatic scaling**
+The Amazon EC2 Auto Scaling service adds and removes capacity to keep a steady and predictable performance at the lowest possible cost.
+
+* **Automatic scaling**: Automatically scales in and out based on demand.
+* **Scheduled scaling**: Scales based on user-defined schedules.
+* **Fleet management**: Automatically replaces unhealthy EC2 instances.
+* **Predictive scaling**: Uses machine learning (ML) to help schedule the optimum number of EC2 instances.
+* **Purchase options**: Includes multiple purchase models, instance types, and Availability Zones.
+* **EC2 availability**: Comes with the Amazon EC2 service.
+
+## ELB with Amazon EC2 Auto Scaling
+
+Additionally, the ELB service integrates seamlessly with Amazon EC2 Auto Scaling. As soon as a new EC2 instance is added to or removed from the Amazon EC2 Auto Scaling group, ELB is notified. However, before ELB can send traffic to a new EC2 instance, it needs to validate that the application running on the EC2 instance is available.
+
+This validation is done by way of the ELB health checks feature you learned about in the previous lesson. 
+
+## Configure Amazon EC2 Auto Scaling components
+
+There are three main components of Amazon EC2 Auto Scaling. Each of these components addresses one main question as follows:
+
+* **Launch templates or configuration**: Which resources should be automatically scaled?
+  * Multiple parameters are required to create EC2 instances—Amazon Machine Image (AMI) ID, instance type, security group, additional Amazon EBS volumes, and more. 
+* **Amazon EC2 Auto Scaling groups**: Where should the resources be deployed?
+* **Scaling policies**: When should the resources be added or removed?
+
+
+### Launch templates
+
+* It supports versioning, which can be used for quickly rolling back if there's an issue or a need to specify a default version of the template
+* You can create a launch template in one of three ways as follows:
+  * Use an existing EC2 instance. All the settings are already defined.
+  * Create one from an already existing template or a previous version of a launch template.
+  * Create a template from scratch. These parameters will need to be defined: AMI ID, instance type, key pair, security group, storage, and resource tags.
+
+### Launch configuration
+
+Another way to define what Amazon EC2 Auto Scaling needs to scale is by using a launch configuration. It’s similar to the launch template, but **you cannot use a previously created launch configuration as a template.** You also **cannot create a template from an already existing EC2 instance**. For these reasons, and to ensure that you get the latest features from Amazon EC2, AWS recommends you u**se a launch template instead of a launch configuration**.
+
+### Amazon EC2 Auto Scaling groups
+
+The next component Amazon EC2 Auto Scaling needs is an Amazon EC2 Auto Scaling group. An Auto Scaling group helps you **define where Amazon EC2 Auto Scaling deploys your resources**. This is where you specify the Amazon Virtual Private Cloud (**Amazon VPC**) and **subnets** the EC2 instance should be launched in. Amazon EC2 Auto Scaling takes care of creating the EC2 instances across the subnets, so select at least two subnets that are across different Availability Zones.
+
+With Auto Scaling groups, you can **specify the type of purchase for the EC2 instances**. You can use **On-Demand Instances or Spot Instances**. You can also use a **combination of the two**, which means you can take advantage of Spot Instances with minimal administrative overhead.
+
+![auto-scaling-001.png](./images/auto-scaling-001.png)
+
+* **Minimum capacity**: this is minimum number of instances running in your auto scaling group, even if the threshold for lowering the number of instances is reached. When EC2 Auto Scaling removes EC2 instances because of the traffic is minimal, it keeps removing EC2 instances until it reaches a minimum capacity. NOTE: depending on your application, using minimum of 2 is recommended to ensure HA.
+
+* **Desired capacity**: this is the number of EC2 instances that EC2 Auto Scaling creates at the time the group is created. This number can be only within or equal to the min or max. If that number decreases, EC2 Auto Scaling removes the oldest instance by default. If that number increases, EC2 Auto Scaling creates new instance using the launch template.
+
+* **Maximum capacity**: this is the max number of instances running in you Auto Scaling group, even if the threshold for adding new instances is reached. This is set to never go above your budget.
+
+### Scaling policies
+
+By default, an Auto Scaling group will be kept to its initial desired capacity. While it’s possible to manually change the desired capacity, you can also use scaling policies.
+
+Metrics and alarms are what scaling policies use to know when to act. For example, you can set up an alarm that states when the CPU utilization is above 70 percent across the entire fleet of EC2 instances. It will then invoke a scaling policy to add an EC2 instance.
+
+Three types of scaling policies are available
+
+* **Simple scaling policy**: You use a CloudWatch alarm and specify what to do when it is invoked. This can include adding or   removing a number of EC2 instances or specifying a number of instances to set the desired capacity to. **You can specify a  percentage of the group instead of using a number of EC2 instances**, which makes the group grow or shrink more quickly.
+
+  After the scaling policy is invoked, it enters a **cooldown period** before taking any other action. This is important because it takes time for the EC2 instances to start, and the CloudWatch alarm might still be invoked while the EC2 instance is booting. For example, you might decide to add an EC2 instance if the CPU utilization across all instances is above 65 percent. You don’t want to add more instances until that new EC2 instance is accepting traffic. However, what if the CPU utilization is now above 85 percent across the Auto Scaling group?
+
+  Adding one instance might not be the right move. Instead, you might want to add another step in your scaling policy. Unfortunately, a simple scaling policy can’t help with that. This is where a step scaling policy helps. 
+  
+* **Step scaling policy**: Step scaling policies **respond to additional alarms even when a scaling activity or health check replacement is in progress**. Similar to the previous example, you might decide to add two more instances when CPU utilization is at 85 percent and four more instances when it’s at 95 percent.
+Deciding when to add and remove instances based on CloudWatch alarms might seem like a difficult task. This is why the third type of scaling policy exists—target tracking.
+
+* **Target tracking scaling policy**: if your application scales based on average CPU utilization, average network utilization (in or out), or request count, then this scaling policy type is the one to use. All you need to provide is the target value to track, and it automatically creates the required CloudWatch alarms.
 
 # Other AWS networking stuff
 
