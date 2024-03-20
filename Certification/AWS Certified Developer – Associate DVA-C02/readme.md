@@ -49,3 +49,9 @@ https://github.com/kicaj29/aws/tree/main/VPC-LB-AutoScalingGroup-EC2-Route53
   
 * https://github.com/kicaj29/aws/tree/main/VPC-LB-AutoScalingGroup-EC2-Route53#ec2-auto-scaling-group
 * https://github.com/kicaj29/aws/tree/main/VPC-LB-AutoScalingGroup-EC2-Route53#create-autoscaling-group-using-created-launch-configuration
+
+### Innovation with AWS
+
+* https://aws.amazon.com/codewhisperer
+
+*Amazon CodeWhisperer generates code suggestions ranging from snippets to full functions in real time in the IDE based on your comments and existing code. It also supports CLI completions and natural-language-to-bash translation in the command line.*
