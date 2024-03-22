@@ -9,6 +9,7 @@
     - [Innovation with AWS](#innovation-with-aws)
   - [AWS Compute Services Overview](#aws-compute-services-overview)
   - [Build with Amazon EC2](#build-with-amazon-ec2)
+  - [AWS Database Offerings](#aws-database-offerings)
 
 # Based on AWS Partner Certification Readiness - Developer - Associate
 
@@ -81,3 +82,5 @@ https://github.com/kicaj29/aws/tree/main/VPC-LB-AutoScalingGroup-EC2-Route53
 
 * https://github.com/kicaj29/aws/tree/main/Deployments%26Managing%20InfraAtScale#systems-manager-ssm
 * https://github.com/kicaj29/aws/tree/main/EC2#ec2-instance-connect
+
+## AWS Database Offerings

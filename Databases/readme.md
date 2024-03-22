@@ -1,4 +1,5 @@
 - [Unmanaged databases vs managed databases](#unmanaged-databases-vs-managed-databases)
+- [OLTP vs OLAP](#oltp-vs-olap)
 - [NoSQL Databases (non relational databases)](#nosql-databases-non-relational-databases)
   - [DynamoDB](#dynamodb)
     - [DynamoDB Accelerator - DAX](#dynamodb-accelerator---dax)
@@ -36,6 +37,13 @@
 # Unmanaged databases vs managed databases
 
 ![14-unmanaged-vs-managed.png](./images/14-unmanaged-vs-managed.png)
+
+# OLTP vs OLAP
+
+**Online transaction processing (OLTP)** databases focus on recording Update, Insertion, and Deletion data transactions. OLTP queries are simple and short, which requires less time and space to process. A great example of an OLTP system is a bank ATM, in which you can modify your bank account using short transactions. 
+
+**Online analytical processing (OLAP)** databases store historical **data that has been input by OLTP**. OLAP databases allow users to view **different summaries of multidimensional data**. Using OLAP, you can extract information from a large database and analyze it for decision-making. A good example of an **OLAP system is a business intelligence tool.**
+
 
 # NoSQL Databases (non relational databases)
 ## DynamoDB
