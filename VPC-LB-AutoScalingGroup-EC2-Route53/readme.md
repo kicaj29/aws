@@ -198,7 +198,7 @@ Another tool the VPCs use for networking control is the **network access control
 
 **For incoming traffic first is always checked ACL and next Security Group rules.** 
 
-When new ACL is created then by default it has rules that DENY all traffic. It is not possible to delete these rules!
+**When new ACL is created then by default it has rules that DENY all traffic. It is not possible to delete these rules!**
 
 ![vpc-103-ACL.png](images/vpc-103-ACL.png)
 ![vpc-103-ACL-outbound.png](images/vpc-103-ACL-outbound.png)

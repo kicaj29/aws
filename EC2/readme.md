@@ -4,8 +4,10 @@
 - [Anatomy of an instance](#anatomy-of-an-instance)
   - [AWS Nitro System](#aws-nitro-system)
 - [Bare-metal instances](#bare-metal-instances)
+- [EC2 Tenancy](#ec2-tenancy)
 - [EC2 instance lifecycle](#ec2-instance-lifecycle)
   - [Difference between stop and stop-hibernate](#difference-between-stop-and-stop-hibernate)
+- [AMI launch permissions](#ami-launch-permissions)
 - [AMI process for creating custom AMIs](#ami-process-for-creating-custom-amis)
 - [EC2 Image builder](#ec2-image-builder)
   - [EC2 Image builder hands-on screens](#ec2-image-builder-hands-on-screens)
@@ -105,6 +107,25 @@ Bare-metal instances are different from an instance on a Dedicated Host because 
 
 Workloads on bare-metal instances continue to **take advantage of all the services and features of the AWS Cloud, such as Amazon EBS**. A bare-metal instance has the lowest latency because it does not have the overhead of running a hypervisor.
 
+# EC2 Tenancy
+
+With Amazon EC2, tenancy defines how the EC2 instances are distributed across the physical hardware. Tenancy choices also have an effect on pricing. 
+
+These are the three available tenancy options:
+
+* **Shared (default)** – Multiple AWS accounts can share the same physical hardware.
+  * Shared tenancy is the most economical choice and can support Spot Instances and burstable instance types.
+  * Shared tenancy doesn’t support instances that use the Bring Your Own License (BYOL) model. 
+* **Dedicated Instance (dedicated)** – Your instance runs on single-tenant hardware.
+  * Dedicated Instances can share hardware with other instances **from the same AWS account** that are not Dedicated Instances
+  * With a Dedicated Instance, only instances owned by you can run on the hardware, but you have no visibility into the underlying hardware nor control of instance placement. 
+  * For example, you have two Dedicated instances that need to run on hardware allocated to your account. You then launch two additional regular instances that could be run on any hardware. But because you have hardware dedicated to your account, you can place these two additional regular instances on that dedicated instance hardware.
+* **Dedicated Host (host)** – Your instance runs on a physical server with EC2 instance capacity fully dedicated to your use. This is an isolated physical server with configurations that you can control.
+  * Dedicated Hosts also give you control and visibility into the underlying hardware of the host.
+  * By using Dedicated Hosts you can use the BYOL (bring your own licenses) model.
+
+![037-dedicated-instances-vs-host.png](./images/037-dedicated-instances-vs-host.png)
+
 # EC2 instance lifecycle
 
 ![032-life-cycle.png](./images/032-life-cycle.png)
@@ -112,15 +133,26 @@ Workloads on bare-metal instances continue to **take advantage of all the servic
 * **Pending**: When you launch an instance, it enters the pending state. **When an instance is pending, billing has not started**. At this stage, the instance is preparing to enter the running state. Pending is where AWS performs all actions needed to set up an instance, such as copying the AMI content to the root device and allocating the necessary networking components.
 * **Running**: When your instance is running, it's ready to use. This is also the stage where billing begins. As soon as an instance is running, you can take other actions on the instance, such as reboot, terminate, stop, and stop-hibernate.
 * **Rebooting**: When you reboot an instance, **it’s different than performing a stop action and then a start action**. Rebooting an instance is equivalent to rebooting an operating system. The instance keeps its public DNS name (IPv4) and private and public IPv4 addresses. An IPv6 address (if applicable) remains on the same host computer and maintains its public and private IP address, in addition to any data on its instance store volume.
-* **Stopping/Stopped**: When you stop your instance, it enters the stopping and then stopped state. This is similar to when you shut down your laptop. You can stop and start an instance if it has an Amazon Elastic Block Store (Amazon EBS) volume as its root device. **When you stop and start an instance, your instance can be placed on a new underlying physical server**. Your instance retains its private IPv4 addresses and if your instance has an IPv6 address, it retains its IPv6 address (but it will have different public IP address unless it uses Elastic IP). **When you put the instance into stop-hibernate**, the instance enters the stopped state, but saves the last information or content into memory, so that the start process is faster.
-You can compare this to how you lock your laptop and shut the lid, but when you open it back up, everything is still in place where you left it.
+* **Stopping/Stopped**: When you stop your instance, it enters the stopping and then stopped state. This is similar to when you shut down your laptop. You can stop and start an instance if it has an Amazon Elastic Block Store (Amazon EBS) volume as its root device. **When you stop and start an instance, your instance can be placed on a new underlying physical server**. Your instance retains its private IPv4 addresses and if your instance has an IPv6 address, it retains its IPv6 address (but it will have different public IP address unless it uses Elastic IP). **When you put the instance into stop-hibernate**, the instance enters the stopped state, but saves the last information or content into disk ( (suspend-to-disk)), so that the start process is faster.
+You can compare this to how you lock your laptop and shut the lid, but when you open it back up, everything is still in place where you left it. When you start your instance, the following events occur:
+  * The EBS root volume is restored to its previous state.
+  * The RAM contents are reloaded.
+  * The processes that were previously running on the instance are resumed.
+  * Previously attached data volumes are reattached and the instance retains its instance ID.
 * **Terminate**: When you terminate an instance, the instance stores are erased, and you lose both the public IP address and private IP address of the machine. Termination of an instance means that you can no longer access the machine. As soon as the status of an instance changes to shutting down or terminated, you stop incurring charges for that instance.
+* **Shutting-down**: the instance is preparing to be terminated, you are not billed when the instance is in this state.
 
 ## Difference between stop and stop-hibernate
 
 When you **stop an instance**, it enters the stopping state until it reaches the stopped state. AWS does not charge usage or data transfer fees for your instance after you stop it. But storage for any Amazon EBS volumes is still charged. While your instance is in the stopped state, you can modify some attributes, like the instance type. When you stop your instance, the data from the instance memory (RAM) is lost.
 
 When you **stop-hibernate an instance**, Amazon EC2 signals the operating system to perform hibernation (suspend-to-disk), which saves the contents from the instance memory (RAM) to the EBS root volume. You can hibernate an instance only if hibernation is turned on and the instance meets the hibernation prerequisites.
+
+# AMI launch permissions
+
+* public: The owner of the AMI grants launch permissions to all AWS accounts.
+* explicit: The owner of the AMI grants launch permissions to specific AWS accounts, organizations, or organizational units.
+* implicit: The owner of the AMI has launch permissions for the AMI they own.
 
 # AMI process for creating custom AMIs
 
@@ -238,6 +270,6 @@ Last step is distribution the new image.
 https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Connect-using-EC2-Instance-Connect.html
 
 Amazon EC2 Instance Connect provides a simple and secure way to connect to your instances using Secure Shell (SSH).
-With EC2 Instance Connect, you use AWS Identity and Access Management (IAM) policies and principals to control SSH access to your instances, removing the need to share and manage SSH keys. All connection requests using EC2 Instance Connect are logged to AWS CloudTrail so that you can audit connection requests. **It is browser-based client**.
+With EC2 Instance Connect, you use AWS Identity and Access Management (IAM) policies and principals to control SSH access to your instances, **removing the need to share and manage SSH keys**. All connection requests using EC2 Instance Connect are logged to AWS CloudTrail so that you can audit connection requests. **It is browser-based client**.
 
 SSH can be used from a Mac OS, Windows or Linux based computer, but it's not a browser-based client.

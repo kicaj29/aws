@@ -78,3 +78,6 @@ https://github.com/kicaj29/aws/tree/main/VPC-LB-AutoScalingGroup-EC2-Route53
 * https://github.com/kicaj29/aws/blob/main/Amazon%20Lightsail/readme.md?plain=1
 
 ## Build with Amazon EC2
+
+* https://github.com/kicaj29/aws/tree/main/Deployments%26Managing%20InfraAtScale#systems-manager-ssm
+* https://github.com/kicaj29/aws/tree/main/EC2#ec2-instance-connect
