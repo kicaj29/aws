@@ -8,9 +8,11 @@ AWS Batch is a fully managed batch computing service that plans, schedules, and 
 * Fully managed batch processing at any scale
 * Efficiently run 100,000s of computing batch jobs on AWS
 * A "batch" job is job with a start and end (opposed to continuous)
-* Batch will dynamically launch EC2 instances or Spot instances
+* Batch will dynamically launch EC2 instances or EC2 Spot instances
+* Can also use Amazon ECS, Amazon EKS, AWS Fargate
 * AWS Batch provisions the right amount of compute/memory
 * You submit or schedule batch jobs and AWS Batch does the rest
+  * AWS Batch dynamically provisions the optimal quantity and type of compute resources, such as CPU- or memory-optimized compute resources, based on the volume and specific resource requirements of the batch jobs submitted.
 * **Batch jobs are defined as docker images and run on ECS**
 * Helpful for cost optimizations and focusing less on the infrastructure
 * AWS Batch is cheaper than running jobs on AWS Fargate

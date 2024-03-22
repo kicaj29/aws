@@ -205,6 +205,9 @@ https://aws.amazon.com/organizations/faqs/
     * On-Demand (hourly)
     * Reservations (1 or 3 years commitment): reservations can provide up to a 70% discount compared to the On-Demand price
     * Dedicated Hosts can be purchased as a Reservation for up to 70 percent off the On-Demand price.
+* Dedicated Instances vs Dedicated Host
+  * **Dedicated Instances**: If you stop/start instance, you can get some other hardware somewhere else. Basically, the hardware is "yours" (you are not sharing it with others) for the time your instance is running. You stop/start it, you may get different physical machine later on (maybe older, maybe newer, maybe its specs will be a bit different), and so on. **So your instance is moved around on different physical servers - whichever is not occupied by others at the time.**
+  * **Dedicated Host**: With Dedicated Host the physical server is basically yours. It does not change, it's always the same physical machine for as long as you are paying.
 
 ## Compute Pricing - Lambda and ECS
 

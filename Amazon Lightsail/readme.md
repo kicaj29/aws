@@ -1,6 +1,6 @@
 #  Amazon LightSail
 
-* Virtual servers, storage, databases and networking
+* Virtual private server (VPS), storage, databases and networking
 * Low & predictable pricing
 * Simpler alternative to using EC2, RDS, ELB, EBS, Route 53...
 * Great for people with little cloud experience

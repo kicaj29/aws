@@ -202,6 +202,9 @@ The **Acceptable Use Policy** describes prohibited uses of the web services offe
 * Possibility of implementing human approval feature
 * Use cases: order fulfillment, data processing, web applications, any workflow
 * **Can be used to train/tune ML models**
+* Step Functions logs the state of each step, so when things do go wrong, you can diagnose and debug problems quickly.
+* Retries when errors occur.
+* You can change and add steps without even writing code, so you can evolve your application and innovate faster.
 
 ![15-step-functions.png](./images/15-step-functions.png)
 

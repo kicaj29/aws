@@ -1,4 +1,18 @@
+- [Based on AWS Partner Certification Readiness - Developer - Associate](#based-on-aws-partner-certification-readiness---developer---associate)
+  - [AWS Technical Essentials](#aws-technical-essentials)
+    - [Module 1: Introduction to AWS](#module-1-introduction-to-aws)
+    - [Module 2: AWS Compute](#module-2-aws-compute)
+    - [Module 3: Introduction to Networking](#module-3-introduction-to-networking)
+    - [Module 4: Storage Types](#module-4-storage-types)
+    - [Module 5: Databases on AWS](#module-5-databases-on-aws)
+    - [Module 6: Monitoring, load balancing, and scaling](#module-6-monitoring-load-balancing-and-scaling)
+    - [Innovation with AWS](#innovation-with-aws)
+  - [AWS Compute Services Overview](#aws-compute-services-overview)
+  - [Build with Amazon EC2](#build-with-amazon-ec2)
+
 # Based on AWS Partner Certification Readiness - Developer - Associate
+
+https://explore.skillbuilder.aws/learn/lp/2114/aws-partner-certification-readiness-developer-associate
 
 ## AWS Technical Essentials
 
@@ -55,3 +69,12 @@ https://github.com/kicaj29/aws/tree/main/VPC-LB-AutoScalingGroup-EC2-Route53
 * https://aws.amazon.com/codewhisperer
 
 *Amazon CodeWhisperer generates code suggestions ranging from snippets to full functions in real time in the IDE based on your comments and existing code. It also supports CLI completions and natural-language-to-bash translation in the command line.*
+
+## AWS Compute Services Overview
+
+* https://github.com/kicaj29/aws/tree/main/OtherServices#aws-step-functions
+* https://github.com/kicaj29/aws/tree/main/Batch
+* https://github.com/kicaj29/aws/blob/main/readme-core-services.md#aws-elastic-beanstalk
+* https://github.com/kicaj29/aws/blob/main/Amazon%20Lightsail/readme.md?plain=1
+
+## Build with Amazon EC2

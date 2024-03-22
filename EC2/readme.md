@@ -1,4 +1,5 @@
 - [EC2 instance families](#ec2-instance-families)
+- [Instance types](#instance-types)
 - [EC2 instance lifecycle](#ec2-instance-lifecycle)
   - [Difference between stop and stop-hibernate](#difference-between-stop-and-stop-hibernate)
 - [AMI process for creating custom AMIs](#ami-process-for-creating-custom-amis)
@@ -52,13 +53,10 @@ https://aws.amazon.com/ec2/instance-types/
     * complex simulations
     * deep learning workloads
 
+# Instance types
 
-![031-types-syntax.png](./images/031-types-syntax.png)
-
-* First position – c, indicates the instance family. This indicates that this instance belongs to the compute optimized family.
-* Second position – 5, indicates the generation of the instance. This instance belongs to the fifth generation of instances.
-* Remaining letters before the period – in this case, n indicates additional attributes, such as local NVMe storage.
-* After the period – xlarge indicates the instance size. In this example, it's xlarge.
+![031-types-syntax.png](./images/031-types-syntax.png)   
+More [here](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-types.html).
 
 # EC2 instance lifecycle
 
