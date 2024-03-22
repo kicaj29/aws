@@ -1,5 +1,9 @@
 - [EC2 instance families](#ec2-instance-families)
 - [Instance types](#instance-types)
+- [Instance sizing](#instance-sizing)
+- [Anatomy of an instance](#anatomy-of-an-instance)
+  - [AWS Nitro System](#aws-nitro-system)
+- [Bare-metal instances](#bare-metal-instances)
 - [EC2 instance lifecycle](#ec2-instance-lifecycle)
   - [Difference between stop and stop-hibernate](#difference-between-stop-and-stop-hibernate)
 - [AMI process for creating custom AMIs](#ami-process-for-creating-custom-amis)
@@ -48,15 +52,58 @@ https://aws.amazon.com/ec2/instance-types/
     * data warehousing applications
     * high-frequency online transaction processing (OLTP) systems
     * deliver tens of thousands of low-latency, random input/output operations per second (IOPS) to applications.
-* **HPC optimized**: High performance computing (HPC) instances are purpose built to offer the best price performance for running HPC workloads at scale on AWS
+* **HPC optimized**: High performance computing (HPC) instances are purpose built to offer the best price performance for running HPC workloads at scale on AWS. HPC == **many servers running parallel processing**. **HPC is like a virtual super computer**.
   * Use cases:
     * complex simulations
     * deep learning workloads
+    * weather forecasting, and other computationally intensive tasks **where large-scale parallel processing is necessary**
 
 # Instance types
 
 ![031-types-syntax.png](./images/031-types-syntax.png)   
 More [here](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-types.html).
+
+# Instance sizing
+
+EC2 instances are sized based on the combined hardware resources consumed by that instance type. This means the size is the total configured capacity of vCPU, memory, storage, and networking.
+
+![033-instance-family.png](./images/033-instance-family.png)
+
+![034-instance-family.png](./images/034-instance-family.png)
+
+# Anatomy of an instance
+
+An EC2 instance is made up of the host's physical hardware components (storage, networking, compute), a hypervisor (software that hides hardware resources from the application OS), and the configuration information from the AMI. 
+
+A **hypervisor** is a piece of virtualization software that allocates resources and manages physical hardware in a virtualized environment. The hypervisor allows multiple operating systems to run on a single physical server.
+
+AWS has **two types of hypervisors**: the **original hypervisor** and the **newer Nitro Hypervisor** that was launched as part of the AWS Nitro System. 
+
+## AWS Nitro System
+
+The majority of EC2 instances run on hardware known as the AWS Nitro System. The important element of the AWS Nitro System hardware is how it uses dedicated hardware to offload input and output (I/O) operations.
+
+The following image illustrates how Amazon EC2 allocated resources at its original launch.
+
+![035-original-launch.png](./images/035-original-launch.png)
+When Amazon EC2 originally launched, up to 30% of the host's compute resources were allocated to the hypervisor for managing the hardware. This left only 70% of the resources for the remaining hypervisor functions and the customer instances.
+
+Traditionally, a hypervisor's job is to protect the physical hardware and BIOS; virtualize the CPU, storage, and networking; and provide a rich set of management capabilities. With the Nitro System, these functions are separated and offloaded to dedicated hardware and software. Doing this reduces costs and increases performance by delivering practically all of the server resources to your instances.
+
+The following image illustrates how the AWS Nitro System splits the management resources from the hardware resources.
+
+![036-nitro.png](./images/036-nitro.png)
+By offloading all hardware, management, and security operations to a dedicated card, the hypervisor no longer has to carve out a portion of compute resources to handle this I/O.
+
+# Bare-metal instances
+
+Bare-metal instances are different from an instance on a Dedicated Host because a Dedicated Host instance comes with the virtualization software (the hypervisor) preinstalled. Bare-metal instances are ideal for the following applications: 
+
+* Workloads that require access to the hardware feature set
+* Applications that need to run in nonvirtualized environments for licensing or support requirements
+* Customers who want to use their own hypervisor
+
+Workloads on bare-metal instances continue to **take advantage of all the services and features of the AWS Cloud, such as Amazon EBS**. A bare-metal instance has the lowest latency because it does not have the overhead of running a hypervisor.
 
 # EC2 instance lifecycle
 
