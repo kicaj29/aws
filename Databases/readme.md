@@ -118,7 +118,8 @@ Aurora is AWS Proprietary database, not open source.
 
 ![02-rds.png](./images/02-rds.png)
 
-* **PostgresSQL and MySQL** are supported as Aurora DB.
+* **PostgreSQL and MySQL** are supported as Aurora DB.
+  * See that [Redshift](https://github.com/kicaj29/aws/tree/main/Databases#redshift) is also based on PostgreSQL but it is used for OLAP and not OLTP
 * It is "AWS cloud optimized" and claims 5x performance improvement over MySQL on RDS, over 3x the performance of Postgres on RDS.
 * Storage will automatically grow in increments of 10GB, up to 64TB
 * Aurora costs more than RDS (20% more) - but is more efficient
@@ -210,8 +211,9 @@ If you want to keep your automated backups longer than 35 days, use manual snaps
 
 https://aws.amazon.com/redshift/faqs/
 
-* Is based on PostgresSQL, but it is not used for OLTP (Online transaction processing)
+* Is based on PostgreSQL, but it is not used for OLTP (Online transaction processing)
 * It is OLAP - online **analytical** processing (analytics and data warehousing)
+  * See that [Aurora](https://github.com/kicaj29/aws/tree/main/Databases#aurora-part-of-rds) is also based on PostgreSQL but it is used for OLTP and not OLAP
 * Load data once every hour, not every second
 * 10x better performance than other data warehouses, scales to PBs of data
 * Columnar storage of data (instead of row based)
