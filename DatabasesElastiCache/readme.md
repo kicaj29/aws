@@ -78,10 +78,10 @@ The same steps like above but here we can specify amount of shards and replicas 
 ![18-create-redis-design-own-cache.png](./images/18-create-redis-design-own-cache.png)
 
 * Equal distribution
-![19-create-redis-design-own-cache.png](./images/19-create-redis-design-own-cache.png)
+  ![19-create-redis-design-own-cache.png](./images/19-create-redis-design-own-cache.png)
 
 * Custom distribution
-![20-create-redis-design-own-cache.png](./images/20-create-redis-design-own-cache.png)
+  ![20-create-redis-design-own-cache.png](./images/20-create-redis-design-own-cache.png)
 
 # ElastiCache for Memcached
 
