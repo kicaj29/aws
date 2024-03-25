@@ -252,12 +252,7 @@ If you want to keep your automated backups longer than 35 days, use manual snaps
 
 ## ElastiCache
 
-* ElastiCache is to get managed **Redis or Memcached**
-* Caches are in-memory databases with high performance, low latency
-* Helps reduce load off databases for read intensive workloads
-* AWS takes care of OS maintenance / patching, optimizations, setup, configuration, monitoring, failure recovery and backups
-
-![06-elastiCache.png](./images/06-elastiCache.png)
+* https://github.com/kicaj29/aws/tree/main/DatabasesElastiCache
 
 ## Amazon MemoryDB for Redis
 
@@ -386,7 +381,7 @@ https://aws.amazon.com/redshift/faqs/
 * The source database remains available during the migration
 * Basic use cases
   * Homogeneous migrations: ex Oracle to Oracle
-  * Heterogeneous migrations: ex Microsoft SQL Server to Aurora
+  * Heterogeneous migrations: ex Microsoft SQL Server to Aurora, for this is needed https://aws.amazon.com/dms/schema-conversion-tool/
 * Other use cases
   * Development and test database migrations - migrate data to test application against production data without affecting production users
   * Database consolidation - combining several databases into a single database
