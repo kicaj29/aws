@@ -257,8 +257,8 @@ https://aws.amazon.com/s3/pricing/
   * Size
   * Memory class
 * Purchase type
-  * On-demand
-  * Reserved instances (1 or 3 years) with required up-front
+  * **On-demand**
+  * **Reserved instances (1 or 3 years) with required up-front**
 * Backup storage: there is no additional charge for backup storage up to 100% of your total database storage for a region
 * Additional storage (per GB per month)
 * Number of input and output requests per month

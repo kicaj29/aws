@@ -1,3 +1,5 @@
+- [Comparing relational and non-relational databases](#comparing-relational-and-non-relational-databases)
+- [Non-relational database types](#non-relational-database-types)
 - [Unmanaged databases vs managed databases](#unmanaged-databases-vs-managed-databases)
 - [OLTP vs OLAP](#oltp-vs-olap)
 - [NoSQL Databases (non relational databases)](#nosql-databases-non-relational-databases)
@@ -6,6 +8,7 @@
     - [DynamoDB Global Tables](#dynamodb-global-tables)
 - [Amazon RDS (Relational Database Service)](#amazon-rds-relational-database-service)
   - [RDS Important points](#rds-important-points)
+  - [RDS Instance Types](#rds-instance-types)
   - [Advantage over using RDS versus deploying DB on EC2](#advantage-over-using-rds-versus-deploying-db-on-ec2)
     - [Aurora (part of RDS)](#aurora-part-of-rds)
   - [RDS Deployments](#rds-deployments)
@@ -33,6 +36,48 @@
 - [Choosing the Right Database Service](#choosing-the-right-database-service)
 - [DMS](#dms)
 
+# Comparing relational and non-relational databases
+
+![19-relation-vs-nonrelational.png](./images/19-relation-vs-nonrelational.png)
+
+# Non-relational database types
+
+* **Key-value databases**: Key-value databases logically store data in a single table. Within the table, the values are associated with a specific key and stored in the form of blob objects without a predefined schema. The values can be of nearly any type.
+  * Strengths
+    * Very flexible
+    * Able to handle a wide variety of data types
+    * Keys are linked directly to their values with no need for indexing or complex join operations
+    * Content of a key can easily be copied to other systems without reprogramming the data
+  * Weaknesses
+    * Analytical queries are difficult to perform due to the lack of joins
+    * Access patterns need to be known in advance for optimum performance
+* **Document databases**: Document stores keep files containing data as a series of elements. These files can be navigated using numerous languages including Python and Node.js. Each element is an instance of a person, place, thing, or event. For example, a document store may hold a series of log files from a set of servers. These log files can each contain the specifics for that system without concern for what the log files in other systems contain.
+  * Strengths
+    * Flexibility
+    * No need to plan for a specific type of data when creating one
+    * Easy to scale
+  * Weaknesses
+    * Sacrifice ACID compliance for flexibility
+    * Databases cannot query across files natively
+* **In-memory databases**: In-memory databases are used for applications that require real-time access to data. Most databases have areas of data that are frequently accessed but seldom updated. Additionally, querying a database is always slower and more expensive than locating a key in a key-value pair cache. Some database queries are especially expensive to perform. By caching such query results, you pay the price of the query once and then are able to quickly retrieve the data multiple times without having to re-execute the query.
+  * Strengths
+    * Support the most demanding applications requiring sub-millisecond response times
+    * Great for caching, gaming, and session store
+    * Adapt to changes in demands by scaling out and in without downtime
+    * Provide ultrafast (sub-microsecond latency) and inexpensive access to copies of data
+  * Weaknesses
+    * Data that is rapidly changing or is seldom accessed
+    * Application using the in-memory store has a low tolerance for stale data
+* **Graph databases**: Graph databases store data as nodes, while edges store information on the relationships between nodes. Data within a graph database is queried using specific languages associated with the software tool you have implemented. Review the Understanding graph relationships section below for more information.
+  * Strengths
+    * Allow simple, fast retrieval of complex hierarchical structures
+    * Great for real-time big data mining
+    * Can rapidly identify common data points between nodes
+    * Great for making relevant recommendations and allowing for rapid querying of those relationships
+  * Weaknesses
+    * Cannot adequately store transactional data
+    * Analysts must learn new languages to query the data
+    * Performing analytics on the data may not be as efficient as with other database types
 
 # Unmanaged databases vs managed databases
 
@@ -44,6 +89,7 @@
 
 **Online analytical processing (OLAP)** databases store historical **data that has been input by OLTP**. OLAP databases allow users to view **different summaries of multidimensional data**. Using OLAP, you can extract information from a large database and analyze it for decision-making. A good example of an **OLAP system is a business intelligence tool.**
 
+Both are relational databases.
 
 # NoSQL Databases (non relational databases)
 ## DynamoDB
@@ -97,6 +143,16 @@ https://aws.amazon.com/rds/features/multi-az/
 * Amazon RDS creates and saves automated backups of your DB instance or Multi-AZ DB cluster during the backup window of your database. https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_WorkingWithAutomatedBackups.html
 * DB instances for Amazon RDS for MySQL, MariaDB, PostgreSQL, Oracle, and Microsoft SQL Server use Amazon Elastic Block Store (Amazon EBS) volumes for database and log storage. https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_Storage.html
 
+## RDS Instance Types
+
+* https://aws.amazon.com/rds/instance-types/
+  * General Purpose
+  * Memory Optimized
+  * Instance Features
+    * Burstable Performance Instances
+    * Database Storage Options
+    * EBS-optimized Instances
+    * Enhanced Networking
 
 ## Advantage over using RDS versus deploying DB on EC2
 
@@ -167,6 +223,7 @@ If you want to keep your automated backups longer than 35 days, use manual snaps
 * Network ACLs and security groups help users dictate the flow of traffic.
 * If you want to restrict the actions and resources others can access, you can use AWS Identity and Access Management (IAM) policies
   * For example you can determine whe can create, describe, modify and delete DB instances, tag resources, or modify security groups.
+* [Controlling access with security groups](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Overview.RDSSecurityGroups.html)
 
 # Purpose-Built Databases
 

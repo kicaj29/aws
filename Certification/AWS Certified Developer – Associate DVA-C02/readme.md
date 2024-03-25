@@ -86,3 +86,4 @@ https://github.com/kicaj29/aws/tree/main/VPC-LB-AutoScalingGroup-EC2-Route53
 ## AWS Database Offerings
 
 * https://github.com/kicaj29/aws/tree/main/Databases
+* https://github.com/kicaj29/aws/tree/main/AccountMgmtBillingAndSupport#database-pricing---rds
