@@ -73,9 +73,13 @@ NOTE: subnet groups can be also created from separated view
 
 ## Create ElastiCache for Design your own cache, cluster cache, cluster mode enabled
 
-The same steps like above but here we can specify amount of shards and replicas per shard.
+The same steps like above but here we can specify amount of shards and replicas per shard, plus slots and keyspaces.
 
 ![18-create-redis-design-own-cache.png](./images/18-create-redis-design-own-cache.png)
+
+![19-create-redis-design-own-cache.png](./images/19-create-redis-design-own-cache.png)
+
+![20-create-redis-design-own-cache.png](./images/20-create-redis-design-own-cache.png)
 
 # ElastiCache for Memcached
 
