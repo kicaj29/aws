@@ -2,10 +2,13 @@
 - [ElastiCache for Redis](#elasticache-for-redis)
   - [Redis Cluster Modes: Enabled and Disabled](#redis-cluster-modes-enabled-and-disabled)
   - [Create ElastiCache for Redis Serverless](#create-elasticache-for-redis-serverless)
-  - [Create ElastiCache for Design your own cache - easy create](#create-elasticache-for-design-your-own-cache---easy-create)
-  - [Create ElastiCache for Design your own cache, cluster cache, cluster mode disabled](#create-elasticache-for-design-your-own-cache-cluster-cache-cluster-mode-disabled)
-  - [Create ElastiCache for Design your own cache, cluster cache, cluster mode enabled](#create-elasticache-for-design-your-own-cache-cluster-cache-cluster-mode-enabled)
+  - [Create ElastiCache for Redis, design your own cache - easy create](#create-elasticache-for-redis-design-your-own-cache---easy-create)
+  - [Create ElastiCache for Redis, design your own cache, cluster cache, cluster mode disabled](#create-elasticache-for-redis-design-your-own-cache-cluster-cache-cluster-mode-disabled)
+  - [Create ElastiCache for Redis, design your own cache, cluster cache, cluster mode enabled](#create-elasticache-for-redis-design-your-own-cache-cluster-cache-cluster-mode-enabled)
 - [ElastiCache for Memcached](#elasticache-for-memcached)
+  - [Create ElastiCache for Memcached Serverless](#create-elasticache-for-memcached-serverless)
+  - [Create ElastiCache for Memcached, design your own cache - easy create](#create-elasticache-for-memcached-design-your-own-cache---easy-create)
+  - [Create ElastiCache for Memcached, design your own cache - standard create](#create-elasticache-for-memcached-design-your-own-cache---standard-create)
 
 # Introduction
 
@@ -39,7 +42,7 @@ https://docs.aws.amazon.com/whitepapers/latest/database-caching-strategies-using
 
 ![04-create-redis-serverless.png](./images/04-create-redis-serverless.png)
 
-## Create ElastiCache for Design your own cache - easy create
+## Create ElastiCache for Redis, design your own cache - easy create
 
 ![05-create-redis-design-own-cache.png](./images/05-create-redis-design-own-cache.png)
 
@@ -53,7 +56,7 @@ NOTE: subnet groups can be also created from separated view
 
 ![08-create-redis-design-own-cache.png](./images/08-create-redis-design-own-cache.png)
 
-## Create ElastiCache for Design your own cache, cluster cache, cluster mode disabled
+## Create ElastiCache for Redis, design your own cache, cluster cache, cluster mode disabled
 
 ![10-create-redis-design-own-cache.png](./images/10-create-redis-design-own-cache.png)
 
@@ -71,7 +74,7 @@ NOTE: subnet groups can be also created from separated view
 
 ![17-create-redis-design-own-cache.png](./images/17-create-redis-design-own-cache.png)
 
-## Create ElastiCache for Design your own cache, cluster cache, cluster mode enabled
+## Create ElastiCache for Redis, design your own cache, cluster cache, cluster mode enabled
 
 The same steps like above but here we can specify amount of shards and replicas per shard, plus slots and keyspaces.
 
@@ -86,3 +89,29 @@ The same steps like above but here we can specify amount of shards and replicas 
 # ElastiCache for Memcached
 
 https://docs.aws.amazon.com/AmazonElastiCache/latest/mem-ug/WhatIs.html
+
+## Create ElastiCache for Memcached Serverless
+
+![21-create-memcached.png](./images/21-create-memcached.png)
+
+![22-create-memcached.png](./images/22-create-memcached.png)
+
+## Create ElastiCache for Memcached, design your own cache - easy create
+
+![23-create-memcached.png](./images/23-create-memcached.png)
+
+![24-create-memcached.png](./images/24-create-memcached.png)
+
+## Create ElastiCache for Memcached, design your own cache - standard create
+
+![25-create-memcached.png](./images/25-create-memcached.png)
+
+![26-create-memcached.png](./images/26-create-memcached.png)
+
+![27-create-memcached.png](./images/27-create-memcached.png)
+
+![28-create-memcached.png](./images/28-create-memcached.png)
+
+![29-create-memcached.png](./images/29-create-memcached.png)
+
+![30-create-memcached.png](./images/30-create-memcached.png)
