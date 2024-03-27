@@ -2,11 +2,13 @@
 - [ElastiCache for Redis](#elasticache-for-redis)
   - [Redis Cluster Modes: Enabled and Disabled](#redis-cluster-modes-enabled-and-disabled)
   - [Create ElastiCache for Redis Serverless](#create-elasticache-for-redis-serverless)
+    - [ElastiCache for Redis Serverless `Customize default settings`](#elasticache-for-redis-serverless-customize-default-settings)
   - [Create ElastiCache for Redis, design your own cache - easy create](#create-elasticache-for-redis-design-your-own-cache---easy-create)
   - [Create ElastiCache for Redis, design your own cache, cluster cache, cluster mode disabled](#create-elasticache-for-redis-design-your-own-cache-cluster-cache-cluster-mode-disabled)
   - [Create ElastiCache for Redis, design your own cache, cluster cache, cluster mode enabled](#create-elasticache-for-redis-design-your-own-cache-cluster-cache-cluster-mode-enabled)
 - [ElastiCache for Memcached](#elasticache-for-memcached)
   - [Create ElastiCache for Memcached Serverless](#create-elasticache-for-memcached-serverless)
+    - [Memcached Serverless `Customize default settings`](#memcached-serverless-customize-default-settings)
   - [Create ElastiCache for Memcached, design your own cache - easy create](#create-elasticache-for-memcached-design-your-own-cache---easy-create)
   - [Create ElastiCache for Memcached, design your own cache - standard create](#create-elasticache-for-memcached-design-your-own-cache---standard-create)
 - [Redis vs Memcached](#redis-vs-memcached)
@@ -43,10 +45,13 @@ https://docs.aws.amazon.com/whitepapers/latest/database-caching-strategies-using
 
 ![04-create-redis-serverless.png](./images/04-create-redis-serverless.png)
 
-* If we select `Customize default settings` then we can select a VPC, AZs, encryption key, security groups, backups and limits.
-  ![31-redis-serverless.png](./images/31-redis-serverless.png)
-  ![32-redis-serverless.png](./images/32-redis-serverless.png)
-  ![33-redis-serverless.png](./images/33-redis-serverless.png)
+### ElastiCache for Redis Serverless `Customize default settings`
+
+If we select `Customize default settings` then we can select a VPC, AZs, encryption key, security groups, backups and limits.
+
+![31-redis-serverless.png](./images/31-redis-serverless.png)
+![32-redis-serverless.png](./images/32-redis-serverless.png)
+![33-redis-serverless.png](./images/33-redis-serverless.png)
 
 
 ## Create ElastiCache for Redis, design your own cache - easy create
@@ -103,10 +108,13 @@ https://docs.aws.amazon.com/AmazonElastiCache/latest/mem-ug/WhatIs.html
 
 ![22-create-memcached.png](./images/22-create-memcached.png)
 
-* If we select `Customize default settings` then we can select a VPC, AZs, encryption key, security groups, and limits.
-  ![34-memcached-serverless.png](./images/34-memcached-serverless.png)
-  ![35-memcached-serverless.png](./images/35-memcached-serverless.png)
-  ![36-memcached-serverless.png](./images/36-memcached-serverless.png)
+### Memcached Serverless `Customize default settings`
+
+If we select `Customize default settings` then we can select a VPC, AZs, encryption key, security groups, and limits.
+
+![34-memcached-serverless.png](./images/34-memcached-serverless.png)
+![35-memcached-serverless.png](./images/35-memcached-serverless.png)
+![36-memcached-serverless.png](./images/36-memcached-serverless.png)
 
 ## Create ElastiCache for Memcached, design your own cache - easy create
 
