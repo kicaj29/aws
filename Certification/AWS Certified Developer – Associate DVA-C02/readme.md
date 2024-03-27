@@ -10,6 +10,7 @@
   - [AWS Compute Services Overview](#aws-compute-services-overview)
   - [Build with Amazon EC2](#build-with-amazon-ec2)
   - [AWS Database Offerings](#aws-database-offerings)
+  - [Amazon ElastiCache Getting Started](#amazon-elasticache-getting-started)
 
 # Based on AWS Partner Certification Readiness - Developer - Associate
 
@@ -87,3 +88,7 @@ https://github.com/kicaj29/aws/tree/main/VPC-LB-AutoScalingGroup-EC2-Route53
 
 * https://github.com/kicaj29/aws/tree/main/Databases
 * https://github.com/kicaj29/aws/tree/main/AccountMgmtBillingAndSupport#database-pricing---rds
+
+## Amazon ElastiCache Getting Started
+
+* https://github.com/kicaj29/aws/tree/main/DatabasesElastiCache
