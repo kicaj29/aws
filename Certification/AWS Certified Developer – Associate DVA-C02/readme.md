@@ -11,6 +11,7 @@
   - [Build with Amazon EC2](#build-with-amazon-ec2)
   - [AWS Database Offerings](#aws-database-offerings)
   - [Amazon ElastiCache Getting Started](#amazon-elasticache-getting-started)
+  - [Getting into the Serverless Mindset](#getting-into-the-serverless-mindset)
 
 # Based on AWS Partner Certification Readiness - Developer - Associate
 
@@ -92,3 +93,7 @@ https://github.com/kicaj29/aws/tree/main/VPC-LB-AutoScalingGroup-EC2-Route53
 ## Amazon ElastiCache Getting Started
 
 * https://github.com/kicaj29/aws/tree/main/DatabasesElastiCache
+
+## Getting into the Serverless Mindset
+
+* https://github.com/kicaj29/aws/tree/main/Serverless-Lambda
