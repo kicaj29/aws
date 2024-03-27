@@ -9,6 +9,7 @@
   - [Create ElastiCache for Memcached Serverless](#create-elasticache-for-memcached-serverless)
   - [Create ElastiCache for Memcached, design your own cache - easy create](#create-elasticache-for-memcached-design-your-own-cache---easy-create)
   - [Create ElastiCache for Memcached, design your own cache - standard create](#create-elasticache-for-memcached-design-your-own-cache---standard-create)
+- [Redis vs Memcached](#redis-vs-memcached)
 
 # Introduction
 
@@ -41,6 +42,12 @@ https://docs.aws.amazon.com/whitepapers/latest/database-caching-strategies-using
 ![03-create-redis-serverless.png](./images/03-create-redis-serverless.png)
 
 ![04-create-redis-serverless.png](./images/04-create-redis-serverless.png)
+
+* If we select `Customize default settings` then we can select a VPC, AZs, encryption key, security groups, backups and limits.
+  ![31-redis-serverless.png](./images/31-redis-serverless.png)
+  ![32-redis-serverless.png](./images/32-redis-serverless.png)
+  ![33-redis-serverless.png](./images/33-redis-serverless.png)
+
 
 ## Create ElastiCache for Redis, design your own cache - easy create
 
@@ -115,3 +122,8 @@ https://docs.aws.amazon.com/AmazonElastiCache/latest/mem-ug/WhatIs.html
 ![29-create-memcached.png](./images/29-create-memcached.png)
 
 ![30-create-memcached.png](./images/30-create-memcached.png)
+
+# Redis vs Memcached
+
+* Both have serverless option but only Redis has option `Restore from backup`.
+* 
