@@ -138,5 +138,7 @@ If we select `Customize default settings` then we can select a VPC, AZs, encrypt
 
 # Redis vs Memcached
 
-* Both have serverless option but only Redis has option `Restore from backup`.
-* 
+* Both have serverless option but only Redis has option `Restore from backup` and only Redis can create backups.
+* Both Redis and Memcached always are placed in a VPC also when a serverless option is used.
+* Redis has cluster mode which can be enabled or disabled. When cluster mode is enabled then you can specify number ot shards and replicas per shard and slots/keyspaces for shards. Memcached does not have shards with slots/keyspaces but you specify only nodes 
+*The number of nodes in this cache cluster. A node is a partition of your data.* without replicas.
