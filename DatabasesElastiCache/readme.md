@@ -103,6 +103,11 @@ https://docs.aws.amazon.com/AmazonElastiCache/latest/mem-ug/WhatIs.html
 
 ![22-create-memcached.png](./images/22-create-memcached.png)
 
+* If we select `Customize default settings` then we can select a VPC, AZs, encryption key, security groups, and limits.
+  ![34-memcached-serverless.png](./images/34-memcached-serverless.png)
+  ![35-memcached-serverless.png](./images/35-memcached-serverless.png)
+  ![36-memcached-serverless.png](./images/36-memcached-serverless.png)
+
 ## Create ElastiCache for Memcached, design your own cache - easy create
 
 ![23-create-memcached.png](./images/23-create-memcached.png)
