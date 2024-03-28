@@ -100,3 +100,5 @@ https://github.com/kicaj29/aws/tree/main/VPC-LB-AutoScalingGroup-EC2-Route53
 * https://github.com/kicaj29/aws/tree/main/Serverless-Lambda
 
 ## Amazon DynamoDB for Serverless Architectures
+
+* https://github.com/kicaj29/aws/tree/main/DatabasesDynamoDB
