@@ -12,6 +12,7 @@
   - [AWS Database Offerings](#aws-database-offerings)
   - [Amazon ElastiCache Getting Started](#amazon-elasticache-getting-started)
   - [Getting into the Serverless Mindset](#getting-into-the-serverless-mindset)
+  - [Amazon DynamoDB for Serverless Architectures](#amazon-dynamodb-for-serverless-architectures)
 
 # Based on AWS Partner Certification Readiness - Developer - Associate
 
@@ -97,3 +98,5 @@ https://github.com/kicaj29/aws/tree/main/VPC-LB-AutoScalingGroup-EC2-Route53
 ## Getting into the Serverless Mindset
 
 * https://github.com/kicaj29/aws/tree/main/Serverless-Lambda
+
+## Amazon DynamoDB for Serverless Architectures
