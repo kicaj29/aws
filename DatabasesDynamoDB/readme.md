@@ -214,6 +214,8 @@ This time does not scale linearly with your total table size – partitioned dat
   * User Errors
   * System Errors
 
+# Design Considerations
+
 # Resources
 
 * https://www.alexdebrie.com/posts/dynamodb-partitions/
