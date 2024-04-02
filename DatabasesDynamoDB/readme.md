@@ -84,6 +84,141 @@ Example:  an application makes changes to user preferences that are stored in a 
 
 ![006-streams.png](./images/006-streams.png)
 
+# Operating Amazon DynamoDB
+
+## Build Resilient Client Behavior
+
+Handle 400 and 500 error codes gracefully to ensure a smooth customer experience.
+For some 400 errors, you should fix the issue before re-submitting the request. For example:
+
+* There was a problem with the request.
+* Some required parameters were missing.
+
+For other 400 errors, you can retry until the request succeeds. For example:
+
+* Provisioned throughput was exceeded.
+
+You can retry 500 errors until the request succeeds. For example:
+
+* An internal server error occurred.
+* The service was unavailable.
+
+## Tune Retries
+
+AWS SDKs have built-in retry logic, with reasonable defaults.
+Tune for your use case to minimize visibility and hasten recovery for:
+
+* Limits on retry attempts
+* Timeouts
+* Exponential back-off and jitter
+
+## Handle Errors in Batch Operations
+
+Think of BatchGetItem and BatchWriteItem as simple wrappers around GetItem and PutItem/DeleteItem.
+Use returned information about unprocessed items (BatchGetItem: UnprocessedKeys, BatchWriteItem: UnprocessedItems) in the batch to create your own retry logic - be sure to implement exponential back-off in your application.
+
+Batch operations can read or write items from one or more tables and individual requests in a batch operation may fail. The most likely reason for failure is that the table in question does not have enough provisioned read or write capacity.
+
+Use the information about failed tables and items to retry the batch operation with exponential backoff.
+
+## DynamoDB Auto Scaling
+
+Many tables have seasonality in their loads – perhaps even with a regular ebb and flow of traffic through a business day. **Auto Scaling is enabled by default**, and using it everywhere is highly recommended.
+RCU and WCU are managed separately, and you set a minimum, a maximum, and a target utilization (in percent) for each.   
+
+Auto Scaling is reactive and takes a little time to recognize the pattern in your metrics – it cannot instantly react to cover a sudden spike without some throttling. **The target utilization** setting can help with this – take a look at the history of your consumption, assess the spiky behavior, and set a target utilization which allows Auto Scaling to maintain an appropriate buffer.
+
+## Global Tables
+
+![007-global-tables.png](./images/007-global-tables.png)
+
+Amazon DynamoDB global tables provide a fully managed solution for deploying a multi-region, multi-master database, without having to build and maintain your own replication solution. When you create a global table, you specify the AWS regions where you want the table to be available. DynamoDB performs all of the necessary tasks to create identical tables in these regions, and propagate ongoing data changes to all of them.   
+
+Cross-region strong consistency is not possible – if you want strongly consistent read-after-write you will need to direct clients to read from the same region as they are writing.   
+
+For some use cases, you may wish to use a second region as a warm failover target in case of a regional disaster. Or where you do not have high concurrency for a single item across multiple regions, you can use geo-routing to bring global clients to whichever global endpoint is closest.   
+
+Imagine an application where each item represents a user’s profile. Since the user is unlikely to be updating this from multiple places at the same time, you can direct their traffic to the nearest copy of the table – they’ll enjoy a low latency experience anywhere they may travel.    
+
+Global tables in each region need to have sufficient write capacity to carry all global writes – this is to accommodate the replicated traffic. Keep this in mind when provisioning – Auto Scaling is highly recommended. 
+
+![008-global-tables.png](./images/008-global-tables.png)
+
+In this slide, we can see an example of last-write-wins with eventual consistency. We’re operating a two-region Global Table (Replica 1 and Replica 2) and it contains an item which records monitored status of a microservice the company operates.
+
+There are monitors running in both regions. At 11:21 AM and 3 seconds, the microservice appears down (status “red”) from the Replica 1 region. At 11:21 AM and 4 seconds, the microservice appears up (status “green”) from the Replica 2 region.   
+
+When the red status update from Replica 1 reaches Replica 2, it does not overwrite the green status, because the associated timestamp shows that it is stale. All the regions converge towards the latest update, status “green.”
+
+### Expiring Items with TTL
+
+If items in your table lose relevance with time, you can expire the old items to keep your storage cost low and your RCU consumption efficient.   
+
+Rather than paying for the WCU required to delete the items you can have DynamoDB take care of it for you for free using the time-to-live (or TTL) feature. You can configure a particular attribute name as your expiry flag – any item which has that attribute is eligible for expiry.   
+
+The attribute should contain a number representing the time after which deletion is allowed – this time should be in epoch format. Within a day or two of passing that expiry time, DynamoDB will delete the item for you – no WCUs are consumed.   
+
+If it’s important to your application to immediately ignore items which are past their expiry time, you can check the epoch time retrieved with any items against current time and handle them accordingly.   
+
+One great pattern with TTL is to move expiring items into “cold” storage such as S3. You can do this with streams – the TTL delete is written to the stream with a record of the item which was deleted. You can read these expired item entries from the stream and write it to S3 (via Kinesis Firehose) – using triggers for a Lambda function which handles this transition is a very popular pattern.   
+
+![009-ttl.png](./images/009-ttl.png)
+
+## Access Control
+
+DynamoDB is tightly integrated with Identity and Access Management (or IAM). You can use fine-grained control to prevent unauthorized access to your tables down to individual items and even individual attributes.   
+
+Recommended best practice is to apply the principle of **least privilege** – only allow users and roles the access they strictly require.   
+**Another best practice for clients which are all in a VPC is to use a VPC Endpoint** – this gives you a target DynamoDB endpoint within your VPC and prevents your traffic from having to traverse the public routed Internet using public addressing. You may be able to maintain greater isolation for your VPC this way.
+
+## Amazon DynamoDB Accelerator (DAX)
+
+DAX is a DynamoDB-compatible caching service that enables you to benefit from fast in-memory performance for demanding applications. 
+DAX addresses three core scenarios:
+
+* Reduce response times of **eventually-consistent** read workloads by an order of magnitude
+* Reduce operational and application complexity through a managed service that is API-compatible with Amazon DynamoDB.  
+* Increase throughput for read-heavy or bursty workloads.
+
+DAX is a highly-available cluster of nodes **accessible only in your VPC**. **DAX is a write-through cache**, which means that items and updates written through the cache are automatically made available for the next time you make an Eventually Consistent read. Strongly Consistent reads are not cached.
+
+Using a DAX cache can dramatically decrease the amount of RCUs required on your table and smooths out spiky and imbalanced read loads. It also reduces DynamoDB’s already-fast single-digit millisecond response time to sub-millisecond. 
+
+![010-dax.png](./images/010-dax.png)
+
+## Backup and Restore
+
+Two types of backups are available – **on-demand** (takes a backup whenever you request it) and **point-in-time** recovery (or PITR).
+
+* **PITR** keeps a 35-day rolling window of information about your table – you can recover to any second within that 35 days.
+* On-demand backups are almost instant. Each time you create an on-demand backup, the entire table data is backed up.
+* Neither type of backup consumes any capacity from your table
+
+![011-backup.png](./images/011-backup.png)
+
+Restore is made to a new table (or you can delete the original table first). Typically customers will want to restore to a separate table where they can look at the data to compare it with the current items – perhaps using this to selectively repair unintended changes which have been made in the table.   
+
+Alternatively, you can reconfigure clients to access a different table name. Restore times vary by partition density, but most restores will complete in well under 10hrs.   
+
+This time does not scale linearly with your total table size – partitioned data is restored in parallel. For most production tables, PITR is a smart choice – and you can supplement this with on-demand backups for longer-term storage.   
+
+## Monitoring and Troubleshooting
+
+* Check the AWS error code returned from your operations and include in your application logs.
+* Enable CloudTrail so that DynamoDB control operations (create table, update table, etc.) are available for later analysis.
+* Use the CloudWatch metrics provided by DynamoDB to monitor table performance.
+* Set alarms for pertinent metrics out of acceptable range. Recommended alarms
+  * SuccessfulRequestLatency
+  * Throttling Events
+  * Capacity Consumption
+  * User Errors
+  * System Errors
+
 # Resources
 
 * https://www.alexdebrie.com/posts/dynamodb-partitions/
+* http://docs.aws.amazon.com/general/latest/gr/api-retries.htm
+* http://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_BatchGetItem.html
+* http://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_BatchWriteItem.html
+* http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/UsingIAMWithDDB.html
+* http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/ErrorHandling.html
