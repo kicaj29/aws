@@ -1,3 +1,25 @@
+- [Introduction](#introduction)
+- [Consistency](#consistency)
+- [Read and Write Capacity Units](#read-and-write-capacity-units)
+- [Basic Item Requests](#basic-item-requests)
+- [Secondary Indexes](#secondary-indexes)
+  - [Local Secondary Indexes](#local-secondary-indexes)
+  - [Global Secondary Indexes](#global-secondary-indexes)
+- [DynamoDB Streams](#dynamodb-streams)
+- [Operating Amazon DynamoDB](#operating-amazon-dynamodb)
+  - [Build Resilient Client Behavior](#build-resilient-client-behavior)
+  - [Tune Retries](#tune-retries)
+  - [Handle Errors in Batch Operations](#handle-errors-in-batch-operations)
+  - [DynamoDB Auto Scaling](#dynamodb-auto-scaling)
+  - [Global Tables](#global-tables)
+    - [Expiring Items with TTL](#expiring-items-with-ttl)
+  - [Access Control](#access-control)
+  - [Amazon DynamoDB Accelerator (DAX)](#amazon-dynamodb-accelerator-dax)
+  - [Backup and Restore](#backup-and-restore)
+  - [Monitoring and Troubleshooting](#monitoring-and-troubleshooting)
+- [Design Considerations](#design-considerations)
+- [Resources](#resources)
+
 # Introduction
 
 * DynamoDB is designed for OLTP
