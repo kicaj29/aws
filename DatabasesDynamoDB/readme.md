@@ -60,7 +60,7 @@ Consistency is the ability to read data with the understanding that all prior wr
 
 You must specify read and write throughput values when you create a table. DynamoDB reserves the necessary resources to handle your throughput requirements and divides the throughput evenly among partitions. 
 
-* **Read** capacity units (RCU) - the number of strongly consistent reads **per second** of items up to 4 KB in size
+* **Read** capacity units (RCU) - the number of **strongly consistent** reads **per second** of items up to 4 KB in size
   * Eventually consistency consumes half as many RCUs
 * **Write** capacity units (WCU) -  the number of 1 KB writes **per second**
   * Note that updating a **single attribute in an item requires writing the entire item**. Your throughput is generally evenly divided among your partitions – so it is important to design for requests which are evenly distributed across your keys.
@@ -164,6 +164,8 @@ RCU and WCU are managed separately, and you set a minimum, a maximum, and a targ
 
 Auto Scaling is reactive and takes a little time to recognize the pattern in your metrics – it cannot instantly react to cover a sudden spike without some throttling. **The target utilization** setting can help with this – take a look at the history of your consumption, assess the spiky behavior, and set a target utilization which allows Auto Scaling to maintain an appropriate buffer.
 
+![022-table-capacity.png](./images/022-table-capacity.png)
+
 ## Global Tables
 
 ![007-global-tables.png](./images/007-global-tables.png)
@@ -192,7 +194,7 @@ If items in your table lose relevance with time, you can expire the old items to
 
 Rather than paying for the WCU required to delete the items you can have DynamoDB take care of it for you for free using the time-to-live (or TTL) feature. You can configure a particular attribute name as your expiry flag – any item which has that attribute is eligible for expiry.   
 
-The attribute should contain a number representing the time after which deletion is allowed – this time should be in epoch format. Within a day or two of passing that expiry time, DynamoDB will delete the item for you – no WCUs are consumed.   
+The attribute should **contain a number representing the time after which deletion is allowed – this time should be in epoch format. Within a day or two of passing that expiry time, DynamoDB will delete the item for you – no WCUs are consumed**.   
 
 If it’s important to your application to immediately ignore items which are past their expiry time, you can check the epoch time retrieved with any items against current time and handle them accordingly.   
 
@@ -216,7 +218,7 @@ DAX addresses three core scenarios:
 * Reduce operational and application complexity through a managed service that is API-compatible with Amazon DynamoDB.  
 * Increase throughput for read-heavy or bursty workloads.
 
-DAX is a highly-available cluster of nodes **accessible only in your VPC**. **DAX is a write-through cache**, which means that items and updates written through the cache are automatically made available for the next time you make an Eventually Consistent read. Strongly Consistent reads are not cached.
+DAX is a highly-available cluster of nodes **accessible only in your VPC**. **DAX is a write-through cache**, which means that items and updates written through the cache are automatically made available for the next time you make an Eventually Consistent read. **Strongly Consistent reads are not cached.**
 
 Using a DAX cache can dramatically decrease the amount of RCUs required on your table and smooths out spiky and imbalanced read loads. It also reduces DynamoDB’s already-fast single-digit millisecond response time to sub-millisecond. 
 
