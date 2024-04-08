@@ -13,7 +13,6 @@
 - [Application Discovery Service](#application-discovery-service)
   - [AWS Application Migration Service (MGN)](#aws-application-migration-service-mgn)
 - [AWS Fault Injection Simulator (FIS)](#aws-fault-injection-simulator-fis)
-- [AWS Step Functions](#aws-step-functions)
 - [AWS Ground Station](#aws-ground-station)
 - [Amazon Pinpoint](#amazon-pinpoint)
 - [AWS Cloud Adoption Framework (AWS CAF)](#aws-cloud-adoption-framework-aws-caf)
@@ -193,20 +192,6 @@ AWS Application Discovery Service helps you plan your migration to the AWS cloud
 ![14-FIS.png](./images/14-FIS.png)
 
 The **Acceptable Use Policy** describes prohibited uses of the web services offered by Amazon Web Services, Inc. and its affiliates (the “Services”) and the website located at http://aws.amazon.com (the “AWS Site”). This policy is present at https://aws.amazon.com/aup/ and is updated on a need basis by AWS.
-
-# AWS Step Functions
-
-* Build serverless visual workflow to **orchestrate** your lambda functions
-* Features: sequence, parallel, conditions, timeouts, error handling
-* **Can integrate with EC2, ECS, On-premises servers, API Gateway, SQS, etc...**
-* Possibility of implementing human approval feature
-* Use cases: order fulfillment, data processing, web applications, any workflow
-* **Can be used to train/tune ML models**
-* Step Functions logs the state of each step, so when things do go wrong, you can diagnose and debug problems quickly.
-* Retries when errors occur.
-* You can change and add steps without even writing code, so you can evolve your application and innovate faster.
-
-![15-step-functions.png](./images/15-step-functions.png)
 
 # AWS Ground Station
 
