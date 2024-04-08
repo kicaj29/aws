@@ -18,6 +18,16 @@
   - [Backup and Restore](#backup-and-restore)
   - [Monitoring and Troubleshooting](#monitoring-and-troubleshooting)
 - [Design Considerations](#design-considerations)
+  - [Design for Uniform Workload](#design-for-uniform-workload)
+  - [Hot and cold data](#hot-and-cold-data)
+  - [Manage Large Attributes](#manage-large-attributes)
+  - [Use Indexes Thoughtfully](#use-indexes-thoughtfully)
+  - [Use Optimistic Locking with Version Number](#use-optimistic-locking-with-version-number)
+  - [Use One-to-many Tables Instead of a Large Number of Attributes](#use-one-to-many-tables-instead-of-a-large-number-of-attributes)
+  - [Store Frequently Accessed Small Attributes in a Separate Table](#store-frequently-accessed-small-attributes-in-a-separate-table)
+  - [Options for Migrating an Existing Data to DynamoDB](#options-for-migrating-an-existing-data-to-dynamodb)
+    - [Live Migration](#live-migration)
+    - [AWS Data Migration Service (DMS)](#aws-data-migration-service-dms)
 - [Resources](#resources)
 
 # Introduction
@@ -237,6 +247,94 @@ This time does not scale linearly with your total table size – partitioned dat
   * System Errors
 
 # Design Considerations
+
+## Design for Uniform Workload
+
+The partition key determines the distribution of data across the partitions where data is stored. The total throughput provisioned for a table is divided equally across partitions.   
+
+When you make a large number of consecutive reads or consecutive writes to a narrow range of partition keys, the same partitions are accessed repeatedly (hot partitions). The throughput allocated to remaining partitions remains unused.    
+
+To achieve maximum read and write throughput, implement your read and write operations as follows:
+
+* Choose the partition key carefully to avoid hot spots.
+* Consider concatenating a random number or a calculated value to the partition key when writing data to ensure distribution of partition keys. For example, you might concatenate the sum of the ASCII values of each character in the partition key.
+* Distribute reads and writes across multiple partitions.
+
+## Hot and cold data
+
+Consider access patterns for your data. For example, you might have an Orders table with a partition key of customer id and sort key of timestamp. Your application probably accesses the latest order data most of the time. It might rarely access data about very old orders.
+
+In such cases, consider breaking the time series data into separate tables. Store the frequently accessed “hot” data in a separate table with higher throughput. Store rarely accessed “cold” data in tables with lower throughput.
+
+You can even move the old data to other storage options such as an Amazon S3 bucket and delete the table that contains the old data.
+
+![012-hot-cold-data.png](./images/012-hot-cold-data.png)
+
+## Manage Large Attributes
+
+Ideally you want to keep items small, and DynamoDB imposes limits on the size of an item.  There are several ways to address this:
+
+* Consider storing large attribute values in Amazon S3.
+* Compress large values before storing in DynamoDB.
+* Break up large attributes across multiple items.
+  ![013-large-attributes.png](./images/013-large-attributes.png)
+
+## Use Indexes Thoughtfully
+
+**Local secondary indexes** consume storage and the table's provisioned throughput. Keep the size of the index as small as possible.
+
+* Use indexes sparingly.
+* Choose projections carefully.
+* Project only those attributes that you request frequently. 
+* Take advantage of sparse indexes.
+
+**GSI (Global Secondary Indexes)** acts like any other table - choose a partition key and sort key that will distribute reads across multiple partitions.
+
+* Take advantage of sparse indexes.
+* Create a global secondary index with a subset of table’s attributes for quick lookups.
+* Use as an eventually consistent read replica.
+
+## Use Optimistic Locking with Version Number
+
+Use optimistic locking with a version number as described below to make sure that an item has not changed since the last time you read it. This approach is also known as the read-modify-write design pattern or optimistic concurrency control.
+
+![014-optimistic-lock.png](./images/014-optimistic-lock.png)
+
+## Use One-to-many Tables Instead of a Large Number of Attributes
+
+If your table has items that store a large number of values in an attribute of set type, such as string set or number set, consider removing the set attribute from the table and splitting it as separate items in another table.
+
+For example, if you have a table that stores threads in a forum and replies as a string set in each item, the item size is likely to exceed the maximum item size, and throughput will be reduced because you will unnecessarily fetch large amounts of data even if you only need minimum information such as the thread subject.
+
+![015-many-tables.png](./images/015-many-tables.png)
+
+## Store Frequently Accessed Small Attributes in a Separate Table
+
+If you frequently access large items in a table but do not use the large attribute values, consider storing frequently accessed smaller attributes in a separate table. For example, consider the Company table. It has fairly large attributes such as company information, mission statement, and logo. These attributes are fairly static and rarely accessed.
+
+![016-seprate-table.png](./images/016-seprate-table.png)
+
+## Options for Migrating an Existing Data to DynamoDB
+
+### Live Migration
+
+* Create DynamoDB table(s).
+* Modify application to write to both source and DynamoDB.
+* Perform a back-fill.
+* Verify.
+* Modify application to read from DynamoDB.
+* Modify application to write to DynamoDB only.
+* Shut down deprecated datastore.    
+
+For exporting, transforming and importing data (such as for a back-fill), there are a number of popular options you can consider: AWS Data Pipeline, AWS Glue, and Amazon EMR with Hive (using the DynamoDB connector).
+
+### AWS Data Migration Service (DMS)
+
+DMS is a service which can move data from a source (Cassandra, MongoDB, and a number of relational databases) to DynamoDB.
+
+DMS can be used to make an initial copy of the full dataset, and then continue to update DynamoDB tables with any ongoing changes. When you are comfortable that the application is ready to make the switch, you deploy a new version of your software which uses the SDK to connect to DynamoDB instead.
+
+Remember that this is an opportunity to optimize your design – you will want to remodel your data to better fit the DynamoDB service – particularly if migrating from a relational database.
 
 # Resources
 
