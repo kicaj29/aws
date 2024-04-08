@@ -106,4 +106,4 @@ https://github.com/kicaj29/aws/tree/main/VPC-LB-AutoScalingGroup-EC2-Route53
 
 ## Introduction to AWS Step Functions
 
-* https://github.com/kicaj29/aws/tree/main/OtherServices#aws-step-functions
+* https://github.com/kicaj29/aws/tree/main/AWS%20Step%20Function
