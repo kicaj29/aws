@@ -13,6 +13,7 @@
   - [Amazon ElastiCache Getting Started](#amazon-elasticache-getting-started)
   - [Getting into the Serverless Mindset](#getting-into-the-serverless-mindset)
   - [Amazon DynamoDB for Serverless Architectures](#amazon-dynamodb-for-serverless-architectures)
+  - [Introduction to AWS Step Functions](#introduction-to-aws-step-functions)
 
 # Based on AWS Partner Certification Readiness - Developer - Associate
 
@@ -102,3 +103,7 @@ https://github.com/kicaj29/aws/tree/main/VPC-LB-AutoScalingGroup-EC2-Route53
 ## Amazon DynamoDB for Serverless Architectures
 
 * https://github.com/kicaj29/aws/tree/main/DatabasesDynamoDB
+
+## Introduction to AWS Step Functions
+
+* https://github.com/kicaj29/aws/tree/main/OtherServices#aws-step-functions
