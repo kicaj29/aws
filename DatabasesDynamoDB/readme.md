@@ -28,6 +28,10 @@
   - [Options for Migrating an Existing Data to DynamoDB](#options-for-migrating-an-existing-data-to-dynamodb)
     - [Live Migration](#live-migration)
     - [AWS Data Migration Service (DMS)](#aws-data-migration-service-dms)
+- [Serverless Architecture Patterns Overview](#serverless-architecture-patterns-overview)
+  - [DynamoDB Streams and AWS Lambda](#dynamodb-streams-and-aws-lambda)
+  - [Querying in Microservice Architectures](#querying-in-microservice-architectures)
+  - [Time Series Data Example](#time-series-data-example)
 - [Resources](#resources)
 
 # Introduction
@@ -335,6 +339,90 @@ DMS is a service which can move data from a source (Cassandra, MongoDB, and a nu
 DMS can be used to make an initial copy of the full dataset, and then continue to update DynamoDB tables with any ongoing changes. When you are comfortable that the application is ready to make the switch, you deploy a new version of your software which uses the SDK to connect to DynamoDB instead.
 
 Remember that this is an opportunity to optimize your design – you will want to remodel your data to better fit the DynamoDB service – particularly if migrating from a relational database.
+
+# Serverless Architecture Patterns Overview
+
+## DynamoDB Streams and AWS Lambda
+
+This serverless example illustrates using DynamoDB streams with Lambda to feed data from DynamoDB to other services (perhaps as part of a pipeline which could include a data lake).   
+
+The stream is sharded to scale out as throughput grows, and Lambda scales automatically to process data and push it to the next step.   
+
+Any “write” activity can become a trigger and Lambda can filter and take actions based on the change.   
+
+![017-dynamo-streams.png](./images/017-dynamo-streams.png)
+
+## Querying in Microservice Architectures
+
+* Separate operational and querying views
+* Polyglot persistence: use the right database for the job
+* Command Query Responsibility Segregation (CQRS)
+
+![018-dynamo-micro-services.png](./images/018-dynamo-micro-services.png)
+
+## Time Series Data Example
+
+The requirement is to collect and store temperature readings from potentially thousands of sensors. We also need to be able to quickly (<10ms) retrieve a reading for a given sensor and timestamp. We need to keep these for 30 days, after which they can be deleted.
+
+* Initial Solution
+
+We implement this by having the sensors place their readings into a Kinesis Stream. We configure a Lambda function which polls the stream, and writes the readings into a DynamoDB table with SensorID as partition key, and timestamp as Sort Key.
+
+Finally, we use a TTL attribute which is essentially timestamp plus 30 days. DynamoDB will delete those records for us after a month has passed.
+
+![019-sensors.png](./images/019-sensors.png)
+
+* Solution Architecture
+
+From the left, you can see the sensors pushing their readings to the Kinesis Stream. Lambda functions read from the stream and insert into the DynamoDB table.
+
+Metrics are emitted to CloudWatch which we use for our operational monitoring. We keep the expired temperature readings for potential long-term analysis – as the recent readings expire via TTL, we use a triggered Lambda function to push them to Kinesis Firehose, which writes them to S3.
+
+Users access a static website (hosted on S3) and authenticate via Cognito to query the temperature data from DynamoDB.
+
+![020-sensors.png](./images/020-sensors.png)
+
+* Cost Considerations
+
+Data rate: 100,000 data points per second
+
+Data storage: 1 month’s worth = ~2.5 TB
+
+Estimated cost:
+
+Lambda: $2K – $5K per month
+Kinesis: 100,000 records -> 100 shards -> ~$5K per month
+DynamoDB: 100,000 WCU’s -> $50K per month
+Where is the problem? 
+
+DynamoDB Write Capacity Unit (WCU) is 1 KB
+Our scenario:
+Storing data points ~50 B in size
+Write capacity utilization per write: 50/1024 * 100% = 4.88%
+
+* Revised Solution
+
+Let's try some queue-based load-leveling.  We can group multiple data points into a single item, saving on WCUs. Using the Lambda batch size, we can batch the data points into a single List attribute – and we can also use BatchWriteItem to improve our connection efficiency. We could also consider compressing the data. We’ll still rely on TTL for expiry.
+
+How much does the revised design save us? If we look just at the DynamoDB WCUs, aggregating 10 data points per item saves us 90% of the cost. The difference over a year is more than $500k. We can save a lot by storing multiple data points in a single item.
+
+![021-sensors.png](./images/021-sensors.png)
+
+* Scaling Considerations
+
+Adding more sensors: 
+
+Kinesis: you need to add more shards   
+Lambda: scales automatically based on Kinesis shards   
+DynamoDB: scales automatically for space and throughput   
+Auto Scaling increases and decreases provisioned capacity as needed   
+For large spikes, provision capacity explicitly   
+Time-to-live (TTL) automatically deletes expired data without consuming provisioned capacity   
+
+Adding more events per sensor:
+
+Lambda function creates “denser” DynamoDB items   
+More data points stored in each DynamoDB item
 
 # Resources
 
