@@ -221,7 +221,7 @@ Standard and Express Workflows can start automatically in response to events suc
 | Workflow run start rate           | Over 2,000 per second         | Over 100,000 per second               |
 | Start transition rate             | Over 4,000 per second per account  | Nearly unlimited                 |
 | Pricing                           |Priced per state transition. A state transition is counted each time a step in your run is completed. | Priced by the number of times you run, their duration, and memory consumption. |
-| Workflow run history              | Workflow runs can be listed and described with Step Functions APIs, and visually debugged through the console. They can also be inspected in CloudWatch Logs by turning on logging on your state machine. | Workflow runs can be inspected in CloudWatch Logs by turning on logging on your state machine. |
+| Workflow run history              | Workflow runs can be listed and described with Step Functions APIs, and visually debugged through the console. They can also be inspected in CloudWatch Logs by turning on logging on your state machine. | Workflow runs can be inspected in CloudWatch Logs by turning on logging on your state machine - **it is enabled by default**. |
 | Workflow run semantics            | Exactly-once workflow run. | Asynchronous Express Workflows: At-least-once workflow run. Synchronous Express Workflows: At-most-once workflow run. |
 | Service integrations              | Supports all service integrations and patterns. | Supports all service integrations. It does not support Job-run (.sync) or Callback (.waitForTaskToken) patterns. |
 | Step Functions activities         | Supports Step Functions activities.             | Does not support Step Functions activities. |
