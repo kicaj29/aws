@@ -11,6 +11,13 @@
   - [Common state fields](#common-state-fields)
   - [Step Functions supports JSON path expressions](#step-functions-supports-json-path-expressions)
   - [Intrinsic Functions](#intrinsic-functions)
+- [AWS Step Functions Workflow Studio](#aws-step-functions-workflow-studio)
+- [AWS Step Functions Security](#aws-step-functions-security)
+  - [How a user can access Step Functions](#how-a-user-can-access-step-functions)
+  - [How AWS Step Functions works with IAM](#how-aws-step-functions-works-with-iam)
+- [Standard and Express Workflows](#standard-and-express-workflows)
+  - [Standard vs Express Workflows](#standard-vs-express-workflows)
+  - [Asynchronous vs synchronous Express Workflows](#asynchronous-vs-synchronous-express-workflows)
 
 # Introduction
 
@@ -153,3 +160,76 @@ After processing the payload template, the new payload is :
   "greeting": "Welcome to John Doe's playlist."
 }
 ```
+
+# AWS Step Functions Workflow Studio
+
+![12-studio.png](./images/12-studio.png)
+
+* 1 - States browser
+* 2 - Canvas panel
+* 3 - inspector panel
+* 4 - info panel
+
+# AWS Step Functions Security
+
+Access to AWS Step Functions requires credentials that AWS can use to authenticate your  requests. These credentials should be setup using AWS Identity and Access Management (IAM). Along with the credentials, you will also need permissions to create or access the Step Functions resources. For example, you must have permissions to invoke a AWS Lambda function or invoke a Amazon Simple Queue Service (SQS) that will be used as target resources in your Step Functions workflow.   
+
+## How a user can access Step Functions
+
+An IAM user or role can be given access to AWS Step Functions by directly attaching the existing policies defined in the IAM service. **There are three existing policies that can be chosen from the IAM console**. To view the permissions defined for each of these policies, expand each of the three blocks.
+
+* **AWSStepFunctionsConsoleFullAccess**: An access policy with the below permissions providing a user/role/etc access to the AWS Step Functions console. For a full console experience, in addition to this policy, a user may need iam:PassRole permission on other IAM roles that can be assumed by the service. 
+  * "states:*"
+  * "iam:ListRoles"
+  * "iam:PassRole"
+  * "lambda:ListFunctions"
+
+* **AWSStepFunctionsFullAccess**: An access policy with the below permissions  providing a user/role/etc access to the AWS Step Functions API.
+  * "states:*"
+
+* **AWSStepFunctionsReadOnlyAccess**: An access policy with the below permissions providing a user/role/etc read only access to the AWS Step Functions service.
+  * "states:ListStateMachines"
+  * "states:ListActivities"
+  * "states:DescribeStateMachine"
+  * "states:DescribeStateMachineForExecution"
+  * "states:ListExecutions"
+  * "states:DescribeExecution"
+  * "states:GetExecutionHistory"
+  * "states:DescribeActivity"
+
+## How AWS Step Functions works with IAM
+
+AWS Step Functions can invoke code and access AWS resources. In order for AWS Step Functions to invoke AWS resources, and maintain security, **you need to grant Step Functions access to those resources by using an IAM role.**   
+
+You can create a role using the IAM console by choosing the Roles section and the Create Role option. Choose Step Functions under AWS service, give a name to the role and create the role. **By default, the lambda:InvokeFunction permission is attached in this process**. You can add more services to this role by choosing the Attach Policies option listed when the Step Functions role is selected in the IAM console. 
+
+# Standard and Express Workflows
+
+When you create a state machine, you can select either a Standard (default) or Express Workflow. In both cases, you define your state machine using the Amazon States Language. Your state machine workflow runs will behave differently depending on which option you select. You cannot change the workflow type after you have created your state machine.
+
+* **Standard Workflows** are ideal for long-running, durable, and auditable workflows.
+* **Express Workflows** are ideal for high-volume, event-processing workloads such as IoT data ingestion, streaming data processing and transformation, and mobile application backends.
+  * There are **two types of Express Workflows, asynchronous and synchronous**. You learn more about the different types of Express Workflows later in this topic.
+
+Standard and Express Workflows can start automatically in response to events such as HTTP requests via Amazon API Gateway, IoT rules, or event sources in Amazon EventBridge.
+
+## Standard vs Express Workflows
+
+|                                   | Standard Workflows            | Express Workflows (async and sync)    |
+|-----------------------------------|-------------------------------|---------------------------------------|
+| Maximum duration                  | 1 year                        | 5 minutes                             |
+| Workflow run start rate           | Over 2,000 per second         | Over 100,000 per second               |
+| Start transition rate             | Over 4,000 per second per account  | Nearly unlimited                 |
+| Pricing                           |Priced per state transition. A state transition is counted each time a step in your run is completed. | Priced by the number of times you run, their duration, and memory consumption. |
+| Workflow run history              | Workflow runs can be listed and described with Step Functions APIs, and visually debugged through the console. They can also be inspected in CloudWatch Logs by turning on logging on your state machine. | Workflow runs can be inspected in CloudWatch Logs by turning on logging on your state machine. |
+| Workflow run semantics            | Exactly-once workflow run. | Asynchronous Express Workflows: At-least-once workflow run. Synchronous Express Workflows: At-most-once workflow run. |
+| Service integrations              | Supports all service integrations and patterns. | Supports all service integrations. It does not support Job-run (.sync) or Callback (.waitForTaskToken) patterns. |
+| Step Functions activities         | Supports Step Functions activities.             | Does not support Step Functions activities. |
+
+## Asynchronous vs synchronous Express Workflows
+
+| Asynchronous Express Workflows                |                   Synchronous Express Workflows     |
+|-----------------------------------------------|-----------------------------------------------------|
+| Return confirmation that the workflow has started, but do not wait for the workflow to complete. | Start a workflow, wait until it completes, and then return the result. |
+| Can be used when you don't require immediate response output, such as messaging services or data processing that other services don't depend on.| **Can be used to orchestrate microservices**; you can develop applications without the need to develop additional code to handle errors, retries, or initiate parallel tasks. |
+| Can be started in response to an event by a nested workflow in Step Functions, or by using the StartExecution API Call. | Can be invoked from Amazon API Gateway, AWS Lambda, or by using the StartSyncExecution API call. |
