@@ -11,6 +11,14 @@
       - [Integration Response](#integration-response)
   - [Using models and validators](#using-models-and-validators)
   - [Using params in URL path](#using-params-in-url-path)
+  - [Designing WebSocket APIs](#designing-websocket-apis)
+    - [Benefits and use cases of WebSocket APIs](#benefits-and-use-cases-of-websocket-apis)
+    - [Pricing considerations for WebSocket APIs](#pricing-considerations-for-websocket-apis)
+      - [Flat charge](#flat-charge)
+      - [Connection minutes](#connection-minutes)
+      - [Additional charges](#additional-charges)
+    - [Developing a WebSocket API in API Gateway](#developing-a-websocket-api-in-api-gateway)
+      - [Creating and configuring WebSocket APIs](#creating-and-configuring-websocket-apis)
 
 
 # Create first mocked API
@@ -366,3 +374,56 @@ xhr.send();
 ```
 
 >NOTE: from some reason I was getting CORS error for this endpoint but did not have time to solve it.
+
+## Designing WebSocket APIs
+
+In a WebSocket API, the client and server can send messages to each other at any time. With a WebSocket connection, your backend servers can push data to connected users and devices, avoiding the need to implement complex polling mechanisms.
+
+For example, you could build a serverless application using an API Gateway WebSocket API and Lambda function to send and receive messages to and from users in a chat room.
+
+![0049_web-socket-api.png](./images/0049_web-socket-api.png)
+
+In API Gateway, you can create a WebSocket API as a stateful frontend for an AWS service, such as Lambda or Amazon DynamoDB, or for an HTTP endpoint. The WebSocket API will then invoke your correct backend service based on the content of the messages it receives from client applications.
+
+
+### Benefits and use cases of WebSocket APIs
+
+API Gateway WebSocket APIs are designed for bidirectional communication between your client and backend architecture. You can do this by using any WebSockets client such as a mobile app, chat app, AWS IOT device, or application dashboard.   
+
+When you connect the client to API Gateway, API Gateway will manage the persistence and state needed to connect it to your clients. Unlike a REST API, which receives and responds to requests, a WebSocket API supports two-way communication between your client applications and your backend.   
+
+WebSocket APIs are often used in real-time application use cases such as:
+
+* Chat applications
+* Streaming dashboards
+* Real-time alerts and notifications
+* Collaboration platforms
+* Multiplayer games
+* Financial trading platforms
+
+By using WebSockets with API Gateway, your clients can send messages to a service and the services can independently send messages back to the clients. This bidirectional behavior creates more valuable interactions between your clients and services because the services can push data to clients without requiring clients to make an explicit request. 
+
+### Pricing considerations for WebSocket APIs
+
+With API Gateway WebSocket APIs, you only pay when your APIs are in use. When considering the pricing model for WebSocket APIs, there are three different aspects to consider. To learn about a category, choose the appropriate tab.
+
+#### Flat charge
+
+WebSocket APIs for API Gateway charge for the messages you send and receive. You can send and receive **messages up to 128 KB in size**. Messages are **metered in 32-KB increments, so a 33-KB message is charged as two messages**.   
+For WebSocket APIs, the API Gateway free tier currently includes one million messages (sent or received) and 750,000 connection minutes for up to 12 months.
+
+#### Connection minutes
+
+In addition to paying for the messages you send and receive, you are also charged for the **total number of connection minutes**.
+
+#### Additional charges
+
+You may also incur additional charges if you use API Gateway in **conjunction with other AWS services or transfer data out of AWS**.
+
+### Developing a WebSocket API in API Gateway
+
+As you're developing your WebSocket API in API Gateway, there are a number of characteristics you need to choose for your API. These characteristics depend on your API's use case.   
+
+For example, you might want to only allow certain clients to call your API, or you might want it to be available to everyone. In addition, you might want an API call to invoke a Lambda function, make a database query, or call an application. All of these options will change the characteristics of the API as you design and deploy it.
+
+#### Creating and configuring WebSocket APIs
