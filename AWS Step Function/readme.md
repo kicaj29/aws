@@ -1,3 +1,17 @@
+- [Introduction](#introduction)
+- [Different types of states](#different-types-of-states)
+- [Why Use AWS Step Functions?](#why-use-aws-step-functions)
+- [Step Functions features](#step-functions-features)
+- [Built-in error handling](#built-in-error-handling)
+- [History of each run](#history-of-each-run)
+- [Visual Monitoring](#visual-monitoring)
+- [High volume orchestration](#high-volume-orchestration)
+- [Amazon States Language](#amazon-states-language)
+  - [Transitions](#transitions)
+  - [Common state fields](#common-state-fields)
+  - [Step Functions supports JSON path expressions](#step-functions-supports-json-path-expressions)
+  - [Intrinsic Functions](#intrinsic-functions)
+
 # Introduction
 
 * Build serverless visual workflow to **orchestrate** your lambda functions
@@ -70,3 +84,72 @@ AWS Step Functions has **Express Workflows to support event rates greater than 1
 In AWS Step Functions, you define your workflows in the **Amazon States Language**. **The Amazon States Language is a JSON-based, structured language used to define your state machine**. Using Amazon States Language, you create workflows. Workflows are a collection of states that can do work (Task states), determine which states to transition to next (Choice states), or stop an activity with an error (Fail states), and so on. The Step Functions console provides a graphical representation of that state machine to help visualize your application logic.
 
 ![10-state-lang.png](./images/10-state-lang.png)
+
+## Transitions
+
+Transitions link states together, defining the control flow for the state machine. When a state machine is invoked, the system **begins with the state referenced in the top-level "StartAt" field**. This field is a string value that must match the name of one of the states exactly. **It is case sensitive**.   
+
+**All non-terminal states must have a Next field, except for the Choice state.** After initiating a state, AWS Step Functions uses the value of the **Next field to determine the next state**. Next fields also specify state names as strings, and must match the name of a state specified in the state machine description exactly.   
+
+States can have multiple incoming transitions from other states. The process repeats itself until it reaches a terminal state, a **Success or Fail state**, or until a runtime error occurs.
+
+## Common state fields
+
+![11-common-state-fields.png](./images/11-common-state-fields.png)
+
+* **StartAt (required)**: case-sensitive that must match the name of one of the state objects exactly. This field value indicates the the task or the state where the workflow starts.
+* **States (required)**: this is an object containing a comma-delimited set of states.
+* **Type (required)**: this is the state type.
+* **OutputPath (optional)**: this is a path the selects a portion of the state input to be passed to the state output. If omitted, it has the value $, which designates the entire input.
+* **Next (optional)**: this is the name of the next state to be run when the current state finishes. Some state types, such as Choice, allow multiple transition states.
+* **TimeoutSeconds (optional)**: this is the maximum number of seconds an activity of the state machine can run. If it runs longer than the specified time, the activity fails with a States.Timeout error.
+* **InputPath (optional)**: this is a path that selects a portion of the state input to be passed to the state task for processing. If omitted, it has value $, which designates the entire input.
+* **End (required)**: this designates this state as a terminal state and ends the activity if set to true. There can be any number of terminal states per state machine. **Next and End can only be used once each in state.**
+
+## Step Functions supports JSON path expressions
+
+Step Functions, when invoked, receives a JSON text as input and passes that input to the first state in the workflow. Individual states receive JSON as input and usually pass JSON as output to the next state. Step Functions can be effectively designed not only by understanding the flow of data from one state to another but also by  knowing how to manipulate and filter the data. **The fields that filter and control the flow from state to state in the Amazon States Language are:**
+
+* InputPath
+* ResultPath
+* OutputPath
+* Parameters
+* ResultSelector
+
+## Intrinsic Functions
+
+The Amazon States Language provides several **intrinsic functions to allow basic operations without Task states**. Intrinsic functions are constructs that look like functions in programming languages and can be used to help Payload Builders process the data going to and from Task Resources. An intrinsic function must be a string and must begin with an intrinsic function name.
+
+* **States.Format**: This intrinsic function takes one or more arguments. The value of the first must be a string, which may include zero or more instances of the character sequence.
+* **States.StringToJson**: This intrinsic function takes a single argument, whose value must be a string. The interpreter applies a JSON parser to the value and returns its parsed JSON form.
+* **States.JsonToString**: This intrinsic function takes a single argument, which must be a path. The interpreter returns a string, which is a JSON text representing the data identified by the path.
+* **States.Array**: This intrinsic function takes zero or more arguments. The interpreter returns a JSON array containing the values of the arguments, in the order provided.
+
+Here is an example of the Intrinsic Function "States.Format".
+
+Sample payload template:
+```json
+"X": {
+  "Type": "Task",
+  "Resource": "arn:aws:states:us-east-1:123456789012:task:X",
+  "Next": "Y",
+  "Parameters": {
+    "greeting.$": "States.Format('Welcome to {} {}\\'s playlist.', $.firstName, $.lastName)"
+  }
+}
+```
+
+Input to the payload template is:
+```json
+{
+  "firstName": "John",
+  "lastName": "Doe"
+}
+```
+
+After processing the payload template, the new payload is :
+```json
+{
+  "greeting": "Welcome to John Doe's playlist."
+}
+```
