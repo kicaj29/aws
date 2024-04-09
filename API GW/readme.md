@@ -427,3 +427,12 @@ As you're developing your WebSocket API in API Gateway, there are a number of ch
 For example, you might want to only allow certain clients to call your API, or you might want it to be available to everyone. In addition, you might want an API call to invoke a Lambda function, make a database query, or call an application. All of these options will change the characteristics of the API as you design and deploy it.
 
 ### Creating and configuring WebSocket APIs
+
+To create a functional API, you must have at least one route, integration, and stage before deploying the API.
+
+* Specify API details
+  ![0050_web-socket-api.png](./images/0050_web-socket-api.png)
+  The **route selection expression** is an attribute defined at the API level. It specifies a JSON property that is expected to be present in the message payload.
+
+* Add routs
+  ![0051_web-socket-api.png](./images/0051_web-socket-api.png)
