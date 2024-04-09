@@ -445,6 +445,9 @@ There are three predefined routes that can be used with WebSocket APIs: $connect
 **Value of the `Route key` must match to value stored in field `action` from the JSON payload sent to the API GW.**
 
 #### Attach integrations
+
+![0056_web-socket-api.png](./images/0056_web-socket-api.png)
+
 Selected routes are integrated with the following lambda functions:
 
 * $connect
