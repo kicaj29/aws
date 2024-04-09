@@ -19,6 +19,10 @@
     - [Additional charges](#additional-charges)
   - [Developing a WebSocket API in API Gateway](#developing-a-websocket-api-in-api-gateway)
     - [Creating and configuring WebSocket APIs](#creating-and-configuring-websocket-apis)
+      - [Specify API details](#specify-api-details)
+      - [Add routes](#add-routes)
+      - [Attach integrations](#attach-integrations)
+      - [Broadcast](#broadcast)
 
 
 # Create first mocked API
@@ -430,9 +434,97 @@ For example, you might want to only allow certain clients to call your API, or y
 
 To create a functional API, you must have at least one route, integration, and stage before deploying the API.
 
-* Specify API details
-  ![0050_web-socket-api.png](./images/0050_web-socket-api.png)
-  The **route selection expression** is an attribute defined at the API level. It specifies a JSON property that is expected to be present in the message payload.
+#### Specify API details
+![0050_web-socket-api.png](./images/0050_web-socket-api.png)
+The **route selection expression** is an attribute defined at the API level. It specifies a JSON property that is expected to be present in the message payload.
 
-* Add routs
-  ![0051_web-socket-api.png](./images/0051_web-socket-api.png)
+#### Add routes
+![0051_web-socket-api.png](./images/0051_web-socket-api.png)
+There are three predefined routes that can be used with WebSocket APIs: $connect, $disconnect, and $default. In addition to the predefined routes, you can also create custom routes.   
+
+**Value of the `Route key` must match to value stored in field `action` from the JSON payload sent to the API GW.**
+
+#### Attach integrations
+Selected routes are integrated with the following lambda functions:
+
+* $connect
+  ![0052_web-socket-api.png](./images/0052_web-socket-api.png)
+  ```py
+  import json
+
+  def lambda_handler(event, context):
+    print(event)
+    print("Connect called!")
+    print(context)
+    return {'statusCode': 200}
+  ```
+  ![0053_web-socket-api.png](./images/0053_web-socket-api.png)
+* $disconnect
+  ```py
+  import json
+
+  def lambda_handler(event, context):
+    print(event)
+    print("Disconnect called!")
+    print(context)
+    return {'statusCode': 200}
+  ```
+  ![0055_web-socket-api.png](./images/0055_web-socket-api.png)
+* custom route
+  ```py
+  import json
+  import urllib3
+  import boto3
+
+  client = boto3.client('apigatewaymanagementapi', endpoint_url="TBD/production")
+
+  def lambda_handler(event, context):
+      print(event)
+      
+      # extract connectionId from the incoming event
+      connectionId = event["requestContext"]["connectionId"]
+      
+      # do something...
+      responseMessage = "responding..."
+      
+      # form response and post back to connectionId
+      response = client.post_to_connection(ConnectionId=connectionId, Data=json.dumps("responding").encoding('urf-8'))
+      return { 'statusCode': 200 }
+  ```
+  In the role which is used by this lambda function add to permissions `AmazonAPIGatewayInvokeFullAccess`.
+  ![0054_web-socket-api.png](./images/0054_web-socket-api.png)
+
+#### Broadcast
+
+It is possible to send a message to all active clients. For example `connectionId` values could be stored in DB. Next the values could be read from this DB. Here we will use test window to simulate it.
+
+```py
+import json
+import urllib3
+import boto3
+
+client = boto3.client('apigatewaymanagementapi', endpoint_url="TBD/production")
+
+def lambda_handler(event, context):
+    print(event)
+    
+    # extract connectionId and desired message to send from input
+    connectionId = event["connectionId"]
+    message = event["message"]  
+    
+    # form response and post back to connectionId
+    response = client.post_to_connection(ConnectionId=connectionId, Data=json.dumps("responding").encoding('urf-8'))
+
+    # no need to return 200 because this function would not be called from API GW
+```
+
+
+
+
+
+
+
+
+
+
+https://www.youtube.com/watch?v=FIrzkt7kH80
