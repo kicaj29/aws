@@ -536,6 +536,7 @@ def lambda_handler(event, context):
 
 * Connect with WebSocket API
   This can be done using for example this page: https://piehost.com/websocket-tester
+  ![0064_web-socket-api.png](./images/0064_web-socket-api.png)
   ![0059_web-socket-api.png](./images/0059_web-socket-api.png)
 
   Next we can check logs from the executed lambda, see value of `'connectionId': 'V_0lYc-6FiACHyw='`:
