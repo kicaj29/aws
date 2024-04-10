@@ -22,7 +22,9 @@
       - [Specify API details](#specify-api-details)
       - [Add routes](#add-routes)
       - [Attach integrations](#attach-integrations)
+      - [Add Stages](#add-stages)
       - [Broadcast](#broadcast)
+    - [Calling WebSocket API](#calling-websocket-api)
 
 
 # Create first mocked API
@@ -487,19 +489,23 @@ Selected routes are integrated with the following lambda functions:
       # extract connectionId from the incoming event
       connectionId = event["requestContext"]["connectionId"]
       
-      # do something...
+      # do something... (it is not used)
       responseMessage = "responding..."
       
       # form response and post back to connectionId
-      response = client.post_to_connection(ConnectionId=connectionId, Data=json.dumps("responding").encoding('urf-8'))
+      response = client.post_to_connection(ConnectionId=connectionId, Data=json.dumps("responding").encode('utf-8'))
       return { 'statusCode': 200 }
   ```
   In the role which is used by this lambda function add to permissions `AmazonAPIGatewayInvokeFullAccess`.
   ![0054_web-socket-api.png](./images/0054_web-socket-api.png)
 
+#### Add Stages
+
+![0057_web-socket-api.png](./images/0057_web-socket-api.png)
+
 #### Broadcast
 
-It is possible to send a message to all active clients. For example `connectionId` values could be stored in DB. Next the values could be read from this DB. Here we will use test window to simulate it.
+It is possible to send a message to all active clients. For example `connectionId` values could be stored in DB. Next the values could be read from this DB. Here we will use test window to simulate it. Make sure that role of this function also has policy `AmazonAPIGatewayInvokeFullAccess`.
 
 ```py
 import json
@@ -516,10 +522,66 @@ def lambda_handler(event, context):
     message = event["message"]  
     
     # form response and post back to connectionId
-    response = client.post_to_connection(ConnectionId=connectionId, Data=json.dumps("responding").encoding('urf-8'))
+    response = client.post_to_connection(ConnectionId=connectionId, Data=json.dumps("responding to all active clients").encode('utf-8'))
 
     # no need to return 200 because this function would not be called from API GW
 ```
+
+### Calling WebSocket API
+
+* Check URLs
+  ![0058_web-socket-api.png](./images/0058_web-socket-api.png)
+  wss://oxwt27c61i.execute-api.eu-central-1.amazonaws.com/production   
+  https://oxwt27c61i.execute-api.eu-central-1.amazonaws.com/production/@connections
+
+* Connect with WebSocket API
+  This can be done using for example this page: https://piehost.com/websocket-tester
+  ![0059_web-socket-api.png](./images/0059_web-socket-api.png)
+
+  Next we can check logs from the executed lambda, see value of `'connectionId': 'V_0lYc-6FiACHyw='`:
+  ![0060_web-socket-api.png](./images/0060_web-socket-api.png)
+
+* Call `SendMessage` WebSocket API.
+
+  To do this make sure that the lambda function uses correct address of API GW https://oxwt27c61i.execute-api.eu-central-1.amazonaws.com/production. Update the following line in the lambda function:
+
+  ```py
+  client = boto3.client('apigatewaymanagementapi', endpoint_url="https://oxwt27c61i.execute-api.eu-central-1.amazonaws.com/production")
+  ```
+
+  Call `SendMessage` WebSocket API we have to use the following payload.
+  ```json
+  {
+    "action": "sendMessage",
+    "message": "hello, is anyone there?"
+  }
+  ```
+  It is required the value of `action` field matches value defined in `Route key` from `Custom routes`.
+
+  ![0061_web-socket-api.png](./images/0061_web-socket-api.png)
+  We can see that proper lambda function has been called and this lambda function called back the client (message `"responding"`).
+
+  * Broadcast
+  We can simulate existence of some background process which sends a message to all active clients. This can be done using broadcast lambda function.
+
+  Update the following line in the lambda function:
+
+  ```py
+  client = boto3.client('apigatewaymanagementapi', endpoint_url="https://oxwt27c61i.execute-api.eu-central-1.amazonaws.com/production")
+  ```
+  Open test window for the `connectionId` use value `V_0lYc-6FiACHyw=` the was generate for the client that is used in this example.   
+
+  ```json
+  {
+    "connectionId": "V_0lYc-6FiACHyw=",
+    "message": "Anyone out there?"
+  }
+  ```
+  ![0062_web-socket-api.png](./images/0062_web-socket-api.png)
+
+  After clicking `Invoke` we can see that the client received the message (`"responding to all active clients"`).
+  ![0063_web-socket-api.png](./images/0063_web-socket-api.png)
+
 
 
 
