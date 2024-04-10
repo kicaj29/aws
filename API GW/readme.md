@@ -529,12 +529,12 @@ def lambda_handler(event, context):
 
 ### Calling WebSocket API
 
-* Check URLs
+* **Check URLs**
   ![0058_web-socket-api.png](./images/0058_web-socket-api.png)
   wss://oxwt27c61i.execute-api.eu-central-1.amazonaws.com/production   
   https://oxwt27c61i.execute-api.eu-central-1.amazonaws.com/production/@connections
 
-* Connect with WebSocket API
+* **Connect with WebSocket API**
   This can be done using for example this page: https://piehost.com/websocket-tester
   ![0064_web-socket-api.png](./images/0064_web-socket-api.png)
   ![0059_web-socket-api.png](./images/0059_web-socket-api.png)
@@ -542,7 +542,7 @@ def lambda_handler(event, context):
   Next we can check logs from the executed lambda, **see value of `'connectionId': 'V_0lYc-6FiACHyw='`**:
   ![0060_web-socket-api.png](./images/0060_web-socket-api.png)
 
-* Call `SendMessage` WebSocket API.
+* **Call `SendMessage` WebSocket API**.
 
   To do this make sure that the lambda function uses correct address of API GW https://oxwt27c61i.execute-api.eu-central-1.amazonaws.com/production. Update the following line in the lambda function:
 
@@ -562,7 +562,7 @@ def lambda_handler(event, context):
   ![0061_web-socket-api.png](./images/0061_web-socket-api.png)
   We can see that proper lambda function has been called and this lambda function called back the client (message `"responding"`).
 
-  * Broadcast
+  * **Broadcast**   
   We can simulate existence of some background process which sends a message to all active clients. This can be done using broadcast lambda function.
 
   Update the following line in the lambda function:
