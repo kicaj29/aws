@@ -25,6 +25,14 @@
       - [Add Stages](#add-stages)
       - [Broadcast](#broadcast)
     - [Calling WebSocket API](#calling-websocket-api)
+  - [Maintaining connections to WebSocket APIs](#maintaining-connections-to-websocket-apis)
+- [Designing REST APIs](#designing-rest-apis)
+  - [API Gateway REST API endpoint types](#api-gateway-rest-api-endpoint-types)
+  - [API Gateway optional cache](#api-gateway-optional-cache)
+    - [Why you use API GW caching](#why-you-use-api-gw-caching)
+    - [Configuring caching per API stage](#configuring-caching-per-api-stage)
+  - [Managing the API Gateway cache](#managing-the-api-gateway-cache)
+  - [Pricing considerations for REST APIs](#pricing-considerations-for-rest-apis)
 
 
 # Create first mocked API
@@ -583,14 +591,107 @@ def lambda_handler(event, context):
   After clicking `Invoke` we can see that the client received the message (`"responding to all active clients"`).
   ![0063_web-socket-api.png](./images/0063_web-socket-api.png)
 
+## Maintaining connections to WebSocket APIs
+
+* **Connect**: The client apps connect to your WebSocket API by sending a WebSocket upgrade request. If the request succeeds, the $connect route is invoked while the connection is being established. Until the invocation of the integration you associated with the $connect route is completed, the upgrade request is pending and the actual connection will not be established. If the $connect request fails, the connection will not be made.
+* **Established connection**: After the connection is established, your client's JSON messages can be routed to invoke a specific backend service based on message content. When a client sends a message over its WebSocket connection, this results in a route request to the WebSocket API. The request will be matched to the route with the corresponding route key in API Gateway. 
+* **Disconnect**: The $disconnect route is invoked after the connection is closed. **The connection can be closed by the server or by the client**. Since the connection is already closed when it is invoked, the $disconnect route is a best-effort event. API Gateway will try its best to deliver the $disconnect event to your integration, but it cannot guarantee delivery. The backend can initiate disconnection by using the @connections API. 
+
+# Designing REST APIs
+
+## API Gateway REST API endpoint types
+
+* **Regional endpoint**
+  The regional endpoint is designed to reduce latency when calls are made from the same AWS Region as the API. **In this model, API Gateway does not deploy its own CloudFront distribution in front of your API**. Instead, traffic destined for your API will be directed straight at the API endpoint in the Region where you’ve deployed it.   
+
+  This endpoint type gives you lower latency for applications that are invoking your API from within the same Region (for example, an API that is going to be accessed from EC2 instances within the same Region).   
+
+  **The regional endpoint provides you with the flexibility to deploy your own CloudFront distribution or content delivery network (CDN) in front of API Gateway** and control that distribution using your own settings for customized scenarios. An example of this might be to design for disaster recovery scenarios or implement load balancing in a very customized way.
+
+  ![0065_rest-api.png](./images/0065_rest-api.png)
+
+* **Edge-optimized endpoint**
+
+  The edge-optimized endpoint is designed to help you reduce client latency from anywhere on the internet. **If you choose an edge-optimized endpoint, API Gateway will automatically configure a fully managed CloudFront distribution to provide lower latency access to your API.**
+
+  This endpoint-type setup reduces your first hit latency for your API. An additional benefit of using a managed CloudFront distribution is that you don’t have to pay for or manage a CDN separately from API Gateway.
+
+  ![0066_rest-api.png](./images/0066_rest-api.png)
+
+* **Private endpoint**
+
+  The private endpoint is designed to **expose APIs only inside your selected Amazon Virtual Private Cloud (Amazon VPC)**. This endpoint type is still managed by API Gateway, but requests are only routable and can only originate from within a single virtual private cloud (VPC) that you control.
+
+  This endpoint type is designed for applications that have very secure workloads, such as healthcare or financial data that cannot be exposed publicly on the internet. There are no data transfer-out charges for private APIs. However, AWS PrivateLink charges apply when using private APIs in API Gateway.
+
+  ![0067_rest-api.png](./images/0067_rest-api.png)   
+
+Although it is important to consider your current and future needs when creating your REST API endpoint in API Gateway, it is possible to change the endpoint type. Changing your API endpoint type requires you to update the API's configuration. You can change an existing API type using the API Gateway console, the AWS CLI, or an AWS SDK for API Gateway.
+
+The following endpoint type changes are supported:
+
+* From edge-optimized to regional or private
+* From regional to edge-optimized or private
+* From private to regional
+
+**You cannot change a private API endpoint into an edge-optimized API endpoint.**
+
+## API Gateway optional cache
+
+You can turn on API caching in API Gateway to cache your endpoint's responses. With caching, you can reduce the number of calls made to your endpoint and also improve the latency of requests to your API.   
+
+This is an optional configuration **only available for REST APIs**, but definitely an option that you want to consider based on your use cases. To learn about API Gateway caching, expand each of the following three categories.
+
+### Why you use API GW caching
+
+When caching is turned on, API Gateway caches responses from your endpoint for a specified Time-to-Live (TTL) period. API Gateway then responds to a request by looking up the endpoint response from the cache instead of making a request to your endpoint. There are two big benefits of using the cache:
+
+* It reduces overall latency for serving requests.
+* It minimizes the number of requests that need to be made to your backend.
+
+This becomes even more valuable as you scale and want to reduce the amount of calls to your backend resources.
+
+![0068_rest-api.png](./images/0068_rest-api.png)
+
+### Configuring caching per API stage
+
+Configuration choices for stage caching include the following.
+
+* **Provision between 0.5 GB and 237 GB of cache**   
+  When you turn on caching, you can configure the size of the cache anywhere from half a gig to 237 gigabytes, and you can also configure and customize the maximum TTL for each cache entry. 
+
+* **Set TTL in seconds**   
+  The default TTL value for API caching is 300 seconds. The maximum TTL value is 3,600 seconds. When you set TTL=0, caching is turned off within API Gateway.
+
+* **Turn on encryption of cache data**
+  You can also encrypt the cached data if you need to. 
+
+* **Only GET methods will be cached**
+  When you turn on caching in a stage's cache settings, only GET methods are cached. We recommend that you don’t cache other types of calls unless you have very specific reasons.
+
+* **Configure per method**
+  You can override stage-level settings for individual methods. Turn caching on or off for specific methods, increase or decrease the TTL, or turn encryption on or off for cached responses.   
+
+  You can also use parameters in the method to form cache keys so that API Gateway caches the method's responses depending on the parameter values used.
+
+## Managing the API Gateway cache
+
+**Caching is charged at an hourly rate**   
+Keep in mind that data caching is charged at an hourly rate that is dependent on the cache size you select, regardless of the number of API calls being cached. So be thoughtful in choosing the cache size, and consider the amount of data you intend to cache. **Two ways to verify caching**:
+
+1. CloudWatch Metrics: **CacheHitCount** and **CacheMissCount**.
+2. Create a timestamp and include it in your API response.
+
+## Pricing considerations for REST APIs
+
+With API Gateway, you only pay when your APIs are in use. When considering the pricing model for REST APIs, there are two different aspects to consider.
+
+* **Flat charge**: REST APIs for API Gateway have a flat charge per million API Gateway requests. With API Gateway, you only pay when your APIs are in use at a set cost per million requests. The API Gateway free tier includes one million API calls per month for up to 12 months.
+
+* **Data transfer out**: An additional cost to factor into your cost estimates is the data transfer out of AWS that will be charged at standard AWS prices. You may incur additional charges if you use API Gateway in conjunction with other AWS services or transfer data out of AWS.   
+
+Private API endpoints don’t have data transfer-out charges. Instead, PrivateLink charges apply.
+
+* **Optional cache**: As mentioned earlier in this lesson, you can optionally provision a dedicated cache for each stage of your APIs. After you specify the size of the cache you require, you will be charged an hourly rate for each stage's cache.
 
 
-
-
-
-
-
-
-
-
-https://www.youtube.com/watch?v=FIrzkt7kH80
