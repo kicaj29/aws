@@ -534,7 +534,7 @@ def lambda_handler(event, context):
   wss://oxwt27c61i.execute-api.eu-central-1.amazonaws.com/production   
   https://oxwt27c61i.execute-api.eu-central-1.amazonaws.com/production/@connections
 
-* **Connect with WebSocket API**
+* **Connect with WebSocket API**   
   This can be done using for example this page: https://piehost.com/websocket-tester
   ![0064_web-socket-api.png](./images/0064_web-socket-api.png)
   ![0059_web-socket-api.png](./images/0059_web-socket-api.png)
