@@ -539,7 +539,7 @@ def lambda_handler(event, context):
   ![0064_web-socket-api.png](./images/0064_web-socket-api.png)
   ![0059_web-socket-api.png](./images/0059_web-socket-api.png)
 
-  Next we can check logs from the executed lambda, see value of `'connectionId': 'V_0lYc-6FiACHyw='`:
+  Next we can check logs from the executed lambda, **see value of `'connectionId': 'V_0lYc-6FiACHyw='`**:
   ![0060_web-socket-api.png](./images/0060_web-socket-api.png)
 
 * Call `SendMessage` WebSocket API.
