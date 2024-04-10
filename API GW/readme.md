@@ -570,7 +570,7 @@ def lambda_handler(event, context):
   ```py
   client = boto3.client('apigatewaymanagementapi', endpoint_url="https://oxwt27c61i.execute-api.eu-central-1.amazonaws.com/production")
   ```
-  Open test window for the `connectionId` use value `V_0lYc-6FiACHyw=` the was generate for the client that is used in this example.   
+  Open test window for the `connectionId` **use value `V_0lYc-6FiACHyw=` the was generate for the client that is used in this example**.   
 
   ```json
   {
