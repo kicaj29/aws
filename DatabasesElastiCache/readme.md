@@ -12,6 +12,7 @@
   - [Create ElastiCache for Memcached, design your own cache - easy create](#create-elasticache-for-memcached-design-your-own-cache---easy-create)
   - [Create ElastiCache for Memcached, design your own cache - standard create](#create-elasticache-for-memcached-design-your-own-cache---standard-create)
 - [Redis vs Memcached](#redis-vs-memcached)
+- [Resources](#resources)
 
 # Introduction
 
@@ -142,3 +143,7 @@ If we select `Customize default settings` then we can select a VPC, AZs, encrypt
 * Both Redis and Memcached always are placed in a VPC also when a serverless option is used.
 * Redis has cluster mode which can be enabled or disabled. When cluster mode is enabled then you can specify number ot shards and replicas per shard and slots/keyspaces for shards. Memcached does not have shards with slots/keyspaces but you specify only nodes 
 *The number of nodes in this cache cluster. A node is a partition of your data.* without replicas.
+
+# Resources
+
+* https://docs.aws.amazon.com/AmazonElastiCache/latest/mem-ug/Strategies.html
