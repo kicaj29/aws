@@ -38,6 +38,16 @@
   - [Customize the hostname](#customize-the-hostname)
   - [Configure resource as proxy](#configure-resource-as-proxy)
   - [API Gateway integration types](#api-gateway-integration-types)
+  - [Test your API methods](#test-your-api-methods)
+  - [API stages](#api-stages)
+    - [Stage options](#stage-options)
+    - [Differentiate your APIs with stages](#differentiate-your-apis-with-stages)
+    - [Simplify version management with stage variables](#simplify-version-management-with-stage-variables)
+    - [Stage variable example](#stage-variable-example)
+    - [Building and deploying best practices](#building-and-deploying-best-practices)
+      - [Use API Gateway stages with Lambda aliases](#use-api-gateway-stages-with-lambda-aliases)
+      - [Use Canary deployments](#use-canary-deployments)
+      - [Use AWS SAM to simplify deployments](#use-aws-sam-to-simplify-deployments)
 
 
 # Create first mocked API
@@ -711,7 +721,7 @@ You can make the URL more meaningful to your users by using a custom domain name
 
 ## Configure resource as proxy
 
-When adding a resource, you have the option to create a proxy resource as well. If you choose this option, it will automatically create a special HTTP method called ANY.
+When adding a resource, you have the option to create a proxy resource as well. **If you choose this option, it will automatically create a special HTTP method called ANY.**
 
 A proxy resource is expressed by a special resource path parameter of **{proxy+}**, often referred to as a greedy path parameter. The plus sign (+) indicates child resources appended to it.   
 
@@ -734,3 +744,100 @@ To use the proxy option, you first configure the resource as a proxy resource an
 * **AWS service**: AWS Service is an integration type that lets an API expose AWS service actions. For example, you might drop a message directly into an Amazon Simple Queue Service (Amazon SQS) queue.
 * **Mock**: Mock lets API Gateway return a response without sending the request further to the backend. This is a good idea for a health check endpoint to test your API. Anytime you want a hardcoded response to your API call, use a Mock integration.
 * **VPC link**: **With VPC Link, you can connect to a Network Load Balancer to get something in your private VPC**. For example, consider an endpoint on your EC2 instance that’s not public. API Gateway can’t access it unless you use the VPC link and you have to have a **Network Load Balancer** on your backend. For an API developer, a VPC Link is functionally equivalent to an integration endpoint.
+
+## Test your API methods
+
+Testing a method with the API Gateway console is the same as calling the method outside of the API Gateway console. Changes can’t be undone. For example, if you use the API Gateway console to call a method that deletes an API's resources, if the method call is successful, the API's resources will be deleted.   
+
+Test results **include simulated CloudWatch logs. No data is actually written to CloudWatch when testing.**
+
+## API stages
+
+A stage is a snapshot of the API and represents a unique identifier for a version of a deployed API.   
+With stages, you can have multiple versions and roll back versions. Anytime you update anything about the API, you need to redeploy it to an existing stage or to a new stage that you create as part of the deploy action.
+
+![0071_stages.png](./images/0071_stages.png)
+
+### Stage options
+
+Critical design options that were discussed earlier in the course are set **per stage** including: 
+
+* Caching
+* Throttling
+* Usage plans
+
+At an API stage, you can also export the API definitions or generate an SDK for your users to call the API using a supported programming language.
+
+### Differentiate your APIs with stages
+
+Some options for you to differentiate your APIs with stages include:
+
+* Use different stages by environment or customer.
+* Use stage variables to increase deployment flexibility.
+* Use stages with canary deployments to test new versions.
+
+![0072_stages.png](./images/0072_stages.png)
+
+### Simplify version management with stage variables
+
+As you define variables in the stage settings in the console, you can reference them with the **$stageVariables.[variable name]** notation. You can also inject stage-dependent items at runtime such as:
+
+* URLs
+* Lambda functions
+* Any necessary variables
+
+This is a great way for you to perform actions such as **invoking different endpoints and different backends for different stages**. For example, if you have different endpoints with different URLs or different Lambda function aliases based on environment, you can use stage variables to inject those variables.
+
+### Stage variable example
+
+This example demonstrates how you can manage stage variables in the console. Two stages are defined in this example; a demo stage and a production stage.
+
+![0073_stages.png](./images/0073_stages.png)
+
+Both of these stages invoke a Lambda function and an HTTP endpoint, but each have different resources based on the stage they are located in.   
+
+Both the Lambda function variable lambdaFn and the url variable are defined in each stage. Each Lambda and URL stage variable, for both demo and prod, are pointing at a Lambda function and URL for the respective stage. For example, the demo stage always points at demo resources and the same goes for the prod stage.   
+
+Now, the stage variables need to be referenced in the methods while configuring the integration type.
+
+* Lambda Function integration: The first integration point is integrating with a Lambda Function type. Rather than specifying the function name in the setup, the stage variable notation is used with the lambdaFn variable.
+  ![0074_stages.png](./images/0074_stages.png)
+
+* HTTP integration: The second integration point is using an HTTP integration type. Rather than specifying the URL in the setup, the stage variable notation is used with the url variable.
+  ![0075_stages.png](./images/0075_stages.png)
+
+### Building and deploying best practices
+
+#### Use API Gateway stages with Lambda aliases
+
+To highlight something that was mentioned in the previous example, Lambda and API Gateway are both designed to support flexible use of versions. You can do this by using aliases in Lambda and stages in API Gateway. When you couple that with stage variables, you don't have to hard-code components, which leads to having a smooth and safe deployment.
+
+* In Lambda, enable versioning and use aliases to reference.
+* In API Gateway, use stages for environments.
+* Point API Gateway stage variables at the Lambda aliases.
+
+#### Use Canary deployments
+
+With Canary deployments, you can send a percentage of traffic to your "canary" while leaving the bulk of your traffic on a known good version of your API until the new version has been verified. API Gateway makes a base version available and updated versions of the API on the same stage. This way, you can introduce new features in the same environment for the base version.   
+
+To set up a Canary deployment through the console, select a stage and then select the Canary tab for that stage.   
+
+Consider you want to add a new GET method to a petStore API with a `/store/products` API resource without impacting clients. To do this, you can create a canary that sends 10 percent of traffic to the canary with the new method. When you are sure the new method works, you can promote the canary and have all traffic flow through the new method.
+
+![0076_canary.png](./images/0076_canary.png)
+
+#### Use AWS SAM to simplify deployments
+
+One of the challenges of serverless deployments is the need to provide all the details of your deployment environment as part of your deployment package. The AWS Serverless Application Model (AWS SAM) is an open-source framework that you can use to build serverless applications on AWS.   
+
+There are some best practices for deploying your APIs and serverless applications to production using AWS SAM as your application framework. To learn more, expand each of the following two categories.
+
+* **Using AWS SAM templates**
+  AWS SAM provides templates that help you define your serverless applications. These template specifications provide you with a straightforward and clean syntax to describe your functions, APIs, permissions, configurations, and events. You use an AWS SAM template file to operate on a single, deployable, versioned entity that makes up your serverless application.   
+
+  **AWS SAM is an extension of AWS CloudFormation**, so it gives you the deployment capabilities and the full suite of resources available in CloudFormation. The AWS SAM template file closely follows the format of a CloudFormation template file.
+
+* **Use Swagger and OpenAPI for more complex APIs**
+  **AWS SAM also supports OpenAPI to define more complex APIs.** This can either be 2.0 for the Swagger specification, or one of the OpenAPI 3.0 versions, like 3.0.1. OpenAPI is an industry-standard way to document and design your APIs.   
+
+  With SAM, you can document your API in an external OpenAPI or Swagger file, and then reference that in a SAM template.
