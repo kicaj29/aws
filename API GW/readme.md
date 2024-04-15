@@ -33,6 +33,11 @@
     - [Configuring caching per API stage](#configuring-caching-per-api-stage)
   - [Managing the API Gateway cache](#managing-the-api-gateway-cache)
   - [Pricing considerations for REST APIs](#pricing-considerations-for-rest-apis)
+- [Building and Deploying APIs with API Gateway](#building-and-deploying-apis-with-api-gateway)
+  - [The base API invoke URL follows a pattern](#the-base-api-invoke-url-follows-a-pattern)
+  - [Customize the hostname](#customize-the-hostname)
+  - [Configure resource as proxy](#configure-resource-as-proxy)
+  - [API Gateway integration types](#api-gateway-integration-types)
 
 
 # Create first mocked API
@@ -694,4 +699,38 @@ Private API endpoints don’t have data transfer-out charges. Instead, PrivateLi
 
 * **Optional cache**: As mentioned earlier in this lesson, you can optionally provision a dedicated cache for each stage of your APIs. After you specify the size of the cache you require, you will be charged an hourly rate for each stage's cache.
 
+# Building and Deploying APIs with API Gateway
 
+## The base API invoke URL follows a pattern
+
+![0069_url.png](./images/0069_url.png)
+
+## Customize the hostname
+
+You can make the URL more meaningful to your users by using a custom domain name as the host and choosing a base path to map the alternative URL to your API. In most cases, you’ll want to use custom domains because they are more user friendly than the invoke URL. In addition, API Gateway is integrated with AWS Certificate Manager (ACM) and lets you import your own certificate or generate a Secure Sockets Layer (SSL) certificate with ACM. 
+
+## Configure resource as proxy
+
+When adding a resource, you have the option to create a proxy resource as well. If you choose this option, it will automatically create a special HTTP method called ANY.
+
+A proxy resource is expressed by a special resource path parameter of **{proxy+}**, often referred to as a greedy path parameter. The plus sign (+) indicates child resources appended to it.   
+
+In addition to the HTTP proxy, there is also a Lambda proxy option. With the Lambda proxy integration, the client can call a single Lambda function in the backend. The function accesses many resources or features of other AWS services, including calling other Lambda functions.
+
+To use the proxy option, you first configure the resource as a proxy resource and then set up an integration type of either HTTP or Lambda proxy when creating the method.  
+
+![0070_proxy.png](./images/0070_proxy.png)
+
+## API Gateway integration types
+
+* **Lambda function**: When you are using API Gateway as the gateway to a Lambda function, you’ll use the Lambda integration. This will result in requests being proxied to Lambda with request details available to your function handler in the event parameter, supporting a streamlined integration setup. The setup can evolve with the backend without requiring you to tear down the existing setup.   
+  
+  For integrations with Lambda functions, you will need to set an IAM role with required permissions for API Gateway to call the backend on your behalf.
+* **HTTP endpoint**: HTTP integration endpoints are useful for public web applications where you want clients to interact with the endpoint. This type of integration lets an API expose HTTP endpoints in the backend.   
+  
+  When the **proxy is not configured**, you’ll need to configure both the integration request and the integration response, and set up necessary data mappings between the method request-response and the integration request-response.   
+
+  If the If the proxy option is used, you don’t set the integration request or the integration response. API Gateway passes the incoming request from the client to the HTTP endpoint and passes the outgoing response from the HTTP endpoint to the client., you don’t set the integration request or the integration response. API Gateway passes the incoming request from the client to the HTTP endpoint and passes the outgoing response from the HTTP endpoint to the client.
+* **AWS service**: AWS Service is an integration type that lets an API expose AWS service actions. For example, you might drop a message directly into an Amazon Simple Queue Service (Amazon SQS) queue.
+* **Mock**: Mock lets API Gateway return a response without sending the request further to the backend. This is a good idea for a health check endpoint to test your API. Anytime you want a hardcoded response to your API call, use a Mock integration.
+* **VPC link**: **With VPC Link, you can connect to a Network Load Balancer to get something in your private VPC**. For example, consider an endpoint on your EC2 instance that’s not public. API Gateway can’t access it unless you use the VPC link and you have to have a **Network Load Balancer** on your backend. For an API developer, a VPC Link is functionally equivalent to an integration endpoint.
