@@ -48,6 +48,19 @@
       - [Use API Gateway stages with Lambda aliases](#use-api-gateway-stages-with-lambda-aliases)
       - [Use Canary deployments](#use-canary-deployments)
       - [Use AWS SAM to simplify deployments](#use-aws-sam-to-simplify-deployments)
+- [Managing API Access](#managing-api-access)
+  - [Authorizing with IAM](#authorizing-with-iam)
+  - [Lambda Authorizers](#lambda-authorizers)
+      - [Lambda Authorizer token types](#lambda-authorizer-token-types)
+      - [Lambda Authorizer request types](#lambda-authorizer-request-types)
+    - [Cognito Authorizers](#cognito-authorizers)
+- [Throttling and usage plans](#throttling-and-usage-plans)
+  - [API keys](#api-keys)
+  - [Usage plans](#usage-plans)
+    - [Example of usage plans based on types of consumers](#example-of-usage-plans-based-on-types-of-consumers)
+    - [Token bucket algorithm](#token-bucket-algorithm)
+    - [Throttling settings hierarchy](#throttling-settings-hierarchy)
+- [IAM permissions](#iam-permissions)
 
 
 # Create first mocked API
@@ -841,3 +854,115 @@ There are some best practices for deploying your APIs and serverless application
   **AWS SAM also supports OpenAPI to define more complex APIs.** This can either be 2.0 for the Swagger specification, or one of the OpenAPI 3.0 versions, like 3.0.1. OpenAPI is an industry-standard way to document and design your APIs.   
 
   With SAM, you can document your API in an external OpenAPI or Swagger file, and then reference that in a SAM template.
+
+# Managing API Access
+
+![0077_auth.png](./images/0077_auth.png)
+
+As shown in the comparison table, there are three main ways to authorize API calls to your API Gateway endpoints:
+
+* Use IAM and Signature version 4 (also known as Sig v4) to authenticate and authorize entities to access your APIs.
+* Use Lambda Authorizers, which you can use to support bearer token authentication strategies such as OAuth or SAML.
+* Use Amazon Cognito with user pools.
+
+## Authorizing with IAM
+
+If you have an internal service or a restricted number of customers, IAM is a great choice for authorization, especially for applications that use IAM to interact with other AWS services using IAM roles. To learn more about the signing process, select each hotspot.
+
+![0078_auth_iam.png](./images/0078_auth_iam.png)
+
+* 1: When you turn on IAM auth., all requests are required to be signed using the AWS V4 signing process (also known as Sig v4).
+* 2: The process uses your AWS access key and secret key to compute HMAC signature using SHA 256. You can obtain these keys as IAM user or by assuming an IAM role.
+* 3: The key information is added to the Auth. header and behind the scenes, API GW will take that signed request, parse it, and determine whether the use who signed the request has the IAM permissions to invoke your API. If not, API GW will simply deny and reject that request. So for this type of authentication, your request must have AWS credentials
+
+## Lambda Authorizers
+
+You also need to consider what you already have in place that should be used. If you are using an OAuth strategy as an organization, you may want to consider Lambda Authorizer.
+
+![0079_auth_lambda.png](./images/0079_auth_lambda.png)
+
+* 1: A lambda authorizer is a lambda function that you can write to perform any custom authorization that you need. **There are two types of lambda authorizers: token and request.**
+* 2: When a client calls your API, API GW verifies whether a lambda authorizer is configured for the API method. If so, API GW calls the lambda function.
+* 3: In this call, API GW supplies that auth. token or the request parameters based on the type of authorizer. The lambda function returns a policy that allows or denies the caller`s request.
+* 4: API GW also supports an optional policy cache that you can configure for your lambda authorizer. This feature increases performance by reducing the number of invocations of your lambda authorizer for previously authorized tokens. With this cache, you can configure a custom TTL.
+
+#### Lambda Authorizer token types
+
+For token-type Lambda Authorizers, API Gateway passes the source token to the Lambda function as a JSON input. Based on the value of this token, your Lambda function will determine whether to allow the request.
+
+![0080_auth_lambda.png](./images/0080_auth_lambda.png)
+
+* 1: API GW passes the source token to the lambda function as a JSON input. Based on the value of this token, your lambda function will determine whether to allow the request.
+* 2: If the authorizer allows the request, it **will return an IAM policy** that **allows execute-API:invoke** on the particular API resources that you specified. This lets a caller invoke the specified methods that are defined in the API in the JSON output.   
+If your lambda denies the request, **you will need to return a JSON policy document that denies access** to the API methods and specified resources. In this case, **the client receives a 403 error.**
+
+#### Lambda Authorizer request types
+
+Request-type Lambda Authorizers are **useful if you need more information about the request itself before authorizing it**.
+
+![0081_auth_lambda.png](./images/0081_auth_lambda.png)
+
+* 1: With request-type authorizers, you can include additional payload in the JSON input to your lambda function. So if you want to make authorizations that are based on information found in the request header, query string params, or the body of the request, use the REQUEST type.
+* 2: The lambda function of the REQUEST authorizer type verifies the input request parameters and returns an **Allow IAM policy on a specified method**. The ALLOW will only be returned if all the required paramter values match the pre-configured ones. If they match, the caller can invoke the specified method. Otherwise, the authorizer function returns an **Unauthorized error, without generating any IAM policy**.
+
+### Cognito Authorizers
+
+As an alternative to using IAM or Lambda authorizers, you can use Amazon Cognito and a Cognito User Pool to control access to your APIs.
+
+![0082_auth_cognito.png](./images/0082_auth_cognito.png)
+
+* 1: Cognito user pool provides a set of APIs that you can integrate into your application to provide authentication. User pools are intended for mobile or web apps where you handle user registration and sign-in directly in the application. In addition, with Cognito, **you can create your own OAuth 2 resource servers** and define custom scopes within them.
+* 2: To use Amazon Cognito user pool with your API, you must first create an authorizer of the COGNITO_USER_POOLS type, and then configure and API method to use that authorizer.
+* 3: After a user is authenticated against the user pool, **they obtain an OpenID Connect (OIDC) token** formatted SON web token. Users who have signed in to your application will have tokens provided to them bby the user pool. Then that token can by used by your application to inject information into a header in subsequent API calls that you make against your API GW endpoint.
+* 4: The API call succeeds only if the required token is supplied and the token is valid. Otherwise, the client isn`t authorized to make the call because the client did not have credentials that could be authorized.
+
+# Throttling and usage plans
+
+Beyond just allowing or denying access to your APIs, API Gateway also helps you manage the volume of API calls that are processed through your API endpoint. 
+
+With API Gateway, you can set throttle and quota limits on your API consumers. This can useful for things such as preventing one consumer from using all of your backend system’s capacity or to ensure that your downstream systems can manage the number of requests you send through. 
+
+## API keys
+
+With API Gateway, you can create and distribute API keys to your customers, which can be used to identify the consumer and apply desired usage and throttle limits to their requests. Customers include the API key through **x-API-key header in requests**. 
+
+## Usage plans
+
+You can use API keys with usage plans to set up some very specific plans that make sense for your use case. For example, you can perform API key throttling based on a rate and a burst per API key. API key usage can also be used to meter daily, weekly, and monthly usage.   
+You can set throttle and quota limits based on API keys through the usage plans feature. You can set up usage plans for:
+
+* **API Key Throttling** per second and burst
+* **API Key Quota** by day, week, or month
+* **API Key Usage** by daily usage records
+
+### Example of usage plans based on types of consumers
+
+Using the information on API keys and usage plans, review this throttling example where you might throttle with usage plans for specific types of consumers.
+
+![0083_usage-plans.png](./images/0083_usage-plans.png)
+
+* 1: in this example, you want to limit your mobile consumers to invoke your API at a maximum rate of 50 requests per second.
+* 2: in this example, you want to enforce a quota of 10 000 requests per day for your partners.
+
+ With usage plans, you can create both the throttle rate limit and apply a daily quota.
+
+ ### Token bucket algorithm
+
+ The method by which the limits are measured and throttled is based on the **token bucket algorithm**, which is a widely used algorithm for checking that network traffic conforms to set limits. **A token, in this case, counts as a request and the burst is the maximum bucket size**.
+
+ Requests that come into the bucket are fulfilled at a steady rate. If the rate at which the bucket is being filled causes the bucket to fill up and exceed the burst value, a **429 Too Many Requests error would be returned**.
+
+ API Gateway sets a limit on a steady-state rate and a **burst of request submissions per account and per Region**. At the account level, by **default**, API Gateway limits the steady-state request rate to **10,000 requests per second**. It limits the **burst to 5,000 requests across all APIs within an AWS account**. However, as discussed earlier, you can use usage plans to manage limits at a more granular level.
+
+ ![0084_token_bucket_alg.png](./images/0084_token_bucket_alg.png)
+
+ ### Throttling settings hierarchy
+
+ The type and level of throttling applied to a request is dependent on all of the limits involved and are applied in this order:
+
+ * 1: **Per-client, per-method** throttling limits that you set for an API stage in a usage plan
+ * 2: **Per-client** throttling limits that you set in a usage plan
+ * 3: **Default per-method limits** and **individual per-method limits** that you set in API stage settings
+ * 4: The **account level limit**
+
+# IAM permissions
