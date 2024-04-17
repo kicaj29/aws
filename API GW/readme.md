@@ -68,6 +68,16 @@
     - [Limiting by IP address example](#limiting-by-ip-address-example)
     - [Limiting by VPC example](#limiting-by-vpc-example)
     - [Resource policies and authentication methods](#resource-policies-and-authentication-methods)
+- [Monitoring and Troubleshooting](#monitoring-and-troubleshooting)
+  - [CloudWatch Metrics for API Gateway](#cloudwatch-metrics-for-api-gateway)
+  - [Calculating API Gateway overhead](#calculating-api-gateway-overhead)
+  - [CloudWatch Logs for API Gateway](#cloudwatch-logs-for-api-gateway)
+    - [Execution logging](#execution-logging)
+    - [Access logging](#access-logging)
+  - [Monitoring with X-Ray and CloudTrail](#monitoring-with-x-ray-and-cloudtrail)
+    - [AWS X-Ray](#aws-x-ray)
+    - [AWS CloudTrail](#aws-cloudtrail)
+    - [X-Ray trace examples](#x-ray-trace-examples)
 
 
 # Create first mocked API
@@ -1040,3 +1050,85 @@ Resource policy and authentication methods work together to grant access to your
 * **Cognito authentication and resource policy**: If API Gateway authenticates the caller from Cognito, the resource policy is evaluated independently. If there is an explicit allow, the caller proceeds. Otherwise, deny or neither allow nor deny will result in a deny.
 
 More here: https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-authorization-flow.html
+
+# Monitoring and Troubleshooting
+
+## CloudWatch Metrics for API Gateway
+
+After your APIs are deployed, you can use CloudWatch Metrics to monitor performance of deployed APIs. API Gateway has seven default metrics out of the box:
+
+* **Count**: Total number of API requests in a period
+* **Latency**: Time between when API Gateway receives a request from a client and when it returns a response to the client; this includes the integration latency and other API Gateway overhead
+* **IntegrationLatency**: Time between when API Gateway relays a request to the backend and when it receives a response from the backend
+* **4xxError**: Client-side errors captured in a specified period
+* **5xxError**: Server-side errors captured in a specified period
+* **CacheHitCount**: Number of requests served from the API cache in a given period
+* **CacheMissCount**: Number of requests served from the backend in a given period, when API caching is turned on
+
+With these metrics, you can monitor details such as the following:
+
+* How often your APIs are being called
+* The number of invocations to your API
+* The latency of the API responses
+* If there are any errors, and if so, whether they are 400 errors or 500 errors
+* Whether your cache is being hit or how many times the backend needed to be called while caching was enabled
+
+In addition, **consider the value of turning on detailed metrics so you can see these metrics at the method level**. This is where you would be able to see details about gets, posts, deletes, and so on.
+**You can turn on detailed metrics from the Stage settings.**
+
+## Calculating API Gateway overhead
+
+Two key metrics that are used to calculate the API Gateway overhead of deployed APIs are the **Latency** and **IntegrationLatency** CloudWatch Metrics.
+
+* **The latency metric** gives you details about how long it takes for a full round-trip response, from the second your customer invokes your API to when your API responds with the results. This is a full round-trip duration of an API request through API Gateway.
+* **Integration latency** is how long it takes for API Gateway to make the invocation to your backend and receive the response.
+
+**The difference between these two metrics gives you your API Gateway overhead**. Together, these metrics can help you fine-tune your applications and see where the bottlenecks are.
+
+## CloudWatch Logs for API Gateway
+
+In addition to CloudWatch Metrics, you can also learn a lot about how your APIs are performing from CloudWatch Logs. API Gateway has two types of CloudWatch logs built in. To learn about a category, choose the appropriate tab.
+
+### Execution logging
+
+The first type is execution logging, which logs what’s happening on the roundtrip of a request. You can see all the details from when the request was made, the other request parameters, everything that happened between the requests, and what happened when API Gateway returned the results to the client that’s calling the service.   
+
+Execution logs can be useful to troubleshoot APIs, but can result in logging sensitive data. Because of this, it is recommended you don't enable Log full requests/responses data for production APIs. In addition, there is a cost component associated with logging your APIs.
+
+![0091_logging.png](./images/0091_logging.png)
+
+### Access logging
+
+The second type is access logging, which provides details about who's invoking your API. This includes everything including IP address, the method used, the user protocol, and the agent that's invoking your API. 
+
+![0092_logging.png](./images/0092_logging.png)
+
+Access logging is fully customizable using JSON formatting. If you need to, you can publish them to a third-party resource to help you analyze them.
+
+## Monitoring with X-Ray and CloudTrail
+
+There are two AWS tools you should understand to analyze your API use and performance: AWS X-Ray and AWS CloudTrail.
+
+### AWS X-Ray
+
+You can use X-Ray to trace and analyze user requests as they travel through your Amazon API Gateway APIs to the underlying services. With X-Ray, you can understand how your application is performing to identify and troubleshoot the root cause of performance issues and errors. X-Ray gives you an end-to-end view of an entire request, so you can analyze latencies and errors in your APIs and their backend services. You can also configure sampling rules to tell X-Ray which requests to record, and at what sampling rates, according to criteria that you specify.   
+
+To summarize, with X-Ray, you can trace and analyze requests as they travel through your APIs to services:
+
+* Analyze latencies and debug errors in your APIs and their backend services.
+* Configure sampling rules to focus on specific requests.
+
+### AWS CloudTrail
+
+The second service, CloudTrail, captures all API calls for API Gateway as events, including calls from the API Gateway console and from code calls to your API Gateway APIs.
+
+Using the information collected by CloudTrail, you can determine the request that was made to API Gateway, the IP address from which the request was made, who made the request, when it was made, and additional details. You can view the most recent events in the CloudTrail console in Event history.   
+
+To summarize, CloudTrail captures all API calls for API Gateway as events.
+
+* IP address, requester, and time of request are included.
+* Event history can be reviewed.
+* Create a trail to send events to an Amazon Simple Storage Service (Amazon S3) bucket.
+
+### X-Ray trace examples
+
