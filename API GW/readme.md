@@ -61,6 +61,13 @@
     - [Token bucket algorithm](#token-bucket-algorithm)
     - [Throttling settings hierarchy](#throttling-settings-hierarchy)
 - [IAM permissions](#iam-permissions)
+  - [Invoke permissions](#invoke-permissions)
+  - [Manage permissions](#manage-permissions)
+  - [Resource policies](#resource-policies)
+    - [Limiting access by user example](#limiting-access-by-user-example)
+    - [Limiting by IP address example](#limiting-by-ip-address-example)
+    - [Limiting by VPC example](#limiting-by-vpc-example)
+    - [Resource policies and authentication methods](#resource-policies-and-authentication-methods)
 
 
 # Create first mocked API
@@ -966,3 +973,70 @@ Using the information on API keys and usage plans, review this throttling exampl
  * 4: The **account level limit**
 
 # IAM permissions
+
+There are two types of IAM permissions for APIs:
+
+![0085_iam_permission_types.png](./images/0085_iam_permission_types.png)
+
+* Who can invoke the API: To call a deployed API, or refresh the API caching, the caller needs the **execute-api** permission.
+* Who can manage the API: To create, deploy, and manage an API in API Gateway, the API developer needs the **apigateway** permission.
+
+## Invoke permissions
+
+For the **execute-api** permission, you need to create IAM policies that permit a specified API caller to invoke the desired API method. To apply this IAM policy on the API method, you need to configure the API method to use an **authorization type **of **AWS_IAM**.
+
+This example grants "Allow" Invoke permissions on the POST method of mydemoresource API:
+
+![0086_invoke_permissions.png](./images/0086_invoke_permissions.png)
+
+When you do this, API Gateway will expect an IAM Sig v4 request for any requests that come to that API method. After you have associated this authorization type with your API method, you can then allow users with this permission to invoke your API. This could be an IAM user who represents an API caller; it could be an IAM group containing a set of IAM users; or it could be an IAM role assumed by a user, an EC2 instance, or an application running inside AWS.   
+
+For the execute-api permission, create IAM policies that permit a specified API caller to invoke the desired API method.
+
+## Manage permissions
+
+To allow an API developer to create and manage an API in API Gateway, you need IAM permission policies that allow a specified API developer to create, update, deploy, view, or delete required API entities. To do that, create a policy using the **apigateway:HTTP_VERB format**, associated with the specific resource using the verb that you want to permit or deny in the policy.
+
+In this example, the user with this policy is limited to perform the GET method requests on one of the API resources, but is permitted to take all of the actions (*) on the second resource.
+
+![0087_manage_permissions.png](./images/0087_manage_permissions.png)
+
+## Resource policies
+
+Resource policies help you to further refine access for your APIs. While an IAM policy is used to grant permission to a user, group, or role, **you can also apply policies directly on API Gateway using a resource policy**. A resource policy is a JSON policy document that you attach to an API to limit access by users from a specified account, IP address range, VPC, or VPC endpoint. You can make this as granular as you need, and resource policies can be used in coordination with IAM policies to restrict access.   
+
+For example, you could use resource policies to provide access to another AWS account, or to limit access to your API from a particular set of IP address ranges. You can also use resource policies to grant access to specific VPCs or VPC endpoints.
+
+### Limiting access by user example
+
+In this example, the resource policy allows a user from another AWS account (account-id:user/George) to perform GET requests on the pets resource of our API.
+
+![0088_resource_policy.png](./images/0088_resource_policy.png)
+
+### Limiting by IP address example
+
+This resource policy denies any user with a source IP address in one of two specified ranges from accessing the API.
+This is done by specifying an effect of DENY and an IpAddress condition with an array of source IP addresses.
+
+![0089_resource_policy.png](./images/0089_resource_policy.png)
+
+### Limiting by VPC example
+
+This resource policy denies anyone (indicated by the principal = *) coming from the VPC specified as the sourceVpc within the Condition.
+
+![0090_resource_policy.png](./images/0090_resource_policy.png)
+
+**Since the Principal in the policy is set to "*", other authorization types can be used alongside the resource policy. However, if the Principal is set to "AWS," authorization will fail for all resources not secured with AWS_IAM authorization, including unsecured resources.**
+
+### Resource policies and authentication methods
+
+Resource policy and authentication methods work together to grant access to your APIs. As illustrated below, methods for securing your APIs work in aggregate. To learn more, expand each of the following four categories.
+
+* **API GW resource policy only**: explicit allow is required on the inbound criteria of the caller. If not found, deny the caller.
+* **Lambda authorizer and resource policy**: **if the policy has explicit denials**, the caller is denied access immediately. Otherwise, the Lambda Authorizer is called and returns a policy document that is evaluated with the resource policy.
+* **IAM authentication and resource policy**: if the user authenticates successfully with IAM, policies attached to the IAM user and resource policy are evaluated together. 
+  * If the caller and API owner are from separate accounts, both the IAM user policies and the resource policy explicitly allow the caller to proceed.
+  * If the caller and the API owner are in the same account, either user policies or the resource policy must explicitly allow the caller to proceed.
+* **Cognito authentication and resource policy**: If API Gateway authenticates the caller from Cognito, the resource policy is evaluated independently. If there is an explicit allow, the caller proceeds. Otherwise, deny or neither allow nor deny will result in a deny.
+
+More here: https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-authorization-flow.html
