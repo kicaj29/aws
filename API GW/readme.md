@@ -78,6 +78,8 @@
     - [AWS X-Ray](#aws-x-ray)
     - [AWS CloudTrail](#aws-cloudtrail)
     - [X-Ray trace examples](#x-ray-trace-examples)
+      - [X-Ray Example 1](#x-ray-example-1)
+      - [X-Ray Example 2](#x-ray-example-2)
 
 
 # Create first mocked API
@@ -1131,4 +1133,58 @@ To summarize, CloudTrail captures all API calls for API Gateway as events.
 * Create a trail to send events to an Amazon Simple Storage Service (Amazon S3) bucket.
 
 ### X-Ray trace examples
+
+These examples reflect an AWS X-Ray trace for a GET method request for the FAQ-API on the Demo stage. The GET method for this API is configured with a proxy integration to Lambda. When the GET request is received, Lambda invokes the FAQ Lambda function.   
+
+#### X-Ray Example 1
+
+This first example demonstrates API Gateway Latency metrics for a **Lambda cold start**. To learn more about the sections of the X-Ray trace, select each hotspot.
+
+![0093_x-ray.png](./images/0093_x-ray.png)
+
+* **1 API GW receives request**: the GET method for this API is configured with a proxy integration to AWS Lambda. First, API GW receives a request for the GET method (for the FAQ-API on the Demo stage)
+* **2 API GW invokes Lambda**: API GW invokes lambda through the integration associated with a GET method for this API.
+* **3 response from Lambda**: the function runs and Lambda returns the response to the API GW.
+* **4 API GW return response**: API GW returns the response to the requestor.
+* **5 Latency**: the latency metric is equal to the time from when API GW receives the request unit the response it returned to the requestor. In this example that`s 232 ms.
+* **6 Integration Latency**: integration latency is equal to the time from when API invokes the lambda function until lambda provides a response back to API GW. In this example, that`s 228ms.
+* **7 API GW overhead**: the difference between latency and integration latency tells you your API GW overhead. In this example, that`s 4ms.
+
+Diving deeper into the example, this image shows a deeper look at the Lambda portion of this trace. 
+
+* **Lambda cold start**: the lambda function had not been invoked in a while, so this request goes through a cold start. Lambda bootstraps the env. and initializes function. **You can tell it`s a cold start because of the initialization segment.**
+
+![0094_x-ray.png](./images/0094_x-ray.png)
+
+* **Billable duration**: in this example it is 26ms to initialize the function and execute the code
+
+![0095_x-ray.png](./images/0095_x-ray.png)
+
+As shown, the entire duration for the Lambda cold start is 232 ms, with a billable duration of 26 ms.
+
+#### X-Ray Example 2
+
+This example demonstrates the API Gateway Latency metrics for a **Lambda warm start**. To learn more about the sections of the X-Ray trace, select each hotspot.
+
+![0096_x-ray.png](./images/0096_x-ray.png)
+
+* 1 API GW receives request
+* 2 API GW invokes lambda
+* 3 response from lambda
+* 4 API returns the response
+* 5 Latency, 18ms
+* 6 Integration latency, 15ms
+* 7 API GW overhead, 3ms
+
+Diving deeper into the example, this image shows a deeper look at the Lambda portion of this trace.
+
+* **Lambda warm start:** the lambda function has been invoke recently, so this request goes through warm start. Lambda thaws an available container and executes the code with no time spent on initialization.
+
+![0097_x-ray.png](./images/0097_x-ray.png)
+
+* **Lambda billed duration:** the billable duration of the lambda in this example is 1ms.
+
+As shown, the entire duration for the Lambda cold start is 18 ms, with a billable duration of 1 ms. Compared to the metrics from the Lambda cold start, the warm start steeply decreases the duration that the Lambda function must run.
+
+![0099_x-ray.png](./images/0099_x-ray.png)
 
