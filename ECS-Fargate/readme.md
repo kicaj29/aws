@@ -1,6 +1,7 @@
 # ECS
 
 * ECS = Elastic Container Service
+  * https://explore.skillbuilder.aws/learn/course/internal/view/elearning/915/building-and-deploying-containers-using-amazon-elastic-container-service
 * Launch Docker containers on AWS
 * You must provision & maintain the infrastructure (EC2 instances)
 * AWS takes care of starting/stopping containers
