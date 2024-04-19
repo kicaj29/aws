@@ -80,6 +80,8 @@
     - [X-Ray trace examples](#x-ray-trace-examples)
       - [X-Ray Example 1](#x-ray-example-1)
       - [X-Ray Example 2](#x-ray-example-2)
+    - [Troubleshooting Exercise – Access Logs and X-Ray](#troubleshooting-exercise--access-logs-and-x-ray)
+      - [What might be the cause?](#what-might-be-the-cause)
 
 
 # Create first mocked API
@@ -1160,7 +1162,7 @@ Diving deeper into the example, this image shows a deeper look at the Lambda por
 
 ![0095_x-ray.png](./images/0095_x-ray.png)
 
-As shown, the entire duration for the Lambda cold start is 232 ms, with a billable duration of 26 ms.
+As shown, the entire duration for the Lambda cold start is 232 ms, with a **billable duration of 26 ms**.
 
 #### X-Ray Example 2
 
@@ -1184,7 +1186,56 @@ Diving deeper into the example, this image shows a deeper look at the Lambda por
 
 * **Lambda billed duration:** the billable duration of the lambda in this example is 1ms.
 
-As shown, the entire duration for the Lambda cold start is 18 ms, with a billable duration of 1 ms. Compared to the metrics from the Lambda cold start, the warm start steeply decreases the duration that the Lambda function must run.
-
 ![0099_x-ray.png](./images/0099_x-ray.png)
 
+As shown, the entire duration for the Lambda cold start is 18 ms, **with a billable duration of 1 ms**. Compared to the metrics from the Lambda cold start, the warm start steeply decreases the duration that the Lambda function must run.
+
+### Troubleshooting Exercise – Access Logs and X-Ray
+
+To experience these monitoring and troubleshooting tools in action, this scenario outlines a situation where a single customer reports getting an access denied error trying to call the API between 9:45 and 10 am. The IP address of the reporter was 207.172.87.12. Continue through the steps to look at two ways to troubleshoot this report.\
+
+* **Review errors with access logs**: Check the name of the CloudWatch Group for access logging on this API stage.
+
+![0100_troubleshooting.png](./images/0100_troubleshooting.png)
+
+* **Open the access log in CloudWatch**
+
+![0101_troubleshooting.png](./images/0101_troubleshooting.png)
+
+* **Select a log event for the time frame**
+
+![0102_troubleshooting.png](./images/0102_troubleshooting.png)
+
+* **Review errors**
+
+In the details of this log event, you can see a successful connection (200 status) from one IP address but a 403 error for the attempt to access from 207.172.87.12.
+
+![0103_troubleshooting.png](./images/0103_troubleshooting.png)
+
+* **Review errors with X-Ray**
+
+Alternatively, you could look at the X-Ray trace for this event. Open X-Ray, select Traces, and set the Group by to ClientIP.
+
+![0104_troubleshooting.png](./images/0104_troubleshooting.png)
+
+* **Select Trace**
+
+![0105_troubleshooting.png](./images/0105_troubleshooting.png)
+
+* **Review error reported in trace**
+
+You can quickly see there was an error on this request. If you hover over the error icon, you can see explicit details indicating that the user is not authorized to perform execute-api:invoke on the resource due to an explicit deny.
+
+![0106_troubleshooting.png](./images/0106_troubleshooting.png)
+
+#### What might be the cause?
+
+Consider a few configuration options to determine the root cause of this permission error.
+
+* **Option 1**: Authorization settings
+
+![0107_troubleshooting.png](./images/0107_troubleshooting.png)
+
+* **Option 2**: Resource policy
+
+![0108_troubleshooting.png](./images/0108_troubleshooting.png)
