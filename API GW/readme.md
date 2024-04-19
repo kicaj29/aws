@@ -82,6 +82,11 @@
       - [X-Ray Example 2](#x-ray-example-2)
     - [Troubleshooting Exercise – Access Logs and X-Ray](#troubleshooting-exercise--access-logs-and-x-ray)
       - [What might be the cause?](#what-might-be-the-cause)
+- [Data Mapping and Request Validation](#data-mapping-and-request-validation)
+  - [JSON to XML transformation example](#json-to-xml-transformation-example)
+  - [Key variables for transformations](#key-variables-for-transformations)
+  - [Handling errors with Gateway Responses](#handling-errors-with-gateway-responses)
+  - [Offloading request validation to API Gateway](#offloading-request-validation-to-api-gateway)
 
 
 # Create first mocked API
@@ -1239,3 +1244,52 @@ Consider a few configuration options to determine the root cause of this permiss
 * **Option 2**: Resource policy
 
 ![0108_troubleshooting.png](./images/0108_troubleshooting.png)
+
+# Data Mapping and Request Validation
+
+In API Gateway, an API's method request can take a payload in a different format from the corresponding integration request payload as required by your backend and the reverse.   
+
+**Mapping templates** can be added to the integration request to transform the incoming request to the format required by the backend of the application or to transform the backend payload to the format required by the method response.
+
+## JSON to XML transformation example
+
+This specific example shows a client making a GET request to /sayHello. Select each hotspot to learn more.
+
+![0109_data-mapping.png](./images/0109_data-mapping.png)
+
+Point 4 contains the used mapping.
+
+## Key variables for transformations
+
+Here are a few of the key variables you might use in your transformations.
+
+![0110_data-mapping.png](./images/0110_data-mapping.png)
+
+More here: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html
+
+## Handling errors with Gateway Responses
+
+For invalid requests, API Gateway bypasses the integration altogether and returns an error response. By default, the error response contains a short descriptive error message.   
+
+For some of the error responses, API Gateway allows customization by API developers to return the responses in different formats. You can access the Gateway Responses option on the API Gateway console. Some of the customization of various error responses you can use are:
+
+* Change HTTP status code.
+* Modify body content.
+* Add headers.
+
+In addition to these, you can also customize specific responses or modify the default 4xx or 5xx error response.
+
+## Offloading request validation to API Gateway
+
+In conjunction with data transformation and customized Gateway Responses, you can also let API Gateway handle some of your basic validations, rather than making the call or building that validation into the backend.   
+
+In this example, the request must have a "make" value, and only the values of Tesla or Hyundai would make it to the backend. Select each hotspot to learn more.
+
+![0111_data-mapping.png](./images/0111_data-mapping.png)
+
+API Gateway verifies either or both of the following conditions for you.
+
+* The required request parameters in the URL, query string, and headers of an incoming request are included and non-blank. 
+* The applicable request payload adheres to the configured JSON request model of the method.
+
+More here: https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-method-request-validation.html
