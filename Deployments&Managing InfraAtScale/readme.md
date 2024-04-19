@@ -4,6 +4,7 @@
   - [Typical architecture](#typical-architecture)
   - [Beanstalk Overview](#beanstalk-overview)
 - [AWS CodeDeploy](#aws-codedeploy)
+  - [Notes from AWS PartnerCast](#notes-from-aws-partnercast)
 - [AWS CodeCommit](#aws-codecommit)
 - [AWS CodeBuild](#aws-codebuild)
 - [AWS CodePipeline](#aws-codepipeline)
@@ -98,6 +99,13 @@ CloudFormation creates those for you, in the right order, with the exact configu
 * Servers/Instances must be provisioned and configured ahead of time with the CodeDeploy Agent
 
 ![05-code-deploy.png](./images/05-code-deploy.png)
+
+## Notes from AWS PartnerCast
+
+![45-code-deploy.png](./images/45-code-deploy.png)
+
+* https://docs.aws.amazon.com/codedeploy/latest/userguide/application-specification-files.html
+* https://docs.aws.amazon.com/codedeploy/latest/userguide/deployment-steps.html
 
 # AWS CodeCommit
 

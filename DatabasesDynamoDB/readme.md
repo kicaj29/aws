@@ -32,6 +32,7 @@
   - [DynamoDB Streams and AWS Lambda](#dynamodb-streams-and-aws-lambda)
   - [Querying in Microservice Architectures](#querying-in-microservice-architectures)
   - [Time Series Data Example](#time-series-data-example)
+- [Notes from AWS PartnerCast](#notes-from-aws-partnercast)
 - [Resources](#resources)
 
 # Introduction
@@ -425,6 +426,18 @@ Adding more events per sensor:
 
 Lambda function creates “denser” DynamoDB items   
 More data points stored in each DynamoDB item
+
+# Notes from AWS PartnerCast
+
+![023-question.png](./images/023-question.png)
+
+* https://docs.aws.amazon.com/crypto/latest/userguide/awscryp-service-ddb-client.html
+* https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html
+
+![024-question.png](./images/024-question.png)
+
+* https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Query.Other.html#Query.Limit
+* https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Scan.html#Scan.Limit
 
 # Resources
 

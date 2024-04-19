@@ -18,6 +18,7 @@
 - [Standard and Express Workflows](#standard-and-express-workflows)
   - [Standard vs Express Workflows](#standard-vs-express-workflows)
   - [Asynchronous vs synchronous Express Workflows](#asynchronous-vs-synchronous-express-workflows)
+- [Notes from AWS PartnerCast](#notes-from-aws-partnercast)
 
 # Introduction
 
@@ -233,3 +234,10 @@ Standard and Express Workflows can start automatically in response to events suc
 | Return confirmation that the workflow has started, but do not wait for the workflow to complete. | Start a workflow, wait until it completes, and then return the result. |
 | Can be used when you don't require immediate response output, such as messaging services or data processing that other services don't depend on.| **Can be used to orchestrate microservices**; you can develop applications without the need to develop additional code to handle errors, retries, or initiate parallel tasks. |
 | Can be started in response to an event by a nested workflow in Step Functions, or by using the StartExecution API Call. | Can be invoked from Amazon API Gateway, AWS Lambda, or by using the StartSyncExecution API call. |
+
+# Notes from AWS PartnerCast
+
+![13-questions.png](./images/13-questions.png)
+
+* https://docs.aws.amazon.com/step-functions/latest/dg/concepts-error-handling.html#error-handling-error-representation
+* https://docs.aws.amazon.com/step-functions/latest/dg/amazon-states-language-task-state.html#task-state-fields
