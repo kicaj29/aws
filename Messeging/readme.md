@@ -1,3 +1,15 @@
+# Standard vs. FIFO SQS queues as Lambda event sources
+
+* Record Order
+  * Standard: Order is not guaranteed
+  * FIFO: Order is guaranteed per group ID
+* Delivery
+  * Standard: Messages may be delivered more than once
+  * FIFO: Messages are delivered only once. There are no duplicate messages introduced to the queue
+* Transaction Throughput
+  * Standard: Nearly unlimited messages per second
+  * FIFO: FIFO queues support up to 300 messages per second, per API action without batching, or 3,000 with batching
+
 # sqs localstack
 
 ## how to change visibility parameter

@@ -19,6 +19,8 @@
   - [Standard vs Express Workflows](#standard-vs-express-workflows)
   - [Asynchronous vs synchronous Express Workflows](#asynchronous-vs-synchronous-express-workflows)
 - [Notes from AWS PartnerCast](#notes-from-aws-partnercast)
+- [Task vs Activity vs Activity Worker](#task-vs-activity-vs-activity-worker)
+- [Sample flow](#sample-flow)
 
 # Introduction
 
@@ -49,8 +51,12 @@
 ![03-state-types.png](./images/03-state-types.png)
 * A **Choice state** add branching logic to a state machine.
 ![04-state-types.png](./images/04-state-types.png)
-* A **Wait state** delays the state machine from  continuing for a specified time. You can choose either a relative time, specified in seconds from when the state begins, or an absolute end time, specified as a timestamp.
-![05-state-types.png](./images/05-state-types.png)
+* A **Wait state** delays the state machine from  continuing for a specified time. You can choose either a relative time, specified in seconds from when the state begins, or an absolute end time, specified as a timestamp.   
+  ![05-state-types.png](./images/05-state-types.png)   
+  With a wait state in Step Functions, you don’t incur any further cost because Step Functions cost is based on transitions between states and not on time spent within a state.
+
+  Callback tasks let you pause the workflow indefinitely until a task token is returned.   
+  For some integrated services (including Lambda), Step Functions lets you pass a task token to the service and then pause that task until you get the token back via a **SendTaskSuccess** or a **SendTaskFailure** call.
 * A **Succeed state** stops an activity successfully. The Succeed state is a useful target for Choice state branches that do not do anything except stop the activity. Because Succeed states are terminal states, **they have no Next field, and do not need End field**.
 ![06-state-types.png](./images/06-state-types.png)
 * A **Fail state** stops the activity of the state machine and marks it as a failure, unless it is caught by a Catch block.
@@ -59,7 +65,10 @@
 ![08-state-types.png](./images/08-state-types.png)
 * The **Map state** can be used to run a set of steps for each element of an input array. While **Parallel state** invokes multiple branches of steps using the same input, a **Map state** will invoke the same steps for multiple entries of an array in the state input.
 ![09-state-types.png](./images/09-state-types.png)
-
+* **Looping tasks**: Iterates on your state machine task a specific number of times.   
+  ![16-looping-task.png](./images/16-looping-task.png)
+* **Try/catch/finally**: Deals with errors and exceptions automatically based on your defined business logic.   
+  ![17-looping-task.png](./images/17-looping-task.png)
 # Why Use AWS Step Functions?
 
 AWS Step Functions helps with any computational problem or business process that can be subdivided into a series of steps. Application development is faster and more intuitive with Step Functions, **because you can define and manage the workflow of your application independently from its business logic**. Making changes to one does not affect the other. You can easily update and modify workflows in one place, without having to struggle with managing, monitoring, and maintaining multiple point-to-point integrations. Step Functions frees your functions and containers from excess code, so you can write your applications faster and make them more resilient and easier to maintain.
@@ -241,3 +250,11 @@ Standard and Express Workflows can start automatically in response to events suc
 
 * https://docs.aws.amazon.com/step-functions/latest/dg/concepts-error-handling.html#error-handling-error-representation
 * https://docs.aws.amazon.com/step-functions/latest/dg/amazon-states-language-task-state.html#task-state-fields
+
+# Task vs Activity vs Activity Worker
+
+![14-t-a-aw.png](./images/14-t-a-aw.png)
+
+# Sample flow
+
+![15-sample-flow.png](./images/15-sample-flow.png)
