@@ -15,6 +15,7 @@
   - [Amazon DynamoDB for Serverless Architectures](#amazon-dynamodb-for-serverless-architectures)
   - [Introduction to AWS Step Functions](#introduction-to-aws-step-functions)
   - [Amazon API Gateway for Serverless Applications](#amazon-api-gateway-for-serverless-applications)
+  - [Designing Event-Driven Architectures](#designing-event-driven-architectures)
 
 # Based on AWS Partner Certification Readiness - Developer - Associate
 
@@ -112,3 +113,8 @@ https://github.com/kicaj29/aws/tree/main/VPC-LB-AutoScalingGroup-EC2-Route53
 ## Amazon API Gateway for Serverless Applications
 
 * https://github.com/kicaj29/aws/tree/main/API%20GW
+
+## Designing Event-Driven Architectures
+
+* https://github.com/kicaj29/aws/tree/main/Messeging
+* https://github.com/kicaj29/aws/tree/main/Serverless-Lambda

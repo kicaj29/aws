@@ -10,6 +10,52 @@
   * Standard: Nearly unlimited messages per second
   * FIFO: FIFO queues support up to 300 messages per second, per API action without batching, or 3,000 with batching
 
+# Patterns for Communicating Status Updates
+
+## Client polling
+
+![001-client-pooling.png](./images/001-client-pooling.png)
+
+Client polling is a common way to get status information on a long-running transaction.   
+Advantages:
+* Convenient to replace a synchronous flow
+Disadvantages
+* Adds additional latency to the consistency of the data to the client
+* Unnecessary work and increased cost for requests and responses when nothing has changed
+
+## Webhooks with Amazon Simple Notification Service (Amazon SNS)
+
+![002-sns-webhook.png](./images/002-sns-webhook.png)
+
+Webhooks are user-defined HTTP callbacks. There are two types of clients for this pattern: **trusted and untrusted**.
+
+* **Trusted clients** would be when **you own both sides of the system** and can create a secure integration between them. With a trusted client, the webhook that you use is established outside of the process. With trusted clients, you can use Amazon SNS to set up an HTTP subscriber that notifies the client using the webhook.   
+* With an **untrusted client**, you would receive the webhook information through a **registration process** or require it as part of the data submitted to your API.
+
+Instead of the client polling for the status, when the work is complete the backing service sends a request to the client webhook with the updated status. This is less resource intensive because the client doesn’t have to check for status updates.
+
+## WebSockets with AWS AppSync (GraphQL)
+
+![003-appsync-webhook.png](./images/003-appsync-webhook.png)
+
+WebSocket APIs are an open standard used to create a persistent connection between the client and the backing service, permitting bidirectional communication. You can provide the status for the client using WebSockets with GraphQL subscriptions to listen for updates through AWS AppSync.   
+
+With AWS AppSync, clients can automatically subscribe and receive status updates as they occur. This is a great pattern when data drives the user interface, and is ideal for data that is streaming or may yield more than a single response.
+
+In the order submission example:
+
+* The client creates a subscription for order status updates and submits the order through the AppSync service.
+* As data changes, the client receives updates through the subscription. This includes changes related to the status of the work as well as changes to the order data.
+
+This is a simpler architecture than using API Gateway with a combination of REST and WebSocket APIs.
+
+To choose whether to use API Gateway or AWS AppSync in this pattern, evaluate which factors are the most important for your workload and your development team.
+
+* The **AWS AppSync approach greatly reduces the number of API calls** required and lets the client filter only the data it needs.
+* If you need more **fine-grained management** of your APIs, such as supporting multiple versions of an API or controlling access with usage plans and throttling limits, **API Gateway** may be the better choice.
+* **GraphQL is a newer API standard than REST.** So the industry best practices and field knowledge are still developing with GraphQL.
+
+
 # sqs localstack
 
 ## how to change visibility parameter
