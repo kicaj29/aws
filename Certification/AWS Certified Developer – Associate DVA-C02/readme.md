@@ -118,3 +118,4 @@ https://github.com/kicaj29/aws/tree/main/VPC-LB-AutoScalingGroup-EC2-Route53
 
 * https://github.com/kicaj29/aws/tree/main/Messeging
 * https://github.com/kicaj29/aws/tree/main/Serverless-Lambda
+* https://github.com/kicaj29/aws/tree/main/Kinesis

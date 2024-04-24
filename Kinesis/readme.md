@@ -34,7 +34,8 @@ NOTE: Apache Flink can read data also from other sources, see [Apache Flink inpu
   It means that we can re-process or replay data.
 * Multiple applications can consume the same stream
 * Once data is inserted in Kinesis, it cannot be deleted (immutability)
-* Records can be up to 1MB size - it is great for small amount of data going fast but not for PB batch analysis
+* Each shard has a uniquely identified sequence of data records. Each data record has a sequence number, a **partition key**, and data blob. Records can be up to 1MB size - it is great for small amount of data going fast but not for PB batch analysis
+* The partition key groups data by shard within a stream. **The sequence number is unique per partition key within it shard.**
 
 ### Capacity Modes
 
