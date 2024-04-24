@@ -55,6 +55,32 @@ To choose whether to use API Gateway or AWS AppSync in this pattern, evaluate wh
 * If you need more **fine-grained management** of your APIs, such as supporting multiple versions of an API or controlling access with usage plans and throttling limits, **API Gateway** may be the better choice.
 * **GraphQL is a newer API standard than REST.** So the industry best practices and field knowledge are still developing with GraphQL.
 
+# Amazon SNS message filtering
+
+In the Amazon SNS message filtering pattern, the subscriber assigns a filter policy to the topic subscription. The filter policy contains attributes that define which messages that subscriber receives, and Amazon SNS compares message attributes to the filter policy for each subscription. If the attributes don’t match, the message doesn’t get sent to that subscriber.
+**It facilitates making changes going forward and prevents subscribers from having to process messages that they don't need.**
+
+![004-sns-filtering.png](./images/004-sns-filtering.png)
+
+# Amazon EventBridge
+
+Amazon EventBridge is a serverless event bus that facilitates connection of applications together using AWS services and data from your own applications, as well as integrated software-as-a-service (SaaS) applications. 
+
+* https://youtu.be/TXh5oU_yo9M
+* https://aws.amazon.com/eventbridge/resources/#Webinars_and_videos
+* https://aws.amazon.com/eventbridge/
+
+# Streaming or messaging for data processing
+
+* Messaging
+  * The core entity is an individual message, and message rates vary.
+  * Messages are deleted when they’ve been consumed.
+  * Configure retries and dead-letter queues for failures.
+* Streaming
+  * You look at the stream of messages together, and the stream is generally continuous.
+    ![005-streaming.png](./images/005-streaming.png)
+  * Data remains on the stream for a period of time. Consumers must maintain a pointer.
+  * A message is retried until it succeeds or expires. You must build error handling into your function to bypass a record.
 
 # sqs localstack
 

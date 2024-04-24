@@ -1,4 +1,5 @@
 - [Kinesis](#kinesis)
+  - [Producers and consumers](#producers-and-consumers)
   - [Kinesis Data Streams](#kinesis-data-streams)
     - [Capacity Modes](#capacity-modes)
     - [Limits to know](#limits-to-know)
@@ -25,6 +26,17 @@
 ![01.png](./images/01.png)
 
 NOTE: Apache Flink can read data also from other sources, see [Apache Flink inputs](#apache-flink-inputs)
+
+## Producers and consumers
+
+* Producers
+  * Kinesis Producer Library (KPL)
+  * AWS SDK
+  * Third-party tools
+* Consumers
+  * Lambda functions
+  * Other streams
+  * Applications created with Kinesis Client Library (KCL)
 
 ## Kinesis Data Streams
 
@@ -72,6 +84,7 @@ NOTE: Apache Flink can read data also from other sources, see [Apache Flink inpu
 * Data transformation through AWS Lambda (ex: CSV => JSON)
 * Supports compression when target is Amazon S3 (GZIP, ZIP, and SNAPPY)
 * Pay for the amount of data going through Firehose
+* Kinesis Data Firehose streams **can only be associated with a single consumer**
 
 ![03.png](./images/03.png)
 
@@ -103,6 +116,8 @@ NOTE: Apache Flink can read data also from other sources, see [Apache Flink inpu
 
 ![20-data-streams-vs-data-firehose.png](./images/20-data-streams-vs-data-firehose.png)
 
+![22-streams-vs-firehose.png](./images/22-streams-vs-firehose.png)
+
 * Streams - used for building real time apps
   * **Going to write custom code (producer/consumer)**
   * Real time (~200 ms latency for classic, ~70 ms latency for enhanced fan-out)
@@ -116,6 +131,8 @@ NOTE: Apache Flink can read data also from other sources, see [Apache Flink inpu
   * Automatic scaling
   * No data storage
   * **Has buffer which is used to send the data to the target resource**
+  * Can only be associated with a single consumer
+  * Kinesis Data Firehose has built-in retries. Amazon Kinesis Data Streams does not.
 
 # Amazon Managed Service for Apache Flink (MSAF) aka Kinesis Data Analytics
 
