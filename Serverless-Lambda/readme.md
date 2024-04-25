@@ -4,6 +4,9 @@
   - [Synchronous events](#synchronous-events)
   - [Asynchronous events](#asynchronous-events)
   - [Error handling for stream-based events](#error-handling-for-stream-based-events)
+  - [Failed-event destinations](#failed-event-destinations)
+    - [Failed-event destinations vs dead-letter queue](#failed-event-destinations-vs-dead-letter-queue)
+  - [Error handling with Amazon SQS as an event source](#error-handling-with-amazon-sqs-as-an-event-source)
 - [Notes from AWS PartnerCast](#notes-from-aws-partnercast)
 
 # Introduction for Serverless
@@ -133,6 +136,68 @@ This means you have to handle idempotency in your function rather than assuming 
 
 ![026-stream-events.png](./images/026-stream-events.png)
 ![027-stream-events.png](./images/027-stream-events.png)
+
+## Failed-event destinations
+
+For both **asynchronous** and **streaming** event sources, you can specify an on-failure destination for a Lambda function.
+
+For **asynchronous sources**, you have the option of an SNS topic, SQS queue, EventBridge event bus, or another Lambda function. 
+![028-failed-event-destinations.png](./images/028-failed-event-destinations.png)
+
+For **streaming event sources**, you can specify an SNS topic or an SQS queue.
+![029-failed-event-destinations.png](./images/029-failed-event-destinations.png)
+
+The SendOrder Step Functions task kicks off the SNS fulfillment topic, whose subscribers handle additional fulfillment requirements. Let’s say that one of the subscribers is a Lambda function that decides if the order qualifies for a promotional gift. If it does, the function initiates steps to send the gift from a third-party system.
+
+To handle potential failures caused by the third-party system, set the function’s on-failure destination equal to the ARN of an SNS topic that notifies the team responsible for fulfillment.
+
+![030-failed-event-destinations.png](./images/030-failed-event-destinations.png)
+
+### Failed-event destinations vs dead-letter queue
+
+There are a couple of advantages to using an on-failure destination rather than using a dead-letter queue.
+
+* First, the invocation record that is sent to the on-failure destination contains more data than the event object available to a dead-letter queue.
+* Second, it provides more flexibility to change or modify the failure behaviors. A dead-letter queue is part of a function’s version-specific configuration.  
+* You can also set on-success destinations to route successfully processed events without modifying your Lambda function code.
+
+![031-failed-event-destinations.png](./images/031-failed-event-destinations.png)
+
+## Error handling with Amazon SQS as an event source
+
+For polling event sources that aren’t stream based, for example Amazon SQS, if an invocation fails or times out, the message is available again when the visibility timeout period expires.
+
+Lambda keeps retrying that message until it is either successful or the queue’s **Maxreceivecount** limit has been exceeded.   
+
+As noted earlier, it’s a best practice to set up a dead-letter queue on the source queue to process the failed messages.   
+
+When you’re building serverless applications, you need to execute performance tests, and adjust retries and timeouts to find the optimal combination that allows your processes to complete but doesn’t create bottlenecks that can cascade throughout the system.   
+
+Let’s go back to the connection between an Amazon SQS queue and Lambda as an example of how you manage timeouts across services.
+
+You can set a timeout on your Lambda functions, and you can set the visibility timeout on SQS queues.
+
+You can also set the batch size for the queue from 1 to 10 messages per batch, which can impact both your function timeout and your visibility timeout configurations.
+
+You choose your Lambda timeout to allow the function to complete successfully under most circumstances.
+
+You also want to consider at what point to give up on individual invocation to avoid additional costs or prevent a bottleneck.
+
+**A larger batch size can reduce polling costs and improve efficiency for fast workloads**. **But for longer running functions, you might need a lower batch size so that everything in the batch is processed before the function timeout expires.**
+
+For example, a batch size of 10 would require fewer polling processes and fewer invocations than a batch size of 3.
+
+![032-lambda-sqs.png](./images/032-lambda-sqs.png)
+
+If your function typically can process a message in 2 seconds, then a batch size of 10 would typically process in 20 seconds, and you might use a function timeout of 30 seconds. But if your function takes 2 minutes to process each message, then it would take 20 minutes to process a batch of 10.
+
+However, the maximum timeout for Lambda is 15 minutes, so that batch would fail without processing all of its messages, and any messages in that batch that weren’t deleted by your function would again be visible on the queue. Which brings us back to the visibility timeout setting on the queue.
+
+You need to configure the visibility timeout to allow enough time for your Lambda function to complete a message batch. So if we stick with the example of a batch size of 10 and a Lambda function that takes 20 seconds to process the batch, you need a visibility timeout that is greater than 20 seconds.
+
+![033-lambda-sqs.png](./images/033-lambda-sqs.png)
+
+You also need to leave some buffer in the visibility timeout to account for Lambda invocation retries when the function is getting throttled. You don’t want your visibility timeout to expire before those messages can be processed. **The best practice is to set your visibility timeout to 6 times the timeout you configure for your function.**
 
 # Notes from AWS PartnerCast
 
