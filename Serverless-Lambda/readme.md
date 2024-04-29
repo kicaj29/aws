@@ -7,6 +7,11 @@
   - [Failed-event destinations](#failed-event-destinations)
     - [Failed-event destinations vs dead-letter queue](#failed-event-destinations-vs-dead-letter-queue)
   - [Error handling with Amazon SQS as an event source](#error-handling-with-amazon-sqs-as-an-event-source)
+  - [Error handling summary by execution model](#error-handling-summary-by-execution-model)
+    - [API GW (synchronous event source)](#api-gw-synchronous-event-source)
+    - [SNS (asynchronous event source)](#sns-asynchronous-event-source)
+    - [Kinesis Data Streams (polling a stream as event source)](#kinesis-data-streams-polling-a-stream-as-event-source)
+    - [SQS queue (polling a queue as an event source)](#sqs-queue-polling-a-queue-as-an-event-source)
 - [Notes from AWS PartnerCast](#notes-from-aws-partnercast)
 
 # Introduction for Serverless
@@ -198,6 +203,41 @@ You need to configure the visibility timeout to allow enough time for your Lambd
 ![033-lambda-sqs.png](./images/033-lambda-sqs.png)
 
 You also need to leave some buffer in the visibility timeout to account for Lambda invocation retries when the function is getting throttled. You don’t want your visibility timeout to expire before those messages can be processed. **The best practice is to set your visibility timeout to 6 times the timeout you configure for your function.**
+
+## Error handling summary by execution model
+
+### API GW (synchronous event source)
+
+* **Timeout considerations** – API Gateway has a 30-second timeout. If the Lambda function hasn't responded to the request within 30 seconds, an error is returned.
+* **Retries** – There are no built-in retries if a function fails to execute successfully.
+* **Error handling** – Generate the SDK from the API stage, and use the backoff and retry mechanisms it provides.
+
+### SNS (asynchronous event source)
+
+* **Timeout considerations** – Asynchronous event sources do not wait for a response from the function's execution. Requests are handed off to Lambda, where they are queued and invoked by Lambda.
+* **Retries** – Asynchronous event sources have built-in retries. If a failure is returned from a function's execution, Lambda will attempt that invocation **two more times** for a **total of three attempts** to execute the function with its event payload. You can use the Retry Attempts configuration to set the retries to 0 or 1 instead.
+
+If Lambda is unable to invoke the function (for example, if there is not enough concurrency available and requests are getting throttled), Lambda will continue to try to run the function again for up to **6 hours by default**. You can modify this duration with **Maximum Event Age**.
+
+Amazon SNS has unique retry behaviors among asynchronous events based on its delivery policy for AWS Lambda(opens in a new tab). It will perform 3 immediate tries, 2 at 1 second apart, 10 backing off from 1 second to 20 seconds, and 100,000 at 20 seconds apart.
+
+**Error handling** – Use the Lambda destinations(opens in a new tab) **OnFailure** option to send failures to another destination for processing. Alternatively, move failed messages to a **dead-letter queue** on the function. When Amazon SNS is the event source, you also have the option to configure a dead-letter queue on the SNS subscription.
+
+### Kinesis Data Streams (polling a stream as event source)
+
+* **Timeout considerations** – When the retention period for a record expires, the record is no longer available to any consumer. The retention period is **24 hours by default**. You can increase the retention period at a cost. As an event source for **Lambda**, you can configure **Maximum Record Age** to tell Lambda to skip processing a data record when it has reached its Maximum Record Age.
+* **Retries** – By default, Lambda retries a failing batch until the retention period for a record expires. You can configure Maximum Retry Attempts so that your Lambda function will skip retrying a batch of records when it has reached the Maximum Retry Attempts (or it has reached the Maximum Record Age).
+* **Error handling** – Configure an **OnFailure** destination on your Lambda function so that when a data record reaches the Maximum Retry Attempts or Maximum Record Age, you can send its metadata, such as shard ID and stream Amazon Resource Name (ARN), to an SQS queue or SNS topic for further investigation.
+
+Use **BisectBatchOnFunctionError** to tell Lambda to split a failed batch into two batches. Retry your function invocation with smaller batches to isolate bad records and work around timeout and retry issues.
+
+For more information on these error handling features, see the blog post AWS Lambda Supports Failure-Handling Features for Kinesis and DynamoDB Event Sources https://aws.amazon.com/about-aws/whats-new/2019/11/aws-lambda-supports-failure-handling-features-for-kinesis-and-dynamodb-event-sources/.
+
+### SQS queue (polling a queue as an event source)
+
+* **Timeout considerations** – When the visibility timeout expires, messages become visible to other consumers on the queue. Set your visibility timeout to 6 times the timeout you configure for your function.
+* **Retries** – Use the **maxReceiveCount** on the queue's policy to limit the number of times Lambda will retry to process a failed execution.
+* **Error handling** – Write your functions to delete each message as it is successfully processed. Move failed messages to a dead-letter queue configured on the source SQS queue.
 
 # Notes from AWS PartnerCast
 
