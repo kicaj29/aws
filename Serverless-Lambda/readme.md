@@ -62,7 +62,7 @@ In a synchronous invocation, like between API Gateway and Lambda, no retries are
 
 ## Asynchronous events
 
-![009-asynchronous-events.png](./images/[009-asynchronous-events.png])
+![009-asynchronous-events.png](./images/009-asynchronous-events.png)
 
 With asynchronous event sources, like Amazon S3, **Lambda provides built-in retry behaviors**.   
 
