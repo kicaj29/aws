@@ -229,9 +229,9 @@ You also need to leave some buffer in the visibility timeout to account for Lamb
 * **Retries** – By default, Lambda retries a failing batch until the retention period for a record expires. You can configure Maximum Retry Attempts so that your Lambda function will skip retrying a batch of records when it has reached the Maximum Retry Attempts (or it has reached the Maximum Record Age).
 * **Error handling** – Configure an **OnFailure** destination on your Lambda function so that when a data record reaches the Maximum Retry Attempts or Maximum Record Age, you can send its metadata, such as shard ID and stream Amazon Resource Name (ARN), to an SQS queue or SNS topic for further investigation.
 
-Use **BisectBatchOnFunctionError** to tell Lambda to split a failed batch into two batches. Retry your function invocation with smaller batches to isolate bad records and work around timeout and retry issues.
+  Use **BisectBatchOnFunctionError** to tell Lambda to split a failed batch into two batches. Retry your function invocation with smaller batches to isolate bad records and work around timeout and retry issues.
 
-For more information on these error handling features, see the blog post AWS Lambda Supports Failure-Handling Features for Kinesis and DynamoDB Event Sources https://aws.amazon.com/about-aws/whats-new/2019/11/aws-lambda-supports-failure-handling-features-for-kinesis-and-dynamodb-event-sources/.
+  For more information on these error handling features, see the blog post AWS Lambda Supports Failure-Handling Features for Kinesis and DynamoDB Event Sources https://aws.amazon.com/about-aws/whats-new/2019/11/aws-lambda-supports-failure-handling-features-for-kinesis-and-dynamodb-event-sources/.
 
 ### SQS queue (polling a queue as an event source)
 
