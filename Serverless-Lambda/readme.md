@@ -217,11 +217,11 @@ You also need to leave some buffer in the visibility timeout to account for Lamb
 * **Timeout considerations** – Asynchronous event sources do not wait for a response from the function's execution. Requests are handed off to Lambda, where they are queued and invoked by Lambda.
 * **Retries** – Asynchronous event sources have built-in retries. If a failure is returned from a function's execution, Lambda will attempt that invocation **two more times** for a **total of three attempts** to execute the function with its event payload. You can use the Retry Attempts configuration to set the retries to 0 or 1 instead.
 
-If Lambda is unable to invoke the function (for example, if there is not enough concurrency available and requests are getting throttled), Lambda will continue to try to run the function again for up to **6 hours by default**. You can modify this duration with **Maximum Event Age**.
+  If Lambda is unable to invoke the function (for example, if there is not enough concurrency available and requests are getting throttled), Lambda will continue to try to run the function again for up to **6 hours by default**. You can modify this duration with **Maximum Event Age**.
 
-Amazon SNS has unique retry behaviors among asynchronous events based on its delivery policy for AWS Lambda(opens in a new tab). It will perform 3 immediate tries, 2 at 1 second apart, 10 backing off from 1 second to 20 seconds, and 100,000 at 20 seconds apart.
+  Amazon SNS has unique retry behaviors among asynchronous events based on its delivery policy for AWS Lambda(opens in a new tab). It will perform 3 immediate tries, 2 at 1 second apart, 10 backing off from 1 second to 20 seconds, and 100,000 at 20 seconds apart.
 
-**Error handling** – Use the Lambda destinations(opens in a new tab) **OnFailure** option to send failures to another destination for processing. Alternatively, move failed messages to a **dead-letter queue** on the function. When Amazon SNS is the event source, you also have the option to configure a dead-letter queue on the SNS subscription.
+* **Error handling** – Use the Lambda destinations(opens in a new tab) **OnFailure** option to send failures to another destination for processing. Alternatively, move failed messages to a **dead-letter queue** on the function. When Amazon SNS is the event source, you also have the option to configure a dead-letter queue on the SNS subscription.
 
 ### Kinesis Data Streams (polling a stream as event source)
 
