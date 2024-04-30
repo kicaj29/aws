@@ -19,6 +19,10 @@
     - [Organic](#organic)
     - [Strangler](#strangler)
 - [Serverless IT automation](#serverless-it-automation)
+- [Serverless web applications and mobile apps](#serverless-web-applications-and-mobile-apps)
+  - [Example: Web application](#example-web-application)
+  - [Example: Mobile backend](#example-mobile-backend)
+- [Best practices for serverless applications](#best-practices-for-serverless-applications)
 - [Notes from AWS PartnerCast](#notes-from-aws-partnercast)
 
 # Introduction for Serverless
@@ -272,7 +276,7 @@ As the name suggests, with the leapfrog pattern, you bypass interim steps and go
 
 ### Organic
 
-With the organic pattern, you move on-premises applications to the cloud in more of a **lift-and-shift model**. In this model, existing applications are kept intact, either running on Amazon Elastic Compute Cloud (Amazon EC2) instances or with some limited rewrites to container services such as Amazon Elastic Kubernetes Service (Amazon EKS), Amazon Elastic Container Service (Amazon ECS), or AWS Fargate.
+With the organic pattern, you move on-premises applications to the cloud in more of a **lift-and-shift model**. **In this model, existing applications are kept intact**, either running on Amazon Elastic Compute Cloud (Amazon EC2) instances **or with some limited rewrites to container services such** as Amazon Elastic Kubernetes Service (Amazon EKS), Amazon Elastic Container Service (Amazon ECS), or AWS Fargate.
 
 ### Strangler
 
@@ -290,6 +294,41 @@ A powerful IT automation pattern is to trigger a Lambda function that assesses w
 
 * **1 CloudWatch event for security group change**: a CloudWatch event is fired off whenever someone modifies a security group
 * **2 Lambda function evaluates the change**: the CloudWatch event triggers a Lambda function through AWS Config that has custom code to review a list of what security group rules are allowed or denied. If the update is not allowed, the function deletes the rule and uses SNS to send an email alert.
+
+# Serverless web applications and mobile apps
+
+A common event-driven pattern forms the basic backbone of a serverless web application architecture using Amazon API Gateway to handle HTTP requests, Lambda to provide the application layer, and Amazon DynamoDB to provide database functionality.
+
+## Example: Web application
+
+In this example, you will see a demo architecture for a serverless web application. You can add Amazon Cognito for authentication and add Amazon Simple Storage Service (Amazon S3) and Amazon CloudFront to quickly serve up static content from anywhere. 
+
+![038-web-app.png](./images/038-web-app.png)
+
+* **1 Start with the basic pattern**: this event-driven pattern is one approach in forming the basic backbone of a serverless web application architecture. When a request comes in, API GW sends it to SQS and gets a message ID back, which the client can use to track the message. The message is stored durably on the queue and the Lambda service polls the queue. If the Lambda finds a new message on the queue, it invokes Lambda function using the message as a parameter.
+* **2 Authentication**: Cognito can be used for sign-up and sign-in.
+* **3 S3 and CloudFront serve static assets**
+
+## Example: Mobile backend
+
+Similar to the web application example, in this example you will see a demo architecture for a serverless mobile backend. For mobile applications, users expect real-time data and a feature-rich user experience. Users also expect their data to be available when they’re offline or using a low-speed connection, and they expect data to be synchronized across devices. You have the added challenge that, with a microservice-based architecture, it takes multiple connections to retrieve distributed data vs. a single connection, which you might use in a more traditional backend.
+
+![039-mobile-app.png](./images/039-mobile-app.png)
+
+* **1 AWS Appsync provides a single point**: one GraphQL endpoint which spans out to interact with lots of backend services.
+* **2 Authentication**: Cognito can be used for sign-up and sign-in.
+* **3 Elasticsearch Service for search and analytics**: DynamoDB Streams indexes relevant data to ElasticSearch through a Lambda function. You can use ES for both application search engine and for analytics.
+* **4 Pinpoint for analytics and targeted communications**: captures analytics data from clients and also sends targeted texts or emails based on user data.
+
+
+# Best practices for serverless applications
+
+* **Don’t reinvent the wheel**. Use managed services when possible and use the AWS Serverless Application Repository and Serverless Patterns Collection.
+* **Don’t just port your code.** You can easily copy code from other applications and run it in Lambda. But if you don’t apply event-driven thinking, you’re going to miss out on some of the benefits. It’s OK to start here, but revisit and iterate.
+* **Stay current.** Services and available serverless applications evolve quickly. There might be an easier way to do something.
+* **Prefer idempotent, stateless functions.**: When you can’t, use Step Functions where you need stateful control (retries, long-running).
+* **Keep events inside AWS services for as long as possible.**: Let AWS services talk directly to each other whenever possible rather than writing code to do it.
+* **Verify the limits of all of the services involved.**: You can use AWS Service Quotas console to view and request increases for most AWS quotas.
 
 # Notes from AWS PartnerCast
 
