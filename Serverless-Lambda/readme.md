@@ -13,6 +13,7 @@
     - [Kinesis Data Streams (polling a stream as event source)](#kinesis-data-streams-polling-a-stream-as-event-source)
     - [SQS queue (polling a queue as an event source)](#sqs-queue-polling-a-queue-as-an-event-source)
   - [Dead-letter queues for Lambda functions and for SQS source queues](#dead-letter-queues-for-lambda-functions-and-for-sqs-source-queues)
+  - [AWS Event Fork Pipelines](#aws-event-fork-pipelines)
 - [Notes from AWS PartnerCast](#notes-from-aws-partnercast)
 
 # Introduction for Serverless
@@ -243,6 +244,14 @@ You also need to leave some buffer in the visibility timeout to account for Lamb
 ## Dead-letter queues for Lambda functions and for SQS source queues
 
 ![034-dead-letter.png](./images/034-dead-letter.png)
+
+## AWS Event Fork Pipelines 
+
+AWS Event Fork Pipelines are prebuilt applications, available in the [AWS Serverless Application Repository](https://aws.amazon.com/serverless/serverlessrepo/), that you can use in your serverless applications.
+
+The **Event Replay Pipeline** buffers events from the given Amazon SNS topic into an Amazon SQS queue, so it can replay these events back to another pipeline in a disaster recovery scenario.
+
+![035-event-replay-pipeline.png](./images/035-event-replay-pipeline.png)
 
 # Notes from AWS PartnerCast
 

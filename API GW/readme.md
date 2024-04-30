@@ -1127,6 +1127,13 @@ To summarize, with X-Ray, you can trace and analyze requests as they travel thro
 * Analyze latencies and debug errors in your APIs and their backend services.
 * Configure sampling rules to focus on specific requests.
 
+When X-Ray is enabled, it gets data from services as **segments**, and groups them by request into **traces**. X-Ray then creates a service **graph** that gives you a visual representation of what’s happening at each service integration point, highlighting successful and failed service calls.   
+
+You can use **subsegments** to give you more granular visibility into application performance. You can also use **subsegments to debug or annotate blocks of code** in your application.  
+
+You can also **add annotations to segments** in order **to group traces** to help you identify performance stats on application-specific operations. Annotations are key-value pairs with string, number, or Boolean values that are **automatically indexed by X-Ray**.
+You can search traces by annotation. Annotations might help you see how long it takes to query a database, how many retries it took to succeed, or what was the processing time per file, event, or operation.
+
 ### AWS CloudTrail
 
 The second service, CloudTrail, captures all API calls for API Gateway as events, including calls from the API Gateway console and from code calls to your API Gateway APIs.
