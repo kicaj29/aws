@@ -16,7 +16,7 @@
 
 ![001-client-pooling.png](./images/001-client-pooling.png)
 
-Client polling is a common way to get status information on a long-running transaction.   
+Client polling is a common way to get **status information on a long-running transaction**.   
 Advantages:
 * Convenient to replace a synchronous flow
 Disadvantages
