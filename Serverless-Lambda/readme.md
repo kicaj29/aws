@@ -38,7 +38,7 @@ It’s important here to distinguish between the Lambda service and your individ
 
 ![004-sqs-inegration.png](./images/004-sqs-inegration.png)
 
-By default, Lambda reads up to five batches at a time and sends each batch to an invocation of your function. Each invocation of the Lambda function gets an event object that contains the messages in a batch.   
+**By default, Lambda reads up to five batches at a time** and sends each batch to an invocation of your function. Each invocation of the Lambda function gets an event object that contains the messages in a batch.   
 The messages in that batch become hidden to other consumers for the duration of the queue’s visibility timeout setting.   
 **When your Lambda function successfully processes a batch, the Lambda service deletes that batch of messages from the queue. If your function returns an error or doesn’t respond, the messages in that batch become visible again.**   
 
@@ -205,6 +205,8 @@ You need to configure the visibility timeout to allow enough time for your Lambd
 ![033-lambda-sqs.png](./images/033-lambda-sqs.png)
 
 You also need to leave some buffer in the visibility timeout to account for Lambda invocation retries when the function is getting throttled. You don’t want your visibility timeout to expire before those messages can be processed. **The best practice is to set your visibility timeout to 6 times the timeout you configure for your function.**
+
+**If a Lambda function returns errors when processing messages, Lambda decreases the number of processes polling the queue.**
 
 ## Error handling summary by execution model
 
