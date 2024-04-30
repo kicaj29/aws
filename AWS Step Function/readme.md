@@ -3,6 +3,8 @@
 - [Why Use AWS Step Functions?](#why-use-aws-step-functions)
 - [Step Functions features](#step-functions-features)
 - [Built-in error handling](#built-in-error-handling)
+  - [Example: Error handling with Step Functions](#example-error-handling-with-step-functions)
+  - [Example: Error handling with the Saga pattern](#example-error-handling-with-the-saga-pattern)
 - [History of each run](#history-of-each-run)
 - [Visual Monitoring](#visual-monitoring)
 - [High volume orchestration](#high-volume-orchestration)
@@ -82,7 +84,54 @@ AWS Step Functions helps with any computational problem or business process that
 
 # Built-in error handling
 
-AWS Step Functions automatically handles errors and exceptions with built-in try/catch and retry, whether the task takes seconds or months to complete. You can automatically retry failed or timed-out tasks, respond differently to different types of errors, and recover gracefully by falling back to designated cleanup and recovery code.
+AWS Step Functions automatically handles errors and exceptions with built-in try/catch and retry, whether the task takes seconds or months to complete. You can automatically retry failed or timed-out tasks, respond differently to different types of errors, and recover gracefully by falling back to designated cleanup and recovery code.   
+
+Whenever possible, you should use Step Functions to minimize the amount of custom retry and backoff code you write in your Lambda functions.   
+
+Step Functions supports errors and **retries via a looping pattern** and provides **try/catch/finally logic for known or unknown errors**.
+
+At a high level, **task and parallel states can use fields named Retry and Catch** for error handling. When a state reports an error and there is no Retry or the retries don’t resolve the problem, Step Functions looks through the catchers for a matching error and transitions to the state named in the next field.   
+
+Each catcher can specify multiple errors to handle. The reserved name States.ALL is a wildcard that matches any error name.
+
+* Example with **Retry field**
+
+  ![18-error-handling.png](./images/18-error-handling.png)
+  This example uses a Retry field to retry a function that fails and outputs the error name HandledError. The function is retried twice with an exponential backoff between retries. 
+
+* Example with **Catch field**
+
+  ![19-error-handling.png](./images/19-error-handling.png)
+  This example uses a Catch field to catch the error and transition the state machine to the fallback state
+
+* Example with **Retry field**
+
+  ![20-error-handling.png](./images/20-error-handling.png)
+  This example highlights the use of Retry to handle a **Lambda function timeout**. The function is retried twice with an exponential backoff between retries.
+
+* Example with **Catch field**
+  
+  ![21-error-handling.png](./images/21-error-handling.png)
+  Tis example uses a Catch field to **handle the timeout** and transition to the fallback state.
+
+As a best practice, ensure that production code can handle AWS Lambda service exceptions (Lambda.ServiceException and Lambda.SdkclientException). Any tasks that invoke a Lambda function should handle Lambda service exceptions.
+
+## Example: Error handling with Step Functions
+
+![22-error-handling.png](./images/22-error-handling.png)
+
+* **1 Lambda function fails to write data**: what if the lambda function fails to write the execution ARN and WebSocket URL?
+  In  this case, a retry won`t resolve it, so you could use **Catch** field to catch the error and transition to a fallback state.
+* **2 Call to DynamoDB fails**: what if the call to DynamoDB table fails when trying to retrieve the connection ID?
+  To address this, you should include a **Retry** field with exponential backoff to retry connection.
+* **3 Step function finishes before the client connections**: what if the step function works completes before the client has connected through the WebSocket API? The notification step wouldn`t find the connection ID in the DynamoDB table.
+  To address this, you could nest a **looping pattern** within the **GetConn** task that uses a Lambda function to execute the GetItemAPI call to the database a set number of times before failing that step.
+
+## Example: Error handling with the Saga pattern
+
+The Saga pattern is used to manage failures where each step within the larger business transaction includes compensating transactions that **undo the changes made by its predecessors**.
+
+![23-error-handling.png](./images/23-error-handling.png)
 
 # History of each run
 
