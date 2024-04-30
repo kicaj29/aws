@@ -12,6 +12,7 @@
     - [SNS (asynchronous event source)](#sns-asynchronous-event-source)
     - [Kinesis Data Streams (polling a stream as event source)](#kinesis-data-streams-polling-a-stream-as-event-source)
     - [SQS queue (polling a queue as an event source)](#sqs-queue-polling-a-queue-as-an-event-source)
+  - [Dead-letter queues for Lambda functions and for SQS source queues](#dead-letter-queues-for-lambda-functions-and-for-sqs-source-queues)
 - [Notes from AWS PartnerCast](#notes-from-aws-partnercast)
 
 # Introduction for Serverless
@@ -238,6 +239,10 @@ You also need to leave some buffer in the visibility timeout to account for Lamb
 * **Timeout considerations** – When the visibility timeout expires, messages become visible to other consumers on the queue. Set your visibility timeout to 6 times the timeout you configure for your function.
 * **Retries** – Use the **maxReceiveCount** on the queue's policy to limit the number of times Lambda will retry to process a failed execution.
 * **Error handling** – Write your functions to delete each message as it is successfully processed. Move failed messages to a dead-letter queue configured on the source SQS queue.
+
+## Dead-letter queues for Lambda functions and for SQS source queues
+
+![034-dead-letter.png](./images/034-dead-letter.png)
 
 # Notes from AWS PartnerCast
 
