@@ -14,6 +14,11 @@
     - [SQS queue (polling a queue as an event source)](#sqs-queue-polling-a-queue-as-an-event-source)
   - [Dead-letter queues for Lambda functions and for SQS source queues](#dead-letter-queues-for-lambda-functions-and-for-sqs-source-queues)
   - [AWS Event Fork Pipelines](#aws-event-fork-pipelines)
+  - [Migrating to Serverless](#migrating-to-serverless)
+    - [Leapfrog](#leapfrog)
+    - [Organic](#organic)
+    - [Strangler](#strangler)
+- [Serverless IT automation](#serverless-it-automation)
 - [Notes from AWS PartnerCast](#notes-from-aws-partnercast)
 
 # Introduction for Serverless
@@ -254,6 +259,37 @@ AWS Event Fork Pipelines are prebuilt applications, available in the [AWS Server
 The **Event Replay Pipeline** buffers events from the given Amazon SNS topic into an Amazon SQS queue, so it can replay these events back to another pipeline in a disaster recovery scenario.
 
 ![035-event-replay-pipeline.png](./images/035-event-replay-pipeline.png)
+
+## Migrating to Serverless
+
+At a high level, there are three migration patterns that you might follow to migrate your legacy applications to a serverless model.
+
+### Leapfrog
+
+As the name suggests, with the leapfrog pattern, you bypass interim steps and go straight from an on-premises legacy architecture to a serverless cloud architecture.
+
+![036-migration-to-serverless.png](./images/036-migration-to-serverless.png)
+
+### Organic
+
+With the organic pattern, you move on-premises applications to the cloud in more of a **lift-and-shift model**. In this model, existing applications are kept intact, either running on Amazon Elastic Compute Cloud (Amazon EC2) instances or with some limited rewrites to container services such as Amazon Elastic Kubernetes Service (Amazon EKS), Amazon Elastic Container Service (Amazon ECS), or AWS Fargate.
+
+### Strangler
+
+With the strangler pattern, an organization incrementally and systematically decomposes monolithic applications by creating APIs and building event-driven components that gradually replace components of the legacy application.
+
+Distinct API endpoints can point to old compared to new components and safe deployment options (such as canary deployments) let you point back to the legacy version with very little risk.
+
+New feature branches can be serverless first, and legacy components can be decommissioned as they are replaced. This pattern represents a more systematic approach to adopting serverless, **allowing you to move to critical improvements where you see benefit quickly but with less risk and upheaval than the leapfrog pattern**.
+
+# Serverless IT automation
+
+A powerful IT automation pattern is to trigger a Lambda function that assesses whether a configuration change is allowed and deletes the change automatically if it is not allowed. In this example, you will learn how configuration changes can be automated in response to an event.
+
+![037-Automate-response.png](./images/037-Automate-response.png)
+
+* **1 CloudWatch event for security group change**: a CloudWatch event is fired off whenever someone modifies a security group
+* **2 Lambda function evaluates the change**: the CloudWatch event triggers a Lambda function through AWS Config that has custom code to review a list of what security group rules are allowed or denied. If the update is not allowed, the function deletes the rule and uses SNS to send an email alert.
 
 # Notes from AWS PartnerCast
 
