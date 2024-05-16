@@ -10,6 +10,9 @@
     - [Step functions](#step-functions)
     - [Amazon SNS](#amazon-sns)
   - [Scaling considerations for Kinesis Data Streams](#scaling-considerations-for-kinesis-data-streams)
+    - [Enhanced fan-out](#enhanced-fan-out)
+    - [IteratorAge](#iteratorage)
+    - [Getting it "just right"](#getting-it-just-right)
 - [Handling errors](#handling-errors)
   - [Synchronous events](#synchronous-events)
   - [Asynchronous events](#asynchronous-events)
@@ -86,7 +89,6 @@ Make sure that you configure the dead-letter queue on the source queue versus co
 * **Lambda with SQS:** when you integrate AWS Lambda with SQS, the Lambda service polls the SQS queue and invokes your Lambda function synchronously with the message. **This is a pull-based model**.
   * SQS supports point-to-point messaging, meaning a message in the queue is processed by a single consumer (Lambda function).
   * If the Lambda function fails to process the message, SQS automatically retries delivering the message based on the visibility timeout setting. If all retries fail, SQS can move the message to a dead-letter queue.
-
 
 # Scaling consideration
 
@@ -226,6 +228,64 @@ Use the pipelines to model your own SNS fanouts. By default, 200 filter policies
 
 ## Scaling considerations for Kinesis Data Streams
 
+Amazon Kinesis Data Streams are designed to handle very high volumes of data. There are a couple of constraints that you need to consider when deciding how to configure your Kinesis data stream.
+
+Stream processing is dependent on the number of shards on the stream. AWS Lambda gets records in a batch (one per shard) and invokes one instance of your function per shard.
+
+If Lambda can’t process one message in the shard, that whole shard is blocked until you either force that message to complete or the retention period expires for the data in the shard.
+
+![047-kinesis.png](./images/047-kinesis.png)
+
+Customize failure handling with:
+
+* Bisect on function error
+* Maximum record age in seconds
+* Maximum retry attempts
+* Destination on failure
+
+Kinesis Data streams can take in up to 1 MB of data or 1,000 records per second, per shard from a producer. When you look at the volume of data you expect to produce, this will drive how many shards you need.
+
+For example, if you need the stream to take in 4,000 records or 4 MB of data per second, you’ll need four shards.
+
+![048-kinesis.png](./images/048-kinesis.png)
+
+When you use Lambda as a consumer of a stream, the Lambda service is handling some things behind the scenes. For example, it determines how frequently the stream is polled, and it uses a GetRecords API call to get data off the stream. "GetRecords" requests can only be made at five transactions per second, per shard.
+
+Each request can return a maximum of 2 MB of data. You can have up to five standard consumers on a stream, but all of them have to share the polling capacity and the data capacity.
+
+So, if you have five standard consumers, each one can poll each shard only once per second (verses five times) and each one is getting 1/5 of the data bandwidth. So, latency goes up, and throughput goes down.
+
+![049-kinesis.png](./images/049-kinesis.png)
+
+### Enhanced fan-out
+
+In 2018, the option for enhanced fan-out was introduced to address these limitations, and it also changes the model of how the consumers get data off the stream. **Standard consumers poll the stream**.
+
+Enhanced fan-out **consumers subscribe to the stream**. Once they are subscribed, data from the shard is pushed out to the consumer using an HTTP/2 request that can run for up to 5 minutes. Data will keep getting pushed out to the consumer as it comes in.
+
+This reduces the latency such that the delivery rate is more like 50 to 70 ms. Additionally, enhanced fan-out increases throughput. Any consumers that are using enhanced fan-out get their own pipe, so they’re getting the full 2 MB per shard.
+
+There is an additional cost to using enhanced fan-out, so consider what your traffic will look like, and whether the latency of a standard consumer is acceptable. Generally speaking, if you have three consumers or less, and latency isn’t critical, you probably want to use a standard stream to minimize the cost.
+
+### IteratorAge
+
+https://docs.aws.amazon.com/lambda/latest/dg/with-kinesis.html#events-kinesis-metrics
+
+Lambda emits the `IteratorAge` metric when your function finishes processing a batch of records. The metric indicates how old the last record in the batch was when processing finished. If your function is processing new events, you can use the iterator age to estimate the latency between when a record is added and when the function processes it. **An increasing trend in iterator age can indicate issues with your function**.
+
+### Getting it "just right"
+
+You need to find the right balance between the type of stream, number of shards, batch size, and retention timeout.
+
+With more shards, there are more batches being processed at once, which increases throughput and lowers how errors impact your stream processing. But there is a cost to using more shards.
+
+If your Lambda function runs too long or runs into errors processing a batch, other messages on the stream might reach their retention timeout before you’ve consumed them.
+
+If your Lambda function is not processing records in a timely manner, you’ll see the IteratorAge metric increase on your Lambda dashboard, and this may indicate that you need to **"reshard"**. **Resharding lets you increase the number of shards in your stream to adapt to changes in the rate of data flow**. When you reshard, data records that were flowing into the existing shards are rerouted to new shards based on key values.
+
+However, any data records that were in the existing shards before the reshard, remain in those shards. For example, if you have two shards, each with 1,000 records, and you reshard and add a third, the existing 1,000 records will remain and need to be processed on the original two shards.
+
+**Only new records will be split among all three shards.** When sizing these parameters, try to think through all possibilities such as an issue with your record processing logic, or a downstream dependency.
 
 # Handling errors
 
