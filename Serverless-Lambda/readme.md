@@ -23,6 +23,7 @@
   - [Example: Web application](#example-web-application)
   - [Example: Mobile backend](#example-mobile-backend)
 - [Best practices for serverless applications](#best-practices-for-serverless-applications)
+- [Concurrency](#concurrency)
 - [Notes from AWS PartnerCast](#notes-from-aws-partnercast)
 
 # Introduction for Serverless
@@ -44,6 +45,8 @@ It’s important here to distinguish between the Lambda service and your individ
 * The Lambda service reads messages in batches and invokes your Lambda **function once per batch**.
 
 ![003-sqs-inegration.png](./images/003-sqs-inegration.png)
+
+Lambda will continue to add additional processes every minute until the queue has slowed down, or it reaches maximum concurrency. Maximum concurrency is 1,000, unless the account or function limit is lower.
 
 ![004-sqs-inegration.png](./images/004-sqs-inegration.png)
 
@@ -329,6 +332,15 @@ Similar to the web application example, in this example you will see a demo arch
 * **Prefer idempotent, stateless functions.**: When you can’t, use Step Functions where you need stateful control (retries, long-running).
 * **Keep events inside AWS services for as long as possible.**: Let AWS services talk directly to each other whenever possible rather than writing code to do it.
 * **Verify the limits of all of the services involved.**: You can use AWS Service Quotas console to view and request increases for most AWS quotas.
+
+# Concurrency
+
+![040-concurrency.png](./images/040-concurrency.png)
+
+For data streams concurrency is measured by shards. There was a limit of one concurrent Lambda invocation per shard but now
+
+![041-concurrency.png](./images/041-concurrency.png)
+
 
 # Notes from AWS PartnerCast
 
