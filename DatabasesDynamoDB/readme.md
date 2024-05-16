@@ -167,6 +167,9 @@ Auto Scaling is reactive and takes a little time to recognize the pattern in you
 
 ![022-table-capacity.png](./images/022-table-capacity.png)
 
+![025-scaling.png](./images/025-scaling.png)
+
+
 ## Global Tables
 
 ![007-global-tables.png](./images/007-global-tables.png)

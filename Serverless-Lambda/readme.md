@@ -1,5 +1,15 @@
 - [Introduction for Serverless](#introduction-for-serverless)
 - [Integration with SQS](#integration-with-sqs)
+- [Lambda with SNS vs Lambda with SQS](#lambda-with-sns-vs-lambda-with-sqs)
+- [Scaling consideration](#scaling-consideration)
+  - [Burst](#burst)
+  - [Memory](#memory)
+  - [Lambda execution environment reuse](#lambda-execution-environment-reuse)
+  - [Serverless scaling with traditional relational databases](#serverless-scaling-with-traditional-relational-databases)
+  - [Scaling considerations for Step Functions and Amazon SNS](#scaling-considerations-for-step-functions-and-amazon-sns)
+    - [Step functions](#step-functions)
+    - [Amazon SNS](#amazon-sns)
+  - [Scaling considerations for Kinesis Data Streams](#scaling-considerations-for-kinesis-data-streams)
 - [Handling errors](#handling-errors)
   - [Synchronous events](#synchronous-events)
   - [Asynchronous events](#asynchronous-events)
@@ -54,6 +64,8 @@ Lambda will continue to add additional processes every minute until the queue ha
 The messages in that batch become hidden to other consumers for the duration of the queue’s visibility timeout setting.   
 **When your Lambda function successfully processes a batch, the Lambda service deletes that batch of messages from the queue. If your function returns an error or doesn’t respond, the messages in that batch become visible again.**   
 
+It means also that lambda function should have configured concurrency at least set to 5!
+
 ![005-sqs-inegration.png](./images/005-sqs-inegration.png)
 
 If any of the messages in the batch fail, all items in the batch become visible on the queue again. This means that some messages will be processed more than once. **You want to include code in your Lambda functions to handle this kind of partial failure.** Your Lambda function should delete each message from the queue after successfully processing it. That way if the batch fails, only the unsuccessful messages reappear in the queue.
@@ -64,6 +76,156 @@ When a message continues to fail, send it to a dead-letter queue. A dead-letter 
 Make sure that you configure the dead-letter queue on the source queue versus configuring the dead-letter queue option on the Lambda function.
 
 ![042-sqs-table.png](./images/042-sqs-table.png)
+
+# Lambda with SNS vs Lambda with SQS
+
+* **Lambda with SNS**: when you integrate AWS Lambda with SNS, the Lambda function is invoked when a message is published to the SNS topic. This is a push-based invocation, **where SNS pushes the message to the Lambda function**.
+  * SNS supports fan-out architecture, meaning a single message can be delivered to multiple subscribers (which can be multiple Lambda functions).
+  * If the Lambda function fails to process the message, SNS will not retry the delivery. You need to handle retries and dead-letter queues at the Lambda function level.
+
+* **Lambda with SQS:** when you integrate AWS Lambda with SQS, the Lambda service polls the SQS queue and invokes your Lambda function synchronously with the message. **This is a pull-based model**.
+  * SQS supports point-to-point messaging, meaning a message in the queue is processed by a single consumer (Lambda function).
+  * If the Lambda function fails to process the message, SQS automatically retries delivering the message based on the visibility timeout setting. If all retries fail, SQS can move the message to a dead-letter queue.
+
+
+# Scaling consideration
+
+## Burst
+
+The key thing is to know, that all of your account concurrency is not available immediately. **This means requests could be throttled for a few minutes even when the limit itself is higher than the burst.**
+
+When you get a burst of requests, Lambda will immediately increase concurrency up to the "Immediate Concurrency Increase" level for the AWS Region where your Lambda function is running. Then, it will add 500 more invocations each minute, until it either has enough to process the burst, or hits the function or account concurrency limit.
+
+![043-burst.png](./images/043-burst.png)
+
+## Memory
+
+When you configure functions, there is only one setting that can impact performance—memory. However, both CPU and I/O scale linearly with memory configuration. For example, a function with 256 MB of memory has twice the CPU and I/O as a 128 MB function.
+
+Memory assignment will impact how long your function runs and, at a larger scale, can impact when functions are throttled
+
+For example, if your function lasts 10 seconds on average, and there are 25 requests per second, you need 250 concurrent invocations of that function.
+
+![044-scaling.png](./images/044-scaling.png)
+
+But if your function lasts only 5 seconds at the same request rate, you only need 125 concurrent invocations.
+
+![045-scaling.png](./images/045-scaling.png)
+
+Performance has an effect on function pricing, too. Lambda costs are determined by the number of requests and the duration of the function. **Functions that are assigned more memory may actually be cheaper to run because they’ll run faster.**
+
+**AWS Lambda Power Tuning** is an open-source project that runs your Lambda function at multiple memory configurations and provides feedback across execution time, and cost, to help you make the best choice.
+
+## Lambda execution environment reuse
+
+https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtime-environment.html   
+https://www.youtube.com/watch?v=E20B8Izr5fI   
+
+When you’re writing AWS Lambda functions, even though you really need to make them stateless, and assume every Lambda invocation could get a new execution environment, you can improve performance of your functions by taking advantage of reuse when the same execution environment is reused (that is, when you get a **"warm start"**).
+
+Here are a few best practices to incorporate into your Lambda function design standards.
+
+If your code retrieves any externalized configuration or dependencies, make sure they are **stored and referenced locally after initial execution**. For example, if your function retrieves information from an external source like a relational database or AWS Systems Manager Parameter Store, it should be kept outside of the function handler. By doing so, the lookup occurs when the function is initially run. Subsequent warm invocations will not need to perform the lookup.
+
+You should also limit the re-initialization of variables or objects on every invocation. Any declarations in your Lambda function code (outside the handler code) remain initialized when a function is invoked.
+
+Add logic to your code to check whether a connection already exists before creating one. If one exists, just reuse it. We’ll talk a bit more about managing connections in the next video.
+
+Add code to check whether the local cache has the data that you stored previously. Each execution context provides additional disk space in the /tmp directory that remains in a reused environment.
+
+And finally, make sure any background processes (or callbacks in the case of Node.js) are complete before the code exits.
+
+Background processes or callbacks initiated by the function that don’t complete when the function ended will resume, if you get a warm start.
+
+https://stackoverflow.com/questions/43463130/c-sharp-lambda-constructor-not-called-in-consecutive-lambda-calls  
+https://aws.amazon.com/blogs/compute/container-reuse-in-lambda/   
+https://kenhalbert.com/posts/useful-csharp-aws-lambda-function-patterns   
+
+```cs
+using Amazon.Lambda.Core;
+using System.Data.SqlClient;
+
+[assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.Json.JsonSerializer))]
+
+public class Function
+{
+    // Static variable to store the database connection string
+    private static string connectionString;
+
+    // Static constructor
+    static Function()
+    {
+        // This code will be executed during the initialization phase
+        connectionString = System.Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
+    }
+
+    public string FunctionHandler(string input, ILambdaContext context)
+    {
+        // Use the connection string to connect to the database
+        using (SqlConnection connection = new SqlConnection(connectionString))
+        {
+            connection.Open();
+            // Perform database operations here...
+        }
+
+        return input?.ToUpper();
+    }
+}
+```
+
+## Serverless scaling with traditional relational databases
+
+When you look at methods you’d traditionally use to manage relational database connections, you’ll find inherent challenges applying them with AWS Lambda.
+
+The main hurdle is the fact that Lambda execution environments are ephemeral, and you don’t control when a new one starts up or an existing one is destroyed.
+
+You can initialize connections inside your function, (outside the handler), to make them available for as long as the execution environment is alive. But there’s no point initializing more than one connection, **because that environment will never execute more than one Lambda function at a time.**
+
+So, as a starting point, you might initialize a single connection outside of the handler, and then check for that connection as each new invocation of that function is executed.
+
+A separate challenge is that you can’t explicitly close connections when an environment gets recycled, because there is no hook to let you indicate destruction of a Lambda environment. You can use the database Time to Live as a fallback to clean up connections, but this can still lead to session leakages.
+
+Because you have no control over the lifecycle of the execution environments, you could have connections sitting idle. **And because you can’t share environments with two different Lambda functions, you can’t reuse idle connections across functions.**
+
+You can use Lambda concurrency limits at the function level to limit the number of potential connections that Lambda would attempt to create.
+
+You might also need to do this at the account level, to segregate connections for different applications. But this adds complexity to account management, and you still can’t share connections dynamically across multiple functions. Plus, it can be difficult to know where to set the limits effectively.
+
+![046-db-connections.png](./images/046-db-connections.png)
+
+**So what else can you do?**
+
+The best practice is to implement an external mechanism for managing the connections.
+For example, your database engine may have a proxy program that will manage the incoming connection requests and use a persistent database connection that can be shared across functions.
+
+You could also use a method called Dynamic Content Management. This method uses an Amazon DynamoDB table to track connections allowed and connections in use and manipulates the count with a helper function packaged as a Lambda layer.
+
+## Scaling considerations for Step Functions and Amazon SNS
+
+### Step functions
+
+Most of the guidance around scaling with AWS Step Functions thus far has focused on how Step Functions helps you manage scaling.
+
+For example, it lets you orchestrate tasks that trigger long-running activities, that might happen in AWS Fargate, AWS Batch, or even on an on-premises resource. **It’s a best practice to use wait states and callbacks to reduce costs when you are waiting on other tasks to finish.**
+
+You also want to use timeouts within Step Functions to avoid stuck executions. Step Functions doesn’t set a default timeout. So if something goes wrong while it’s waiting on a response from an activity worker, it’s just going to sit there patiently waiting for a response that won’t come. To avoid this, use the **TimeoutSeconds** options within the Amazon States Language to end the activity, regardless of the response.
+
+It’s also important to understand the size of the data that will be fed into or be passed out of one Step Functions state to the next.
+
+If your payload has the potential to grow beyond the limit for input or output data size, use Amazon Simple Storge Service (Amazon S3) to store the data **and pass the ARN of the S3 bucket**. I spoke about this in the context of direct connections with Amazon API Gateway, but there is a limit to how many StartExecution requests can be made per second, and requests beyond that level will be throttled.
+
+There are similar limits on the other APIs within Step Functions. Make sure you are aware of the limits of the APIs you use and include testing against them in your load tests.
+
+### Amazon SNS
+
+SNS can give you asynchronous connections and parallel execution of functions, or nested applications within your larger application.
+
+In particular, the **AWS Event Fork Pipeline** applications available in the Serverless Application Repository let you deploy pre-built applications that use SNS to execute common tasks in parallel.
+
+Use the pipelines to model your own SNS fanouts. By default, 200 filter policies per account, per AWS Region can be applied to a topic.
+
+## Scaling considerations for Kinesis Data Streams
+
 
 # Handling errors
 
