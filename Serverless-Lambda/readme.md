@@ -63,6 +63,8 @@ If any of the messages in the batch fail, all items in the batch become visible 
 When a message continues to fail, send it to a dead-letter queue. A dead-letter queue is another SQS queue that you use to process failed messages. This is optional, but recommended.   
 Make sure that you configure the dead-letter queue on the source queue versus configuring the dead-letter queue option on the Lambda function.
 
+![042-sqs-table.png](./images/042-sqs-table.png)
+
 # Handling errors
 
 When you invoke a function, two types of errors can occur:
