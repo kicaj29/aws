@@ -53,6 +53,7 @@
     - [Deployment strategies](#deployment-strategies)
       - [Comparing deployment strategies](#comparing-deployment-strategies)
     - [Deployment preferences with AWS SAM](#deployment-preferences-with-aws-sam)
+  - [Creating a deployment pipeline](#creating-a-deployment-pipeline)
 - [Notes from AWS PartnerCast](#notes-from-aws-partnercast)
 
 # Introduction for Serverless
@@ -726,6 +727,11 @@ Traffic shifting with aliases is directly integrated into AWS SAM. If you’d li
 * AllAtOnce
 
 ![061-lambda-version.png](./images/061-lambda-version.png)
+
+## Creating a deployment pipeline
+
+![062-build-pipeline.png](./images/062-build-pipeline.png)
+![063-build-pipeline.png](./images/063-build-pipeline.png)
 
 # Notes from AWS PartnerCast
 
