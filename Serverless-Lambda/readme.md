@@ -37,6 +37,18 @@
   - [Example: Mobile backend](#example-mobile-backend)
 - [Best practices for serverless applications](#best-practices-for-serverless-applications)
 - [Concurrency](#concurrency)
+- [Deploying Serverless Applications](#deploying-serverless-applications)
+  - [Introduction to serverless deployments](#introduction-to-serverless-deployments)
+  - [Serverfull vs serverless development](#serverfull-vs-serverless-development)
+  - [AWS Serverless Application Model (SAM)](#aws-serverless-application-model-sam)
+    - [SAM templates](#sam-templates)
+      - [Example of a SAM template](#example-of-a-sam-template)
+    - [Deploying SAM templates with the SAM CLI](#deploying-sam-templates-with-the-sam-cli)
+  - [Serverless Patterns Collection](#serverless-patterns-collection)
+  - [Sharing configuration data in a serverless environment](#sharing-configuration-data-in-a-serverless-environment)
+    - [AWS Systems Manager Parameter Store](#aws-systems-manager-parameter-store)
+      - [Parameter Store: Hierarchical key storage](#parameter-store-hierarchical-key-storage)
+  - [Automating the Deployment Pipeline](#automating-the-deployment-pipeline)
 - [Notes from AWS PartnerCast](#notes-from-aws-partnercast)
 
 # Introduction for Serverless
@@ -565,6 +577,104 @@ For data streams concurrency is measured by shards. There was a limit of one con
 
 ![041-concurrency.png](./images/041-concurrency.png)
 
+# Deploying Serverless Applications
+
+## Introduction to serverless deployments
+
+To make sure that your code is deployed successfully, you’ll need a couple things:
+
+* **The first is the ability to audit changes during your deployment**. If you want to be alerted of any state change throughout your deployment, you can set up AWS CloudTrail to record events occurring throughout your system. When this state change occurs, you can react using automated actions, such as sending a notification to your operations team if a deployment failed. Additionally, each of your Lambda functions are automatically monitored on your behalf.
+You can track the number of requests, the execution duration, and the number of requests that resulted in an error. These metrics can come in handy when troubleshooting and validating that your code is working as expected.
+
+* **The second thing you’ll need for a successful deployment is the ability to halt or roll back any bad deployments.** If your new deployment fails or an alarm monitoring threshold is met, rolling back to a previous, more stable version of your code is an essential recovery strategy.
+
+* **Deploying your changes through a planned and automated process is especially important with serverless workloads**. Automating how your deployment moves from the development environment all the way to the production environment can increase the likelihood of a successful deployment.
+For example, it can improve your detection of anomalies, better automate your testing, halt your pipeline at a certain step, and even automatically roll back a change if a deployment were to fail or if an alarm threshold is triggered.
+A successful deployment is a deployment that your customers don’t notice. Automation allows you to reduce human error and establish a planned, documented process that validates each of your changes before they are pushed into production.
+
+## Serverfull vs serverless development
+
+In a **serverfull** development environment, you might have an architecture that looks like the diagram below. The servers shown in the diagram could be Amazon EC2 instances, containers, or even on-premises servers that are all fronted by a load balancer. To deploy a new version of your application, you would need to update each of those servers with a copy of the latest application code.
+
+![050-deployment.png](./images/050-deployment.png)
+
+With serverless development, the term “deployment” can take on a whole new meaning. When developing serverless applications, you no longer deploy new application code to servers, because there are no servers.
+
+Using infrastructure as code services, such as AWS CloudFormation, AWS Cloud Development Kit (AWS CDK), Terraform, and the Serverless Framework, developers are able to create AWS resources in an orderly and predictable fashion.
+
+With AWS Lambda, a deployment can be as simple as an API call to create a function or update the function code.
+
+![051-deployment.png](./images/051-deployment.png)
+
+## AWS Serverless Application Model (SAM)
+
+There are two key truths about serverless:
+
+1. Developers need the ability to build and test their code locally, and
+2. They need the ability to deploy their code into a sandbox. 
+
+Both of these problems can be solved by using the **AWS Serverless Application Model**, otherwise known as AWS SAM. AWS SAM is made up of two main components: **SAM templates and the SAM Command Line Interface**, or CLI. 
+
+AWS SAM is an open source framework you can use to build your serverless applications. It provides you with a shorthand syntax to express your functions, APIs, databases, and event source mappings.
+
+During your deployments, SAM then transforms and expands the SAM syntax into an AWS CloudFormation syntax. CloudFormation can then provision your resources with reliable deployment capabilities, making the deployment of your serverless application simpler.
+
+### SAM templates
+
+AWS SAM templates are an extension of the AWS CloudFormation templates, with some additional components that make them easier for you to work with:
+
+* Create AWS CloudFormation compatible templates using shorthand syntax.
+* Use infrastructure as code to define your Lambda functions, API Gateway APIs, serverless application from the AWS Serverless Application Repository, and DynamoDB tables.
+* If any errors are detected while deploying your template, AWS CloudFormation will roll back the template and delete any resources that were created, leaving your environment exactly as it was before the deployment.
+
+#### Example of a SAM template
+
+AWS SAM requires the use of the transform directive and a resource block with a corresponding type. The transform directive takes an entire template written in the AWS SAM syntax and transforms and expands it into a compliant AWS CloudFormation template. You can also optionally include any resource in a SAM template.
+
+![052-sam-template.png](./images/052-sam-template.png)
+
+**1**: AWS CloudFormation can expand the SAM syntax with the transform directive. This helps AWS CloudFormation properly process the template and build out your serverless resources.
+**2**: This section is where you dictate what ype of resource you would like to provision. AWS SAM also supports: `AWS::Serverless::Api`, `AWS::Serverless::Application`, `AWS::Serverless::Function`, `AWS::Serverless::LayerVersion`, `AWS::Serverless::SimpleTable`.
+
+### Deploying SAM templates with the SAM CLI
+
+This diagram summarizes the process of developing with AWS SAM. You begin by writing your Lambda function code and defining all of your serverless resources inside an AWS SAM template. **You can use the SAM CLI to emulate the Lambda environment and perform local tests on your Lambda functions.** After the code and templates are validated, you can then use the **SAM package command to create a deployment package, which is essentially a .zip file** that SAM stores in Amazon S3. After that, the SAM deploy command instructs AWS CloudFormation to deploy the .zip file to create resources inside of your AWS console.
+
+![053-sam-template.png](./images/053-sam-template.png)
+
+## Serverless Patterns Collection
+
+The [Serverless Patterns Collection](https://serverlessland.com/patterns) is a repository of serverless examples that demonstrate integrating two or more AWS services using either AWS SAM or AWS CDK. These examples simplify the creation and configuration of the services referenced within the specific pattern.
+
+The entire Serverless Patterns Collection is also available in GitHub so that you can clone it locally and build on it in your organization.
+
+## Sharing configuration data in a serverless environment
+
+![054-sharing-data.png](./images/054-sharing-data.png)
+
+**As a best practice, never hardcode secrets or configurations into your deployment package, as you might accidentally expose that information.**
+
+There are several ways to deploy your configuration data. You can hardcode this data in your application code, store it in environment variables, or load this data in at runtime from a storage system like AWS Systems Manager Parameter Store, AWS Secrets Manager, or AWS AppConfig. Hardcoding this data or using environment variables can keep latency low, but it isn't ideal for secrets or for sharing data across projects or other Lambda functions. When loading data in at runtime, you can store your data in a centralized storage system to keep sensitive information out of your code. However, this can incur additional latency.
+
+### AWS Systems Manager Parameter Store 
+
+AWS Systems Manager has an additional capability called Parameter Store that provides you with secure, hierarchical storage for configuration data management and secrets management. You can store data such as passwords, database strings, Amazon Machine Image (AMI) IDs, and license codes as parameter values.  In addition, Parameter Store includes the following:
+
+* Free, fully managed, centralized storage system for configuration data and secret management.
+* Data can be stored in plain text or also encrypted with AWS Key Management System (AWS KMS).
+* Parameter Store tracks all parameter changes through versioning, so if you need to roll back your deployment, you can also choose to use an earlier version of your configuration data.
+
+#### Parameter Store: Hierarchical key storage
+
+Parameter Store provides hierarchical key-value storage. You can create a hierarchy for each of your environments (dev, stage, and prod), and then have the API keys that you need for each environment (it assumes that all envs are in the same AWS account).
+
+Depending on the environment you’re in, you can pull the correct key without exposing your other keys.
+
+![055-param-store.png](./images/055-param-store.png)
+
+This diagram shows that you can access an API key in a development environment without exposing the staging or production API keys.
+
+## Automating the Deployment Pipeline
 
 # Notes from AWS PartnerCast
 
