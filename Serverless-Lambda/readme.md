@@ -49,6 +49,10 @@
     - [AWS Systems Manager Parameter Store](#aws-systems-manager-parameter-store)
       - [Parameter Store: Hierarchical key storage](#parameter-store-hierarchical-key-storage)
   - [Automating the Deployment Pipeline](#automating-the-deployment-pipeline)
+    - [Lambda versioning and aliases](#lambda-versioning-and-aliases)
+    - [Deployment strategies](#deployment-strategies)
+      - [Comparing deployment strategies](#comparing-deployment-strategies)
+    - [Deployment preferences with AWS SAM](#deployment-preferences-with-aws-sam)
 - [Notes from AWS PartnerCast](#notes-from-aws-partnercast)
 
 # Introduction for Serverless
@@ -675,6 +679,53 @@ Depending on the environment you’re in, you can pull the correct key without e
 This diagram shows that you can access an API key in a development environment without exposing the staging or production API keys.
 
 ## Automating the Deployment Pipeline
+
+### Lambda versioning and aliases
+
+To understand deployment strategies, you first need to understand the concept of Lambda versions and Lambda aliases.
+
+* Lambda versions
+
+  When you create a Lambda function, there is only one version called $LATEST. Any time you publish a version, Lambda takes a snapshot copy of $LATEST to create the new version. This copy cannot be modified.
+  ![056-lambda-version.png](./images/056-lambda-version.png)
+
+* Lambda aliases
+
+  A Lambda alias is a pointer to a specific function version. By default, an alias points to a single Lambda version. When the alias is updated to point to a different function version, all incoming request traffic will be redirected to the updated Lambda function version.
+  ![057-lambda-version.png](./images/057-lambda-version.png)
+
+
+### Deployment strategies
+
+With Lambda **traffic shifting**, you can send a small subset of traffic to your newest function version while keeping the majority of incoming production traffic to your old, stable version. Some of the following deployment strategies use traffic shifting. Traffic shifting helps you validate that your new Lambda version works as expected, before sending all production traffic to it.
+
+* **All-at-once**
+  All-at-once deployments instantly shift traffic from the original (old) Lambda function to the updated (new) Lambda function, all at one time. All-at-once deployments can be beneficial when the speed of your deployments matters. In this strategy, the new version of your code is released quickly, and all your users get to access it immediately.
+
+* **Canary**
+  In a canary deployment, you deploy your new version of your application code and shift a small percentage of production traffic to point to that new version. After you have validated that this version is safe and not causing errors, you direct all traffic to the new version of your code.
+  ![058-lambda-version.png](./images/058-lambda-version.png)
+
+* **Linear**
+  A linear deployment is similar to canary deployment. In this strategy, you direct a small amount of traffic to your new version of code at first. After a specified period of time, you automatically increment the amount of traffic that you send to the new version until you’re sending 100 percent of production traffic.
+  ![059-lambda-version.png](./images/059-lambda-version.png)
+
+#### Comparing deployment strategies
+
+![060-lambda-version.png](./images/060-lambda-version.png)
+
+### Deployment preferences with AWS SAM
+
+Traffic shifting with aliases is directly integrated into AWS SAM. If you’d like to use all-at-once, canary, or linear deployments with your Lambda functions, you can embed that directly into your AWS SAM templates. You can do this in the deployment preferences section of the template. AWS CodeDeploy uses the deployment preferences section to manage the function rollout as part of the AWS CloudFormation stack update. SAM has several pre-built deployment preferences you can use to deploy your code. See the following table for examples. 
+
+* Canary10Percent30Minutes
+* Canary10Percent5Minutes
+* ...
+* Linear10PercentEvery2Minutes
+* Linear10PercentEvery3Minutes
+* AllAtOnce
+
+![061-lambda-version.png](./images/061-lambda-version.png)
 
 # Notes from AWS PartnerCast
 
