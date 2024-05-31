@@ -16,6 +16,12 @@
   - [Introduction to AWS Step Functions](#introduction-to-aws-step-functions)
   - [Amazon API Gateway for Serverless Applications](#amazon-api-gateway-for-serverless-applications)
   - [Designing Event-Driven Architectures](#designing-event-driven-architectures)
+  - [Architecting Serverless Applications](#architecting-serverless-applications)
+  - [Scaling Serverless Architectures](#scaling-serverless-architectures)
+  - [Getting Started with DevOps](#getting-started-with-devops)
+  - [Getting Started with AWS CloudFormation](#getting-started-with-aws-cloudformation)
+  - [Deploying Serverless Applications](#deploying-serverless-applications)
+  - [AWS Identity and Access Management (IAM)](#aws-identity-and-access-management-iam)
 
 # Based on AWS Partner Certification Readiness - Developer - Associate
 
@@ -119,3 +125,21 @@ https://github.com/kicaj29/aws/tree/main/VPC-LB-AutoScalingGroup-EC2-Route53
 * https://github.com/kicaj29/aws/tree/main/Messeging
 * https://github.com/kicaj29/aws/tree/main/Serverless-Lambda
 * https://github.com/kicaj29/aws/tree/main/Kinesis
+
+## Architecting Serverless Applications
+
+## Scaling Serverless Architectures
+
+* https://github.com/kicaj29/aws/tree/main/Serverless-Lambda
+
+## Getting Started with DevOps 
+
+## Getting Started with AWS CloudFormation
+
+## Deploying Serverless Applications
+
+* https://github.com/kicaj29/aws/tree/main/Serverless-Lambda
+
+## AWS Identity and Access Management (IAM)
+
+* https://github.com/kicaj29/aws/tree/main/IAM
