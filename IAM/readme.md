@@ -10,6 +10,7 @@
 - [IAM user groups](#iam-user-groups)
 - [IAM Access Analyzer and Access Advisor](#iam-access-analyzer-and-access-advisor)
 - [Access Policies Schema](#access-policies-schema)
+- [Types of AWS credentials](#types-of-aws-credentials)
 - [Managing server certificates in IAM](#managing-server-certificates-in-iam)
 - [Links](#links)
 
@@ -198,7 +199,6 @@ https://docs.aws.amazon.com/IAM/latest/UserGuide/what-is-access-analyzer.html
 
 **Access Analyzer** gives some visibility into existing external access but does not offer any insight into if the permissions are excessive and how to remediate the risk if so. Another AWS tool, **Access Advisor, analyzes usage of access permissions to services by IAM objects such as users, groups, roles and policies**.
 
-
 # Access Policies Schema
 
 https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies.html#access_policies-json
@@ -253,12 +253,28 @@ Sample policies:
 * The **Action** element describes the type of action that should be allowed or denied. In the example policy, the action is "*". This is called a wildcard, and it is used to symbolize every action inside your AWS account.
 * The **Resource** element specifies the object or objects that the policy statement covers. In the policy example, the resource is the wildcard "*". This represents all resources inside your AWS console.
 
+# Types of AWS credentials
+
+* Username and password
+  **A password policy** is a set of rules that define the type of password an IAM user can set. You should define a password policy for all of your IAM users to enforce strong passwords and to require your users to regularly change their passwords. Password requirements are similar to those found in most secure online environments.
+
+  ![21_password_policy.png](./images/21_password_policy.png)
+
+* Multi-factor authentication
+  Multi-factor authentication (MFA) is an additional layer of security for accessing AWS services. With this authentication method, more than one authentication factor is checked before access is granted, **which consists of a user name, a password, and the single-use code from the MFA device**.
+
+  ![22_mfa.png](./images/22_mfa.png)
+
+* User access keys
+  Users need their own access keys to make programmatic calls to AWS using the AWS CLI or the AWS SDKs, or direct HTTPS calls using the APIs for individual AWS services. Access keys are used to digitally sign API calls made to AWS services. Each access key credential consists of an access key ID and a secret key. **Each user can have two active access keys, which is useful when you need to rotate the user's access keys or revoke permissions.** 
+
+  ![23_access_keys.png](./images/23_access_keys.png)
+
 # Managing server certificates in IAM
 
 https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_server-certs.html
 
 Use IAM as a certificate manager only when you must support HTTPS connections in a Region that is not supported by ACM. IAM securely encrypts your private keys and stores the encrypted version in IAM SSL certificate storage. IAM supports deploying server certificates in all Regions, but you must obtain your certificate from an external provider for use with AWS. You cannot upload an ACM certificate to IAM. Additionally, you cannot manage your certificates from the IAM Console.
-
 
 # Links
 https://aws-blog.de/2021/08/iam-what-happens-when-you-assume-a-role.html   
