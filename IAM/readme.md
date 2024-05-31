@@ -13,6 +13,8 @@
   - [Policy: AWS managed, Customer managed, Inline](#policy-aws-managed-customer-managed-inline)
   - [Access Policies Schema](#access-policies-schema)
   - [Policy types](#policy-types)
+    - [Guardrails vs. grants](#guardrails-vs-grants)
+- [Explicit and implicit denies](#explicit-and-implicit-denies)
 - [Types of AWS credentials](#types-of-aws-credentials)
 - [Managing server certificates in IAM](#managing-server-certificates-in-iam)
 - [Links](#links)
@@ -305,6 +307,22 @@ Sample policies:
 
 * **Session policies**: **A session policy is an inline permissions policy that users pass in the session when they assume the role**. The permissions for a session are the intersection of the identity-based policies for the IAM entity (user or role) used to create the session and the session policies. Permissions can also come from a resource-based policy. **Session policies limit the permissions that the role or user's identity-based policies grant to the session.**
 
+### Guardrails vs. grants
+
+Some policies are used to restrict permissions while others are used to grant access. Using a combination of different policy types not only improves your overall security posture but also minimizes your blast radius in case an incident occurs.
+
+![28_gg.png](./images/28_gg.png)
+
+# Explicit and implicit denies
+
+A request results in an explicit deny if an applicable policy includes a Deny statement. If policies that apply to a request include an Allow statement and a Deny statement, the Deny statement trumps the Allow statement. The request is explicitly denied.
+
+An implicit denial occurs when there is no applicable Deny statement but also no applicable Allow statement. Because an IAM user, role, or federated user is denied access by default, they must be explicitly allowed to perform an action. Otherwise, they are implicitly denied access.
+
+The flow chart below provides details about how the decision is made as AWS authenticates the principal that makes the request. AWS evaluates the policy types in the following order:
+
+![29_graph.png](./images/29_graph.png)
+
 # Types of AWS credentials
 
 * Username and password   
@@ -321,6 +339,7 @@ Sample policies:
   Users need their own access keys to make programmatic calls to AWS using the AWS CLI or the AWS SDKs, or direct HTTPS calls using the APIs for individual AWS services. Access keys are used to digitally sign API calls made to AWS services. Each access key credential consists of an access key ID and a secret key. **Each user can have two active access keys, which is useful when you need to rotate the user's access keys or revoke permissions.** 
 
   ![23_access_keys.png](./images/23_access_keys.png)
+
 
 # Managing server certificates in IAM
 
