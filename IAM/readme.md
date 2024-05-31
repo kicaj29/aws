@@ -10,8 +10,9 @@
 - [IAM user groups](#iam-user-groups)
 - [IAM Access Analyzer and Access Advisor](#iam-access-analyzer-and-access-advisor)
 - [IAM Policy](#iam-policy)
-  - [Policy types](#policy-types)
+  - [Policy: AWS managed, Customer managed, Inline](#policy-aws-managed-customer-managed-inline)
   - [Access Policies Schema](#access-policies-schema)
+  - [Policy types](#policy-types)
 - [Types of AWS credentials](#types-of-aws-credentials)
 - [Managing server certificates in IAM](#managing-server-certificates-in-iam)
 - [Links](#links)
@@ -211,7 +212,7 @@ In order to talk about IAM policies, you first need to cover the three main piec
 * Action: What the principal is attempting to do
 * Resource: AWS resource object upon which the actions or operations are performed
 
-## Policy types
+## Policy: AWS managed, Customer managed, Inline
 
 * **AWS managed**: AWS manages and creates these types of policies. They can be attached to multiple users, groups, and roles. If you are new to using policies, AWS recommends that you start by using AWS managed policies.
 * **Customer managed**: These are policies that you create and manage in your AWS account. This type of policy provides more precise control than AWS managed policies and can also be attached to multiple users, groups, and roles. 
@@ -277,6 +278,32 @@ Sample policies:
 * The **Resource** element specifies the object or objects that the policy statement covers. In the policy example, the resource is the wildcard "*". This represents all resources inside your AWS console.
 
 * **Condition**: IAM allows you to add conditions to your policy statements. The Condition element is optional and lets you specify conditions for when a policy is in effect. `"Condition" : { "{condition-operator}" : { "{condition-key}" : "{condition-value}" }}`. You can have multiple conditions in a single policy, **which are evaluated using a logical AND.**
+
+## Policy types
+
+* **Identity-based**: Also known as IAM policies, identity-based policies are **managed and inline policies** attached to IAM identities (users, groups to which users belong, or roles). Impacts IAM principal permissions.
+
+* **Resource-based**: These are inline policies that are attached to AWS resources. The most common examples of   resource-based policies are Amazon S3 bucket policies and IAM role trust policies. Resource-based policies grant permissions to the principal that is specified in the policy; **hence, the principal policy element is required.**. Grants permission to principals or accounts (same or different accounts).
+
+  The resource-based policy below is attached to an Amazon S3 bucket. According to the policy, only the IAM user carlossalzar can access this bucket.
+  ![25_resource-based-policy.png](./images/25_resource-based-policy.png)
+
+* **Permissions boundaries**: A permissions boundary sets the maximum permissions that an identity-based policy can grant to an **IAM user or role** (permissions boundaries cannot be assigned to user group). The entity can perform only the actions that are allowed by both its identity-based policies and its permissions boundaries. Permissions boundaries do not grant permissions! **Resource-based policies that specify the user or role as the principal are not limited by the permissions boundary.** 
+
+  For example, assume that one of your IAM users should be allowed to manage only Amazon S3, Amazon CloudWatch, and Amazon EC2. To enforce this rule, you can use the customer-managed policy enclosed in the square to set the permissions boundary for the user. Then, add the condition block below to the IAM user's policy. The user can never perform operations in any other service, including IAM, even if it has a permissions policy that allows it.
+
+  ![26_permission-boundaries.png](./images/26_permission-boundaries.png)
+
+  https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_boundaries.html   
+  https://www.youtube.com/watch?v=t8P8ffqWrsY
+
+* **AWS Organizations SCPs**: AWS Organizations is a service for grouping and centrally managing AWS accounts. If you enable all features in an organization, then you can apply SCPs to any or all of your accounts. SCPs specify the maximum permissions for an account, or a group of accounts, called an organizational unit (OU). 
+
+  ![27_aws_organizations.png](./images/27_aws_organizations.png)
+ 
+* **ACLs**: Use ACLs to control which principals in other accounts can access the resource to which the ACL is attached.  **ACLs are supported by Amazon S3 buckets and objects.** They are similar to resource-based policies although they are the only policy type that does not use the JSON policy document structure. ACLs are cross-account permissions policies that grant permissions to the specified principal. **ACLs cannot grant permissions to entities within the same account.**
+
+* **Session policies**: **A session policy is an inline permissions policy that users pass in the session when they assume the role**. The permissions for a session are the intersection of the identity-based policies for the IAM entity (user or role) used to create the session and the session policies. Permissions can also come from a resource-based policy. **Session policies limit the permissions that the role or user's identity-based policies grant to the session.**
 
 # Types of AWS credentials
 
