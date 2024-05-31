@@ -54,6 +54,9 @@
       - [Comparing deployment strategies](#comparing-deployment-strategies)
     - [Deployment preferences with AWS SAM](#deployment-preferences-with-aws-sam)
   - [Creating a deployment pipeline](#creating-a-deployment-pipeline)
+  - [AWS SAM Pipelines](#aws-sam-pipelines)
+    - [Creating pipeline deployment resources](#creating-pipeline-deployment-resources)
+    - [Deploy SAM templates with one command](#deploy-sam-templates-with-one-command)
 - [Notes from AWS PartnerCast](#notes-from-aws-partnercast)
 
 # Introduction for Serverless
@@ -732,6 +735,56 @@ Traffic shifting with aliases is directly integrated into AWS SAM. If you’d li
 
 ![062-build-pipeline.png](./images/062-build-pipeline.png)
 ![063-build-pipeline.png](./images/063-build-pipeline.png)
+
+![064-build-pipeline.png](./images/064-build-pipeline.png)
+
+* **1**: inside your source code repository, you have a SAM template
+* **4**: when a developer pushes a code to a user-defined branch in this repository, CodePipeline copies your source code into an S3 bucket and passes it to CodeBuild.
+* **3**: CodeBuild gets the source code from the pipeline and tests, lints, runs security checks, install dependencies, and prepares the SAM template for deployment
+* **2**: SAM kicks off CodeDeploy to manage the Lambda deployment configuration previously defined in the SAM template, whether that is all-at-once, canary or linear deployment. CodeDeploy also manages stack rollback based on of user-defined CloudWatch alarms.
+* **5**: In the deployment phase, CodePipeline sends the SAM template outputted from build phase to AWS CloudFormation. AWS CloudFormation also assumes an IAM role that has the necessary permissions to provision the resources in the template.
+* **6**: AWS CloudFormation is used to create or update an AWS CloudFormation stack.
+
+## AWS SAM Pipelines
+
+AWS SAM Pipelines is a feature of AWS SAM that automates the process of creating a continuous delivery pipeline. AWS SAM Pipelines provides templates for popular CI/CD systems, such as AWS CodePipeline, Jenkins, GitHub Actions, Bitbucket Pipelines, and GitLab CI/CD. Pipeline templates include AWS deployment best practices to help with multi-account and multi-region deployments. AWS environments such as dev and production typically exist in different AWS accounts. Development teams can configure safe deployment pipelines, without making unintended changes to infrastructure. You can also supply your own custom pipeline templates to help to standardize pipelines across development teams. 
+
+AWS SAM Pipelines is composed of two commands:
+
+* **sam pipeline bootstrap**, a configuration command that creates the AWS resources and permissions required to deploy application artifacts from your code repository into your AWS environments.
+* **sam pipeline init**, an initialization command that generates a pipeline configuration file that your CI/CD system can use to deploy serverless applications using AWS SAM.
+
+With two separate commands, you can manage the credentials for operators and developers separately. **Operators can use sam pipeline bootstrap** to provision AWS pipeline resources. This can reduce the risk of production errors and operational costs. **Developers can then focus on building** without having to set up the pipeline infrastructure by running the sam pipeline init command.
+
+SAM Pipelines creates appropriate configuration files for your CI/CD provider of choice. For example, when using AWS CodePipeline, SAM will synthesize an AWS CloudFormation template file named **codepipeline.yaml**. This template defines multiple AWS resources that work together to deploy a serverless application automatically.
+
+### Creating pipeline deployment resources
+
+The **sam pipeline init --bootstrap** command guides you through a series of questions to help **produce the template file** that creates the AWS resources and permissions required to deploy application artifacts from your code repository into your AWS environments. The --bootstrap option helps you to set up AWS pipeline stage resources before the template file is initialized.
+
+![065-sam-pipeline.png](./images/065-sam-pipeline.png)
+
+* **1**: AWS SAM Pipelines create a PipelineUser with an associated ACCESS_KEY_ID and SECRET_ACCESS_KEY to deploy artifacts to your AWS accounts.
+* **2**: The pipeline IAM user, and pipeline and CloudFormation execution roles, are generated automatically, if not specified by the user. An S3 bucket is required to store application build artifacts during the deployment process, This is also generated automatically.
+* **3**: The AWS SAM Pipeline command automatically detects that a second stage is required to complete the template and walks you through the setup process. The Prod environment uses the same Pipeline IAM user created in the dev environment.
+
+![066-sam-pipeline.png](./images/066-sam-pipeline.png)
+
+After AWS SAM has created the supporting resources, the guided walkthrough will prompt you to create the CloudFormation template that will define our entire CI/CD pipeline. To deploy the CI/CD pipeline template file, you use the **sam deploy** command.
+
+### Deploy SAM templates with one command
+
+You can use a single command, **sam deploy**, to deploy your serverless applications, and the SAM CLI will create and manage this S3 bucket for you. The following diagram is an example of the terminal output when the sam deploy command runs. 
+
+https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-config.html
+
+![067-sam-pipeline.png](./images/067-sam-pipeline.png)
+
+* **1**: **sam deploy --guided**, this mode walks you through the parameters required for deployment, provides default options, and saves your input for the given application.
+* **3**: in this section, you can configure the name of your AWS CloudFormation stack, which Region you would like to deploy your stack, and more.
+* **2**: **samconfig.toml**, the configurations you choose in the default arguments will be saved to the **samconfig.toml** file. You can change your configurations by modifying this file.
+
+![068-sam-pipeline.png](./images/068-sam-pipeline.png)
 
 # Notes from AWS PartnerCast
 
