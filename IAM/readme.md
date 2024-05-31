@@ -9,7 +9,9 @@
     - [Assuming multiple IAM roles](#assuming-multiple-iam-roles)
 - [IAM user groups](#iam-user-groups)
 - [IAM Access Analyzer and Access Advisor](#iam-access-analyzer-and-access-advisor)
-- [Access Policies Schema](#access-policies-schema)
+- [IAM Policy](#iam-policy)
+  - [Policy types](#policy-types)
+  - [Access Policies Schema](#access-policies-schema)
 - [Types of AWS credentials](#types-of-aws-credentials)
 - [Managing server certificates in IAM](#managing-server-certificates-in-iam)
 - [Links](#links)
@@ -19,6 +21,8 @@
 * **Permission**: it is the smallest "unit" in IAM. It's the statement in a policy that allows or denies access. Permissions in AWS are defined within policies.
 * **Policy**: A policy is a document that formally states one or more permissions. It is written in JSON format. **Policy can be assigned to users, user groups and role.** In context of a single user, user group and role it is called **Permissions Policies**.
   ![20_permissions_policies.png](./images/20_permissions_policies.png)
+  Policy can exist also as **inline policy** which is always in context of single user, user group or role ane cannot be assigned to other users, user groups or roles.
+  ![24_inline_policy.png](./images/24_inline_policy.png)
 * **User**: An IAM user is an identity with **long-term credentials** that is used to interact with AWS in an account.
 * **User group**: A user group is a collection of IAM users. Use groups to **specify permissions (these are statements from policies)** for a collection of users.
 * **Role**: An IAM role is an identity you can create that has specific permissions with **credentials that are valid for short durations**. Roles can be assumed by entities that you trust.
@@ -199,7 +203,21 @@ https://docs.aws.amazon.com/IAM/latest/UserGuide/what-is-access-analyzer.html
 
 **Access Analyzer** gives some visibility into existing external access but does not offer any insight into if the permissions are excessive and how to remediate the risk if so. Another AWS tool, **Access Advisor, analyzes usage of access permissions to services by IAM objects such as users, groups, roles and policies**.
 
-# Access Policies Schema
+# IAM Policy
+
+In order to talk about IAM policies, you first need to cover the three main pieces of logic that define what is in the policy and how the policy actually works. These pieces make up the **request context that is authenticated by IAM and authorized accordingly**. You can think of the **principal, action, and resource** as the subject, verb, and object of a sentence, respectively.
+
+* Principal: User, role, external user, or application that sent the request and the policies associated with that principal
+* Action: What the principal is attempting to do
+* Resource: AWS resource object upon which the actions or operations are performed
+
+## Policy types
+
+* **AWS managed**: AWS manages and creates these types of policies. They can be attached to multiple users, groups, and roles. If you are new to using policies, AWS recommends that you start by using AWS managed policies.
+* **Customer managed**: These are policies that you create and manage in your AWS account. This type of policy provides more precise control than AWS managed policies and can also be attached to multiple users, groups, and roles. 
+* **Inline**: Inline policies are embedded directly into a single user, group, or role. In most cases, AWS doesn’t recommend using inline policies. This type of policy is useful if you want to maintain a strict one-to-one relationship between a policy and the principal entity that it's applied to. **For example, use this type of policy if you want to be sure that the permissions in a policy are not inadvertently assigned to a principal entity other than the one they're intended for.** 
+
+## Access Policies Schema
 
 https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies.html#access_policies-json
 
@@ -208,7 +226,7 @@ IAM polices can be applied to AWS identities:
 * groups
 * roles
 
-**Effect, Action are required fields.**
+* **Effect, Action are required fields.**
 
 Sample policies:
 
@@ -235,7 +253,7 @@ Sample policies:
       "Action": [
         "s3:*"
       ],
-      "Resource": "*",
+      "Resource": "[arn:aws:s3:::myBucket/*]",
       "Condition": {
         "StringNotEquals": {
           "aws:ResourceAccount": [
@@ -249,9 +267,16 @@ Sample policies:
 ```
 
 * **Version**: The Version element defines the version of the policy language. It specifies the language syntax rules that are needed by AWS to process a policy. To use all the available policy features, include "Version": "2012-10-17" before the "Statement" element in your policies.
+
+* **Sid**: it is optional and provides a brief description of the policy statement
+
 * **Effect**: The Effect element specifies whether the policy will allow or deny access. In this policy, the Effect is "Allow", which means you’re providing access to a particular resource.
+
 * The **Action** element describes the type of action that should be allowed or denied. In the example policy, the action is "*". This is called a wildcard, and it is used to symbolize every action inside your AWS account.
+
 * The **Resource** element specifies the object or objects that the policy statement covers. In the policy example, the resource is the wildcard "*". This represents all resources inside your AWS console.
+
+* **Condition**: IAM allows you to add conditions to your policy statements. The Condition element is optional and lets you specify conditions for when a policy is in effect. `"Condition" : { "{condition-operator}" : { "{condition-key}" : "{condition-value}" }}`. You can have multiple conditions in a single policy, **which are evaluated using a logical AND.**
 
 # Types of AWS credentials
 
