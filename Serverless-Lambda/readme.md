@@ -786,6 +786,9 @@ https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/s
 
 ![068-sam-pipeline.png](./images/068-sam-pipeline.png)
 
+* **1**: CloudFormation stack changeset: in this section, you can preview the changes your template will make on existing resources when deployed. It will show which resources will be modified, deleted, and added.
+* **2** after viewing the modifications in the changeset, you can choose whether or not you would like to continue to deploy the SAM template.
+
 # Notes from AWS PartnerCast
 
 ![001-question.png](./images/001-question.png)

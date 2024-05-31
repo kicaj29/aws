@@ -1,6 +1,7 @@
 - [IAM Roles](#iam-roles)
   - [Assuming multiple IAM roles](#assuming-multiple-iam-roles)
 - [IAM user groups](#iam-user-groups)
+- [Role, User, User group, Policy, Permission](#role-user-user-group-policy-permission)
 - [Assume role in AWS Console](#assume-role-in-aws-console)
   - [Introduction](#introduction)
   - [Create IAM role](#create-iam-role)
@@ -53,6 +54,14 @@ https://stackoverflow.com/questions/48876077/assume-multiple-aws-iam-roles-are-a
 An IAM group is a collection of users. All users in the group inherit the permissions assigned to the group. 
 **Permissions can be assigned to user groups but not IAM roles.**
 
+# Role, User, User group, Policy, Permission
+
+* **Permission**: it is the smallest "unit" in IAM. It's the statement in a policy that allows or denies access. Permissions in AWS are defined within policies.
+* **Policy**: A policy is a document that formally states one or more permissions. It is written in JSON format. **Policy can be assigned to users, user groups and role.** In context of a single user, user group and role it is called **Permissions Policies**.
+  ![20_permissions_policies.png](./images/20_permissions_policies.png)
+* **User**: An IAM user is an identity with **long-term credentials** that is used to interact with AWS in an account.
+* **User group**: A user group is a collection of IAM users. Use groups to **specify permissions (these are statements from policies)** for a collection of users.
+* **Role**: An IAM role is an identity you can create that has specific permissions with **credentials that are valid for short durations**. Roles can be assumed by entities that you trust.
 
 # Assume role in AWS Console
 
