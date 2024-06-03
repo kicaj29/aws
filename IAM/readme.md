@@ -18,6 +18,9 @@
   - [Analyzing the authorization context](#analyzing-the-authorization-context)
 - [Explicit and implicit denies](#explicit-and-implicit-denies)
 - [Types of AWS credentials](#types-of-aws-credentials)
+- [Attributes and Tagging](#attributes-and-tagging)
+  - [Benefits of the ABAC method](#benefits-of-the-abac-method)
+- [IAM Condition Keys](#iam-condition-keys)
 - [Managing server certificates in IAM](#managing-server-certificates-in-iam)
 - [Links](#links)
 
@@ -386,6 +389,21 @@ The flow chart below provides details about how the decision is made as AWS auth
 
   ![23_access_keys.png](./images/23_access_keys.png)
 
+# Attributes and Tagging
+
+Attribute-based access control (ABAC) is an authorization strategy that defines permissions based on attributes. In AWS, these attributes are called tags. Tags can be attached to IAM principals (users or roles) and to AWS resources. 
+
+You can create a single ABAC policy or small set of policies for your IAM principals. These ABAC policies can be designed to allow operations when the principal's tag matches the resource tag. ABAC is helpful in environments that are growing rapidly and helps with situations where policy management becomes cumbersome.
+
+## Benefits of the ABAC method
+
+* **Scalable**: Teams change and grow quickly. It is no longer necessary for an administrator to update existing policies to allow access to new resources because permissions for new resources are automatically granted based on attributes. 
+
+* **Manageable**: Because you don't have to create different policies for different job functions, you create fewer policies. Those policies are easier to manage.
+
+* **Granular permissions**: When you create policies, it's a best practice to grant least privilege. Using traditional RBAC, you must write a policy that allows access to only specific resources. However, when you use ABAC, you can allow actions on all resources but only if the resource tag matches the principal's tag.
+
+# IAM Condition Keys
 
 # Managing server certificates in IAM
 
