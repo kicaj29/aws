@@ -16,11 +16,11 @@
     - [Guardrails vs. grants](#guardrails-vs-grants)
   - [Principal types](#principal-types)
   - [Analyzing the authorization context](#analyzing-the-authorization-context)
+  - [Attributes and Tagging](#attributes-and-tagging)
+    - [Benefits of the ABAC method](#benefits-of-the-abac-method)
+  - [IAM Condition Keys](#iam-condition-keys)
 - [Explicit and implicit denies](#explicit-and-implicit-denies)
 - [Types of AWS credentials](#types-of-aws-credentials)
-- [Attributes and Tagging](#attributes-and-tagging)
-  - [Benefits of the ABAC method](#benefits-of-the-abac-method)
-- [IAM Condition Keys](#iam-condition-keys)
 - [Managing server certificates in IAM](#managing-server-certificates-in-iam)
 - [Links](#links)
 
@@ -362,6 +362,54 @@ In summary, when a principal tries to use the AWS Management Console, the AWS AP
 * Example 3: access granted, request matches policy including the same tag value for tags **aws:ResourceTag/project** and **aws:PrincipalTag/project**
   ![37_authorization_context.png](./images/37_authorization_context.png)
 
+## Attributes and Tagging
+
+Attribute-based access control (ABAC) is an authorization strategy that defines permissions based on attributes. In AWS, these attributes are called tags. Tags can be attached to IAM principals (users or roles) and to AWS resources. 
+
+You can create a single ABAC policy or small set of policies for your IAM principals. These ABAC policies can be designed to allow operations when the principal's tag matches the resource tag. ABAC is helpful in environments that are growing rapidly and helps with situations where policy management becomes cumbersome.
+
+### Benefits of the ABAC method
+
+* **Scalable**: Teams change and grow quickly. It is no longer necessary for an administrator to update existing policies to allow access to new resources because permissions for new resources are automatically granted based on attributes. 
+
+* **Manageable**: Because you don't have to create different policies for different job functions, you create fewer policies. Those policies are easier to manage.
+
+* **Granular permissions**: When you create policies, it's a best practice to grant least privilege. Using traditional RBAC, you must write a policy that allows access to only specific resources. However, when you use ABAC, you can allow actions on all resources but only if the resource tag matches the principal's tag.
+
+## IAM Condition Keys
+
+The `Condition` element in a policy lets you indicate the circumstances for when a policy is in effect. You can use the `Condition` element to compare keys in the request context with key values that you specify in your policy. This gives you granular control over when your JSON policy statements match or don't match an incoming request.
+
+The condition key that you specify can be a service-specific or a global condition key. Service-specific condition keys have the service's prefix. For example, Amazon EC2 lets you write a condition using the `ec2:InstanceType` key, which is unique to that service.
+
+Below you can read about different service-specific keys for IAM:   
+
+https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_condition_operators.html#Conditions_String
+
+* **iam:AWSService**: This condition key is used to control access for a specific service role. Many AWS services require that you use roles to allow the service to access resources in other services on your behalf. A role that a service assumes to perform actions on your behalf is called a service role. Here you are able to specify the service to which the permissions in the policy applies.
+
+  To allow an IAM entity to create a specific service role, add the following policy to the IAM entity that needs to create the service role. This policy allows you to create a service role for the specified service and with a specific name. You can then attach managed or inline policies to that role.
+
+  ![38_iam_condition.png](./images/38_iam_condition.png)
+
+* **iam:OrganizationsPolicyId**: For those accounts that are members of an AWS Organizations unit, this condition key provides the IAM entity access to specific SCPs. The example shown here is an IAM policy that allows viewing service last accessed information for SCP with the p-policy123 ID. This policy also allows the requester to retrieve the data for any Organizations entity in their organization.
+
+  ![39_iam_condition.png](./images/39_iam_condition.png)
+
+* **iam:PermissionsBoundary**: The `iam:PermissionsBoundary` key checks that the specified policy is attached as a permissions boundary on the IAM principal resource.
+
+* **iam:PolicyARN**: This condition key checks the Amazon Resource Name (ARN) of a managed policy in requests that involve that same managed policy. You use this key to control how users can apply AWS managed and customer managed policies. For example, you might create a policy that allows users to attach only the IAMUserChangePassword AWS managed policy to a new IAM user, group, or role.
+
+  In the below policy, the iam:PolicyARN condition ensures that permissions are allowed only when the policy being attached matches the AWS managed policy in the condition. Here, the user is allowed to attach policies to only the groups and roles that include the path /TEAM-A/.
+
+  ![40_iam_condition.png](./images/40_iam_condition.png)
+
+* **iam:ResourceTag**: The iam:ResourceTag condition key checks that the tag attached to the identity resource, either a user or role, matches the specified key name and value provided. You can add custom attributes to a user or role in the form of a key-value pair, such as environment=prod where "environment" is the key and "prod" is the value. An upcoming lesson will talk more about using tags.
+
+  The example shows how you might create a policy that allows deleting users with only the `status=terminated` tag.
+
+  ![41_iam_condition.png](./images/41_iam_condition.png)
+
 # Explicit and implicit denies
 
 A request results in an explicit deny if an applicable policy includes a Deny statement. If policies that apply to a request include an Allow statement and a Deny statement, the Deny statement trumps the Allow statement. The request is explicitly denied.
@@ -388,22 +436,6 @@ The flow chart below provides details about how the decision is made as AWS auth
   Users need their own access keys to make programmatic calls to AWS using the AWS CLI or the AWS SDKs, or direct HTTPS calls using the APIs for individual AWS services. Access keys are used to digitally sign API calls made to AWS services. Each access key credential consists of an access key ID and a secret key. **Each user can have two active access keys, which is useful when you need to rotate the user's access keys or revoke permissions.** 
 
   ![23_access_keys.png](./images/23_access_keys.png)
-
-# Attributes and Tagging
-
-Attribute-based access control (ABAC) is an authorization strategy that defines permissions based on attributes. In AWS, these attributes are called tags. Tags can be attached to IAM principals (users or roles) and to AWS resources. 
-
-You can create a single ABAC policy or small set of policies for your IAM principals. These ABAC policies can be designed to allow operations when the principal's tag matches the resource tag. ABAC is helpful in environments that are growing rapidly and helps with situations where policy management becomes cumbersome.
-
-## Benefits of the ABAC method
-
-* **Scalable**: Teams change and grow quickly. It is no longer necessary for an administrator to update existing policies to allow access to new resources because permissions for new resources are automatically granted based on attributes. 
-
-* **Manageable**: Because you don't have to create different policies for different job functions, you create fewer policies. Those policies are easier to manage.
-
-* **Granular permissions**: When you create policies, it's a best practice to grant least privilege. Using traditional RBAC, you must write a policy that allows access to only specific resources. However, when you use ABAC, you can allow actions on all resources but only if the resource tag matches the principal's tag.
-
-# IAM Condition Keys
 
 # Managing server certificates in IAM
 
