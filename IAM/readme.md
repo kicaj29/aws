@@ -15,6 +15,7 @@
   - [Policy types](#policy-types)
     - [Guardrails vs. grants](#guardrails-vs-grants)
   - [Principal types](#principal-types)
+  - [Analyzing the authorization context](#analyzing-the-authorization-context)
 - [Explicit and implicit denies](#explicit-and-implicit-denies)
 - [Types of AWS credentials](#types-of-aws-credentials)
 - [Managing server certificates in IAM](#managing-server-certificates-in-iam)
@@ -344,6 +345,19 @@ Principal is a person, role, or application that can make a request for an actio
   The identifier includes the long version of a service name and is usually in the long_service-name.amazonaws.com format. The following example shows a policy that can be attached to a service role. The policy enables two services—Amazon EMR and AWS Data Pipeline—to assume the role. 
 
   ![34_principal.png](./images/34_principal.png)
+
+## Analyzing the authorization context
+
+In summary, when a principal tries to use the AWS Management Console, the AWS API, or the AWS CLI, that principal sends a request to AWS. AWS gathers the request information into a request context, which is used to evaluate and authorize the request. During authorization, AWS uses values from the request context to check for policies that apply to the request. It then uses the policies to determine whether to allow or deny the request.
+
+* Example 1: access denied because requested action **iam:GetUser** does not match to the action from the policy **"dynamodb:ListTables"**
+  ![35_authorization_context.png](./images/35_authorization_context.png)
+
+* Example 2: access denied because the request tries to access resource **arn:aws:iam::123456789012:user/Carol** but policy says that only resource **arn:aws:iam::123456789012:user/Bob** can be accessed
+  ![36_authorization_context.png](./images/36_authorization_context.png)
+
+* Example 3: access granted, request matches policy including the same tag value for tags **aws:ResourceTag/project** and **aws:PrincipalTag/project**
+  ![37_authorization_context.png](./images/37_authorization_context.png)
 
 # Explicit and implicit denies
 
