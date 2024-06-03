@@ -14,6 +14,7 @@
   - [Access Policies Schema](#access-policies-schema)
   - [Policy types](#policy-types)
     - [Guardrails vs. grants](#guardrails-vs-grants)
+  - [Principal types](#principal-types)
 - [Explicit and implicit denies](#explicit-and-implicit-denies)
 - [Types of AWS credentials](#types-of-aws-credentials)
 - [Managing server certificates in IAM](#managing-server-certificates-in-iam)
@@ -313,6 +314,36 @@ Sample policies:
 Some policies are used to restrict permissions while others are used to grant access. Using a combination of different policy types not only improves your overall security posture but also minimizes your blast radius in case an incident occurs.
 
 ![28_gg.png](./images/28_gg.png)
+
+## Principal types
+
+Principal is a person, role, or application that can make a request for an action or operation on an AWS resource.
+
+* **AWS account**: When you use an AWS account identifier as the principal in a policy, you delegate authority to the account. Within that account, the permissions in the policy statement can be granted to all identities, including IAM users and roles in that account. When you specify an AWS account, you can use the Amazon Resource Name (ARN) arn:aws:iam::AWS-account-ID:root or a shortened form that consists of the aws: prefix followed by the account ID.
+
+  For example, given an account ID of 123456789012, you can use either one of the following methods to specify that account in the Principal element.
+
+  ![30_principal.png](./images/30_principal.png)
+
+* **IAM user**: You can specify an individual IAM user (or array of users) as the principal, as in the following examples. When you specify more than one principal in the element, **you grant permissions to each principal. This is a logical OR** and not a logical AND because you are authenticated as one principal at a time. In a Principal element, the user name is case-sensitive. When you specify users in a Principal element, **you cannot use a wildcard (*) to mean "all users."** Principals must always name a specific user or users.
+
+  ![31_principal.png](./images/31_principal.png)
+
+* **Federated user**: If you already manage user identities outside AWS, you can use IAM identity providers instead of creating IAM users in your AWS account. With an identity provider (IdP), you can manage your user identities outside AWS and give these external user identities permissions to use AWS resources in your account. IAM supports SAML-based IdPs and web identity providers, such as Login with Amazon, Amazon Cognito, Facebook, or Google. 
+
+  Here are examples of a Principal element used for federated web identity users and for federated SAML users.
+
+  ![32_principal.png](./images/32_principal.png)
+
+* **IAM role**: You can use roles to delegate access to users, applications, or services that don't normally have access to your AWS resources. For example, you might want to grant users in your AWS account access to resources they don't usually have or grant users in one AWS account access to resources in another account.  The entity that assumes the role will lose its original privileges and gain the access associated with the role.
+
+  ![33_principal.png](./images/33_principal.png)
+
+* **AWS Service**: IAM roles that can be assumed by an AWS service are called service roles. **Service roles must include a trust policy, which are resource-based policies that are attached to a role that define which principals can assume the role.** Some service roles have predefined trust policies. However, in some cases, you must specify the service principal in the trust policy. A service principal is an identifier that is used to grant permissions to a service.
+
+  The identifier includes the long version of a service name and is usually in the long_service-name.amazonaws.com format. The following example shows a policy that can be attached to a service role. The policy enables two services—Amazon EMR and AWS Data Pipeline—to assume the role. 
+
+  ![34_principal.png](./images/34_principal.png)
 
 # Explicit and implicit denies
 
