@@ -25,6 +25,12 @@
 - [Explicit and implicit denies](#explicit-and-implicit-denies)
 - [Types of AWS credentials](#types-of-aws-credentials)
 - [Managing server certificates in IAM](#managing-server-certificates-in-iam)
+- [Global Condition Keys](#global-condition-keys)
+  - [Who made what request?](#who-made-what-request)
+  - [Who called first, and who called last?](#who-called-first-and-who-called-last)
+- [Advanced Policy Elements](#advanced-policy-elements)
+  - [The power of the NOTs](#the-power-of-the-nots)
+    - [NotPrincipal](#notprincipal)
 - [Test](#test)
 - [Links](#links)
 
@@ -475,6 +481,108 @@ The flow chart below provides details about how the decision is made as AWS auth
 https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_server-certs.html
 
 Use IAM as a certificate manager only when you must support HTTPS connections in a Region that is not supported by ACM. IAM securely encrypts your private keys and stores the encrypted version in IAM SSL certificate storage. IAM supports deploying server certificates in all Regions, but you must obtain your certificate from an external provider for use with AWS. You cannot upload an ACM certificate to IAM. Additionally, you cannot manage your certificates from the IAM Console.
+
+# Global Condition Keys
+
+Global condition keys start with the `aws:` prefix. AWS services can support global condition keys or provide service-specific keys that include their service prefix. Not all AWS services support all of the available global condition keys.
+
+## Who made what request?
+
+https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_condition-keys.html#condition-keys-calledvia   
+
+When an IAM principal (user or role) makes a request to an AWS service, that service might use the principal's credentials to make subsequent requests to other services. If there is no service role configured, the request context may contain the `aws:CalledVia` key. This condition key includes information in the form of an ordered list of each service in the chain that made requests on the principal’s behalf. This information is available only if the AWS services involved support `aws:CalledVia`.
+
+For example, here AWS CloudFormation is reading and writing from an Amazon DynamoDB table. DynamoDB then uses the encryption services supplied by AWS Key Management Service (AWS KMS) to protect the data
+
+![45_global_conditions.png](./images/45_global_conditions.png)
+
+* **1**: `cloudformation:CreateStack`, principal requests made directly to a service are not recorded by the `aws:CalledVia` context key. This is the case for User 1`s call to CloudFormation to create a stack.
+* **2**: `dynamodb:CreateTable`, CloudFormation used the principal's credentials to create a table in DynamoDB. Here, CloudFormation is the first piece of information recorded by the `aws:CalledVia` context key.
+* **3**: `kms:Encrypt`, DynamoDB uses AWS KMS to encrypt data as it's been written to the new table, so a call is made by DynamoDB to AWS KMS on behalf of the principal. Here, DynamoDB is the second service  making a call and being recorded by `aws:CalledVia`
+
+In the diagram above, User 1 makes a request to AWS CloudFormation, which calls DynamoDB, which calls AWS KMS. These are three separate requests. User 1 performs the final call to AWS KMS via AWS CloudFormation and then DynamoDB. In this case, the aws:CalledVia key in the request context includes cloudformation.amazonaws.com and dynamodb.amazonaws.com in that order. If you care only that the call was made via DynamoDB somewhere in the chain of requests, you can use this condition key in your policy.
+
+For your first policy example, the following allows managing the AWS KMS key named my-example-key but only if DynamoDB is one of the services making the request. The ForAnyValue:StringEquals condition operator ensures that DynamoDB is one of the calling services. If the principal makes the call to AWS KMS directly, the condition returns false and the request is not allowed by this policy.
+
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "KmsActionsIfCalledViaDynamodb",
+            "Effect": "Allow",
+            "Action": [
+                "kms:Encrypt",
+                "kms:Decrypt",
+                "kms:ReEncrypt*",
+                "kms:GenerateDataKey",
+                "kms:DescribeKey"
+            ],
+            "Resource": "arn:aws:kms:region:111122223333:key/my-example-key",
+            "Condition": {
+                "ForAnyValue:StringEquals": {
+                    "aws:CalledVia": ["dynamodb.amazonaws.com"]
+                }
+            }
+        }
+    ]
+}
+```
+
+## Who called first, and who called last?
+
+If you want to enforce which service makes the first or last call in the aws:CalledVia context key, you can use the `aws:CalledViaFirst` and `aws:CalledViaLast` keys. For example, assume that CloudFormation calls another service named Service X, which calls DynamoDB, which then calls AWS KMS. User 1 performs the final call to AWS KMS via AWS CloudFormation, then Service X, and then DynamoDB. It was first called via CloudFormation and last called via DynamoDB. 
+
+![46_global_conditions.png](./images/46_global_conditions.png)
+
+* **1**: because this is a direct request that a principal made to a service, no `CalledVia` context keys are present.
+* **2**: `CalledVia: cloudformation`, `CalledViaFirst: cloudformation`, `CalledViaLast: cloudformation`
+* **3**: `CalledVia: cloudformation, service X`, `CalledViaFirst: cloudformation`, `CalledViaLast: service X`
+* **4**: `CalledVia: cloudformation, service X, dynamodb`, `CalledViaFirst: cloudformation`, `CalledViaLast: dynamodb`
+
+In your second policy example, the following allows managing the same AWS KMS key only if multiple requests were included in the chain. The first request must be made via AWS CloudFormation and the last via DynamoDB like in the diagram above. If other services make requests in the middle of the chain, the operation is still allowed.
+
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "KmsActionsIfCalledViaChain",
+            "Effect": "Allow",
+            "Action": [
+                "kms:Encrypt",
+                "kms:Decrypt",
+                "kms:ReEncrypt*",
+                "kms:GenerateDataKey",
+                "kms:DescribeKey"
+            ],
+            "Resource": "arn:aws:kms:region:111122223333:key/my-example-key",
+            "Condition": {
+                "StringEquals": {
+                    "aws:CalledViaFirst": "cloudformation.amazonaws.com",
+                    "aws:CalledViaLast": "dynamodb.amazonaws.com"
+                }
+            }
+        }
+    ]
+}
+```
+
+# Advanced Policy Elements
+
+## The power of the NOTs
+
+AWS offers several advanced policy elements that not only let you specify exceptions in policies but may also result in shorter and more streamlined policies. Think of it this way: let's say you go to a sandwich shop, and the person behind the counter asks you what you want in your sandwich. Instead of listing all of the available ingredients you want one by one and leaving out only one, you can simply say, "I want all of the ingredients except for onions." This lesson covers the `NotPrincipal`, `NotAction`, and `NotResource` policy elements.
+
+### NotPrincipal
+
+The `NotPrincipal` element lets you specify an exception to a list of principals. For example, you can use this element to allow all AWS accounts except a specific account to access a resource. Conversely, you can deny access to all principals except the one named in the `NotPrincipal` element. As with the Principal element, you specify the user or account that should be allowed or denied permission. The difference is that the NotPrincipal element applies to everyone except that person or account. When used in conjunction with an identity policy that also explicitly allows that entity access to the specific resources, the `NotPrincipal` element can help ensure that only necessary parties can access a resource.
+
+* **NotPrincipal with Allow**: It is strongly recommend that you do not use NotPrincipal in the same policy statement as `"Effect": "Allow"`. Doing so allows all principals except the one named in the NotPrincipal element access to your resources. By doing this, you might grant access to anonymous (unauthenticated) users.
+
+* **NotPrincipal with Deny**: When you use `NotPrincipal` in the same policy statement as `"Effect": "Deny"`, the actions specified in the policy statement are explicitly denied to all principals except for the ones specified in the policy. You can use this method to allow access to only a certain principal while denying the rest. When you use `NotPrincipal` with Deny, you must also specify the account ARN of the not-denied principal. Otherwise, the policy might deny access to the entire account, including the principal. 
+
+**You cannot use the NotPrincipal element in an IAM identity-based policy. You can use it in the trust policies for IAM roles and in resource-based policies.**
 
 # Test
 
