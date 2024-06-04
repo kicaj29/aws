@@ -1,5 +1,7 @@
 - [Basic IAM entities: Role, User, User group, Policy, Permission](#basic-iam-entities-role-user-user-group-policy-permission)
 - [IAM Roles](#iam-roles)
+  - [Passing a role to an AWS service](#passing-a-role-to-an-aws-service)
+    - [Condition keys for passing roles](#condition-keys-for-passing-roles)
   - [Assume role in AWS Console](#assume-role-in-aws-console)
     - [Introduction](#introduction)
     - [Create IAM role](#create-iam-role)
@@ -55,6 +57,26 @@ Roles can be assumed by:
 * An external user authenticated by an identity provider service that is compatible with **SAML 2.0 or OpenID Connect, or a custom-built identity broker**
 * If your organization uses multiple accounts, roles will be a key part of your strategy of centrally managing users' access across multiple accounts.
 * **NOTE: IAM group cannot assume IAM roles!**
+
+## Passing a role to an AWS service
+
+There are many AWS services that require permissions via a role to perform actions on your behalf. To configure these services, you need to **pass the role to the service only once during setup**. For example, assume that you have an application running on an Amazon EC2 instance that requires access to an Amazon DynamoDB table. The application needs temporary credentials for authentication and authorization to interact with the table. When you set up the application, you must pass a role to Amazon EC2 to use with the instance that provides those credentials. The **application assumes the role every time it needs to perform the actions that the role allows**.
+
+### Condition keys for passing roles
+
+To pass a role to an AWS service, a user must have the proper permissions. This helps to ensure that only approved users can configure a service with a role that grants permissions. In order to allow a user to pass a role to an AWS service, you must first add the `iam:PassRole` action to its IAM policy. You may also add IAM condition keys to your policies to further control how roles are passed
+
+* `iam:PassedToService`: The `iam:PassedToService` key specifies the service principal of the service to which a role can be passed. A service principal is the name of a service that can be specified in the Principal element of a policy in the following format: `SERVICE_NAME_URL.amazonaws.com`. You can use `iam:PassedToService` to restrict your users so that they can pass roles only to specific services and ensure that users create service roles only for the services that you specify. 
+
+  For example, a user might create a service role that trusts Amazon CloudWatch to write log data to an Amazon S3 bucket on their behalf. In this case, the trust policy must specify `cloudwatch.amazonaws.com` in the Principal element. If a user with the policy below attempts to create a service role for Amazon EC2, the operation will fail. The failure occurs because the user does not have permission to pass the role to Amazon EC2.
+
+  ![42_iam_pass_role.png](./images/42_iam_pass_role.png)
+
+* `iam:AssociatedResourceArn`: This condition key specifies the ARN of the resource to which this role will be associated at the destination service.  Use this condition key in a policy to allow an IAM entity (an IAM user or role) to pass a role but only if that role is associated with the specified resource.
+
+  For example, below you have the `iam:PassRole` action with both the `iam:PassedToService` and `iam:AssociatedResourceArn` condition keys. Here you are allowing an IAM entity to pass any role to the Amazon EC2 service to be used with instances in the us-east-1 or us-west-1 Region. The IAM user or role would not be allowed to pass roles to other services, and it doesn't allow Amazon EC2 to use the role with instances in other Regions.
+
+  ![43_iam_pass_role.png](./images/43_iam_pass_role.png)
 
 ## Assume role in AWS Console
 
