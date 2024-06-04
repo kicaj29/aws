@@ -224,6 +224,11 @@ https://stackoverflow.com/questions/48876077/assume-multiple-aws-iam-roles-are-a
 ## IAM PassRole vs IAM AssumeRole
 
 https://demacia.medium.com/difference-between-iam-passrole-and-iam-assumerole-en-id-3cb1ffd71a36
+https://www.youtube.com/watch?v=h7Z2l_9Sq8Y
+
+* IAM PassRole: The IAM PassRole is an IAM action that gives us permission to attach an IAM Role to an AWS Service. **The keywords are “attach”, “IAM Role”, “to an AWS Service”.**
+
+* IAM AssumeRole: The IAM AssumeRole is an action for IAM User to assume an IAM Role. **This also has keywords which are “IAM User”, “assume”, and “IAM Role”.**
 
 # IAM user groups
 
