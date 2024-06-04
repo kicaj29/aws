@@ -25,6 +25,7 @@
 - [Explicit and implicit denies](#explicit-and-implicit-denies)
 - [Types of AWS credentials](#types-of-aws-credentials)
 - [Managing server certificates in IAM](#managing-server-certificates-in-iam)
+- [Test](#test)
 - [Links](#links)
 
 # Basic IAM entities: Role, User, User group, Policy, Permission
@@ -474,6 +475,10 @@ The flow chart below provides details about how the decision is made as AWS auth
 https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_server-certs.html
 
 Use IAM as a certificate manager only when you must support HTTPS connections in a Region that is not supported by ACM. IAM securely encrypts your private keys and stores the encrypted version in IAM SSL certificate storage. IAM supports deploying server certificates in all Regions, but you must obtain your certificate from an external provider for use with AWS. You cannot upload an ACM certificate to IAM. Additionally, you cannot manage your certificates from the IAM Console.
+
+# Test
+
+![44_test.png](./images/44_test.png)
 
 # Links
 https://aws-blog.de/2021/08/iam-what-happens-when-you-assume-a-role.html   
