@@ -9,6 +9,7 @@
     - [Configure aws credentials file](#configure-aws-credentials-file)
     - [Usage @Infra role](#usage-infra-role)
     - [Assuming multiple IAM roles](#assuming-multiple-iam-roles)
+  - [IAM PassRole vs IAM AssumeRole](#iam-passrole-vs-iam-assumerole)
 - [IAM user groups](#iam-user-groups)
 - [IAM Access Analyzer and Access Advisor](#iam-access-analyzer-and-access-advisor)
 - [IAM Policy](#iam-policy)
@@ -219,6 +220,10 @@ https://repost.aws/questions/QU-EiIvq3rTGyctiWqMfrSwg/how-to-access-multiple-rol
 *When interacting with AWS resources each request can only be associated with a singular principal. So, if you assume role1 and role2 you can make requests as role1 OR role2 but not as both together. So, if you are trying to perform a single action that requires an aggregate of the permissions of multiple roles, that's a not possible.*
 
 https://stackoverflow.com/questions/48876077/assume-multiple-aws-iam-roles-are-a-single-time#:~:text=1%20Answer&text=Technically%2C%20yes%2C%20there%20is%20a,to%20assume%20a%20different%20identity.
+
+## IAM PassRole vs IAM AssumeRole
+
+https://demacia.medium.com/difference-between-iam-passrole-and-iam-assumerole-en-id-3cb1ffd71a36
 
 # IAM user groups
 
