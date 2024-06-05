@@ -33,10 +33,10 @@
   - [NotPrincipal](#notprincipal)
     - [Case study: Centralized credential store](#case-study-centralized-credential-store)
       - [Background](#background)
-        - [Viewing the bucket](#viewing-the-bucket)
-        - [Updating stored credentials](#updating-stored-credentials)
-        - [Acquiring stored credentials](#acquiring-stored-credentials)
-        - [Using Amazon S3 data protection](#using-amazon-s3-data-protection)
+      - [Viewing the bucket](#viewing-the-bucket)
+      - [Updating stored credentials](#updating-stored-credentials)
+      - [Acquiring stored credentials](#acquiring-stored-credentials)
+      - [Using Amazon S3 data protection](#using-amazon-s3-data-protection)
 - [Test](#test)
 - [Links](#links)
 
@@ -600,19 +600,19 @@ An e-commerce company created a new centralized credential store within Amazon S
 
 * **Credential user role** – Has read access to only specific bucket directories
 
-##### Viewing the bucket
+#### Viewing the bucket
 
 ![47_advanced_policy_elements.png](./images/47_advanced_policy_elements.png)
 
 To begin writing the Amazon S3 resource policy, the company had to create the above statement that allows both the credential manager (CredMgr) and credential user (CredUsr) to be able to see the credential bucket (CredentialBucket). They used a Deny statement along with the NotPrincipal element to ensure that only the individuals specifically listed in the policy are granted access to the credentials within the S3 buckets. 
 
-##### Updating stored credentials
+#### Updating stored credentials
 
 ![48_advanced_policy_elements.png](./images/48_advanced_policy_elements.png)
 
 Now that the authorized users can see the CredentialBucket, the company had to ensure that the CredMgr user has the ability to put objects in and get objects from the bucket. This allows the CredMgr role to update credentials stored in the bucket.
 
-##### Acquiring stored credentials
+#### Acquiring stored credentials
 
 ![49_advanced_policy_elements.png](./images/49_advanced_policy_elements.png)
 
@@ -620,7 +620,7 @@ Finally, the company also created a policy to allow credential users and manager
 
 The NotPrincipal element along with the Deny statement in each of these policies ensure that even if an IAM administrator creates new IAM users or IAM roles that have access to the CredentialBucket, they will not be able to access the sensitive credentials within the bucket because those users have not been explicitly given allow listed access in the S3 access policy.
 
-##### Using Amazon S3 data protection
+#### Using Amazon S3 data protection
 
 Amazon S3 provides a number of data protection capabilities natively. This case study did not explain in detail how to configure the following capabilities, but AWS recommends enabling:
 
