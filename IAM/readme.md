@@ -30,7 +30,13 @@
   - [Who called first, and who called last?](#who-called-first-and-who-called-last)
 - [Advanced Policy Elements](#advanced-policy-elements)
   - [The power of the NOTs](#the-power-of-the-nots)
-    - [NotPrincipal](#notprincipal)
+  - [NotPrincipal](#notprincipal)
+    - [Case study: Centralized credential store](#case-study-centralized-credential-store)
+      - [Background](#background)
+        - [Viewing the bucket](#viewing-the-bucket)
+        - [Updating stored credentials](#updating-stored-credentials)
+        - [Acquiring stored credentials](#acquiring-stored-credentials)
+        - [Using Amazon S3 data protection](#using-amazon-s3-data-protection)
 - [Test](#test)
 - [Links](#links)
 
@@ -574,7 +580,7 @@ In your second policy example, the following allows managing the same AWS KMS ke
 
 AWS offers several advanced policy elements that not only let you specify exceptions in policies but may also result in shorter and more streamlined policies. Think of it this way: let's say you go to a sandwich shop, and the person behind the counter asks you what you want in your sandwich. Instead of listing all of the available ingredients you want one by one and leaving out only one, you can simply say, "I want all of the ingredients except for onions." This lesson covers the `NotPrincipal`, `NotAction`, and `NotResource` policy elements.
 
-### NotPrincipal
+## NotPrincipal
 
 The `NotPrincipal` element lets you specify an exception to a list of principals. For example, you can use this element to allow all AWS accounts except a specific account to access a resource. Conversely, you can deny access to all principals except the one named in the `NotPrincipal` element. As with the Principal element, you specify the user or account that should be allowed or denied permission. The difference is that the NotPrincipal element applies to everyone except that person or account. When used in conjunction with an identity policy that also explicitly allows that entity access to the specific resources, the `NotPrincipal` element can help ensure that only necessary parties can access a resource.
 
@@ -583,6 +589,45 @@ The `NotPrincipal` element lets you specify an exception to a list of principals
 * **NotPrincipal with Deny**: When you use `NotPrincipal` in the same policy statement as `"Effect": "Deny"`, the actions specified in the policy statement are explicitly denied to all principals except for the ones specified in the policy. You can use this method to allow access to only a certain principal while denying the rest. When you use `NotPrincipal` with Deny, you must also specify the account ARN of the not-denied principal. Otherwise, the policy might deny access to the entire account, including the principal. 
 
 **You cannot use the NotPrincipal element in an IAM identity-based policy. You can use it in the trust policies for IAM roles and in resource-based policies.**
+
+### Case study: Centralized credential store
+
+#### Background
+
+An e-commerce company created a new centralized credential store within Amazon S3. One of the company's requirements was to ensure that the credentials stored in the Amazon S3 bucket are protected from misuse. Two levels of access were created to handle the data:
+
+* **Credential manager role** – Has read and write access into the bucket to ensure that they can place new credentials or key files in the bucket
+
+* **Credential user role** – Has read access to only specific bucket directories
+
+##### Viewing the bucket
+
+![47_advanced_policy_elements.png](./images/47_advanced_policy_elements.png)
+
+To begin writing the Amazon S3 resource policy, the company had to create the above statement that allows both the credential manager (CredMgr) and credential user (CredUsr) to be able to see the credential bucket (CredentialBucket). They used a Deny statement along with the NotPrincipal element to ensure that only the individuals specifically listed in the policy are granted access to the credentials within the S3 buckets. 
+
+##### Updating stored credentials
+
+![48_advanced_policy_elements.png](./images/48_advanced_policy_elements.png)
+
+Now that the authorized users can see the CredentialBucket, the company had to ensure that the CredMgr user has the ability to put objects in and get objects from the bucket. This allows the CredMgr role to update credentials stored in the bucket.
+
+##### Acquiring stored credentials
+
+![49_advanced_policy_elements.png](./images/49_advanced_policy_elements.png)
+
+Finally, the company also created a policy to allow credential users and managers the ability to get the credentials for the specific service that they are authorized to access.
+
+The NotPrincipal element along with the Deny statement in each of these policies ensure that even if an IAM administrator creates new IAM users or IAM roles that have access to the CredentialBucket, they will not be able to access the sensitive credentials within the bucket because those users have not been explicitly given allow listed access in the S3 access policy.
+
+##### Using Amazon S3 data protection
+
+Amazon S3 provides a number of data protection capabilities natively. This case study did not explain in detail how to configure the following capabilities, but AWS recommends enabling:
+
+* S3 server-side encryption to help protect your credentials at rest.
+* Versioning to help capture any changes to the files.
+* Server access logging to help capture requests to access the credentials.
+* IAM user permissions to help ensure only authorized individuals can manipulate the settings on your bucket.
 
 # Test
 
