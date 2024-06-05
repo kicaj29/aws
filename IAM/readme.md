@@ -37,6 +37,13 @@
       - [Updating stored credentials](#updating-stored-credentials)
       - [Acquiring stored credentials](#acquiring-stored-credentials)
       - [Using Amazon S3 data protection](#using-amazon-s3-data-protection)
+  - [NotAction](#notaction)
+    - [Case study: Permissions guardrails with AWS Organizations](#case-study-permissions-guardrails-with-aws-organizations)
+      - [Background](#background-1)
+      - [Creating the SCP](#creating-the-scp)
+      - [Restricting actions](#restricting-actions)
+      - [Granting exceptions](#granting-exceptions)
+  - [NotResource](#notresource)
 - [Test](#test)
 - [Links](#links)
 
@@ -628,6 +635,84 @@ Amazon S3 provides a number of data protection capabilities natively. This case 
 * Versioning to help capture any changes to the files.
 * Server access logging to help capture requests to access the credentials.
 * IAM user permissions to help ensure only authorized individuals can manipulate the settings on your bucket.
+
+## NotAction
+
+The NotAction element explicitly matches everything except the specified list of actions. Using NotAction can result in a shorter policy by listing only a few actions that should not match rather than including a long list of actions that will match. This, in turn, means that all of the applicable actions or services that are not listed are allowed if you use the Allow effect. In addition, such unlisted actions or services are denied if you use the Deny effect. When you use NotAction with the Resource element, you provide scope for the policy. This is how AWS determines which actions or services are applicable.
+
+* **NotAction with Allow**
+  As with using the NotPrincipal element with "Allow", it is also strongly recommend that you do not use NotAction in the same policy statement as "Effect": "Allow". Doing so allows all actions except the one named in the NotAction element.
+
+  Here is a policy example that allows users to access all of the Amazon S3 actions that can be performed on any S3 resource except for deleting a bucket. 
+
+  ```json
+  "Effect": "Allow",
+  "NotAction": "s3:DeleteBucket",
+  "Resource": "arn:aws:s3:::*",
+  ```
+
+* **NotAction with Deny**
+  You can use the NotAction element in a statement with "Effect": "Deny" to deny access to all of the listed resources except for the actions specified in the NotAction element. This combination does not allow the listed items but instead explicitly denies the actions not listed. You must still allow actions that you want to allow.
+
+  The following policy example denies access to non-IAM actions if the user is not signed in using MFA. If the user is signed in with MFA, then the "Condition" test fails and the final "Deny" statement has no effect. Note, however, that this would not grant the user access to any actions; it would only explicitly deny all other actions except IAM actions.
+
+  ```json
+  {    
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Sid": "DenyAllUsersNotUsingMFA",
+        "Effect": "Deny",
+        "NotAction": "iam:*",
+        "Resource": "*",
+        "Condition": {
+            "BoolIfExists": {"aws:MultiFactorAuthPresent": "false"}}
+        }]
+  }  
+  ```
+### Case study: Permissions guardrails with AWS Organizations
+
+#### Background
+
+An insurance company launched its first central cloud security team to audit and make changes to settings across all of their AWS Organizations accounts. To access these accounts, the team created a role named AdminRole in all of the accounts. This role has the AdministratorAccess managed policy attached to it.
+
+An SCP was created to restrict all IAM entities in each account from modifying the AdminRole or its associated permissions. This helps ensure this role is available to only the central cloud security team.
+
+#### Creating the SCP
+
+![50_advanced_policy_elements.png](./images/50_advanced_policy_elements.png)
+
+First, the company made sure that all of the features in AWS Organizations were enabled, especially SCPs. Then, in the Organizations console, the team selected the Policies tab and created a new SCP.
+
+#### Restricting actions
+
+![51_advanced_policy_elements.png](./images/51_advanced_policy_elements.png)
+
+After the team gave the policy a name of DenyChangesToAdminRole and a description of "Prevents all IAM principals from making changes to AdminRole," they used the Organizations policy editor displayed here to write the policy. 
+
+The AdminRole was selected as the resource. Because this role is common in all accounts but each account ID is different, the wildcard (*) was used in the place of the account ID.
+
+#### Granting exceptions
+
+![52_advanced_policy_elements.png](./images/52_advanced_policy_elements.png)
+
+When the SCP was applied to each account, it prevented all principals from modifying or deleting the AdminRole IAM role. However, the central cloud security team that uses the role had to eventually make changes later on. The team's administrators could not modify the role without lifting the protection of the SCP.
+
+The solution that the team implemented to address this issue involved adding a condition to the SCP to make an exception for the AdminRole itself. The aws:PrincipalArn global condition key was used to return the ARN for the principal making the request. The NotAction would be ignored if the requesting principal is the AdminRole. 
+
+## NotResource
+
+NotResource is an advanced policy element that explicitly matches every resource except those specified. Using NotResource can result in a shorter policy by listing only a few resources that should not match rather than including a long list of resources that will match. This is particularly useful for policies that apply within a single AWS service.
+
+* **NotResource with "Allow"**: Be careful using the NotResource element and "Effect": "Allow" in the same statement or in a different statement within a policy. NotResource allows all services and resources that are not explicitly listed in the policy and could result in granting users more permissions than you intended. 
+
+* **NotResource with "Deny"**: When using NotResource, you should keep in mind that resources specified in this element are the only resources that are not limited. This, in turn, limits all of the resources that would apply to the action. Using the NotResource element and "Effect": "Deny" in the same statement denies services and resources that are not explicitly listed in the policy.
+
+As an example, imagine you have a group named HRPayroll. Members of HRPayroll should not be allowed to access any Amazon S3 resources except the Payroll folder in the HRBucket bucket. The following policy explicitly denies access to all Amazon S3 resources other than the listed resources. Note, however, that this policy does not grant the user access to any resources, so you would need to add an Allow statement to this policy for the access you wish to grant.
+
+![53_advanced_policy_elements.png](./images/53_advanced_policy_elements.png)
+
+**You should never use the NotResource element with the "Effect": "Allow" and "Action": "*" elements together. This statement is very dangerous because it allows all actions in AWS on all resources except the resource specified in the policy. This would even allow the user to add a policy to themselves that allows them to access the resource specified by the NotResource element.**
 
 # Test
 
