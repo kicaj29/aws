@@ -44,6 +44,11 @@
       - [Restricting actions](#restricting-actions)
       - [Granting exceptions](#granting-exceptions)
   - [NotResource](#notresource)
+- [Interacting with AWS STS](#interacting-with-aws-sts)
+  - [Temporary security credentials use cases](#temporary-security-credentials-use-cases)
+  - [Assuming a role](#assuming-a-role)
+    - [The AssumeRole request](#the-assumerole-request)
+    - [The AssumeRole response](#the-assumerole-response)
 - [Test](#test)
 - [Links](#links)
 
@@ -713,6 +718,74 @@ As an example, imagine you have a group named HRPayroll. Members of HRPayroll sh
 ![53_advanced_policy_elements.png](./images/53_advanced_policy_elements.png)
 
 **You should never use the NotResource element with the "Effect": "Allow" and "Action": "*" elements together. This statement is very dangerous because it allows all actions in AWS on all resources except the resource specified in the policy. This would even allow the user to add a policy to themselves that allows them to access the resource specified by the NotResource element.**
+
+# Interacting with AWS STS
+
+You can use AWS Security Token Service (AWS STS) to create and provide trusted IAM users or users that you authenticate (federated users) with **temporary security credentials** that can control access to your AWS resources. **Temporary security credentials are required when assuming an IAM role**, and they work almost identically to the long-term access key credentials that your IAM users can use, with the following differences: 
+
+* Temporary security credentials can be configured to last from a few minutes to several hours. After the credentials expire, AWS no longer recognizes them or allows any kind of access from API requests made with them.
+
+* Temporary security credentials are not stored with the user but are generated dynamically and provided to the user when requested. When (or even before) the temporary security credentials expire, the user can request new credentials as long as the user requesting them still has permissions to do so.
+
+## Temporary security credentials use cases
+
+Due to the nature of temporary security credentials, you do not have to rotate them or explicitly revoke them when they're no longer needed. After temporary security credentials expire, they cannot be reused. Also, you can provide access to your AWS resources to users without having to define an AWS identity for them or embed long-term credentials with an application.
+
+* **Identity federation**: You can manage your users in an external system outside AWS and grant them access to perform AWS tasks and access your AWS resources. IAM supports two types of identity federation: **corporate identity federation and web identity federation**. In both cases, the identities are stored outside AWS.
+
+* **Cross-account access**: Many organizations maintain more than one AWS account. Using roles and cross-account access, you can define user identities in one account and use those identities to access AWS resources in other accounts that belong to your organization.
+
+* **Roles for EC2**: If you run applications on Amazon EC2 instances and those applications need access to AWS resources, you can provide temporary security credentials to your instances when you launch them. These temporary security credentials are available to all applications that run on the instance, so you don't need to store any long-term credentials on the instance. 
+
+## Assuming a role
+
+By default, AWS STS is available as a global service, and all AWS STS API requests go to a single endpoint at https://sts.amazonaws.com. When a user or application requires temporary security credentials to access AWS resources, they make the AssumeRole API request. These temporary credentials consist of an access key ID, a secret access key, and a security token. Each time a role is assumed and a set of temporary security credentials is generated, an IAM role session is created.
+
+### The AssumeRole request
+
+Typically, you use AssumeRole within your account or for cross-account access. When it comes to cross-account access, imagine that you own multiple accounts and need to access resources in each account. You could create long-term credentials in each account to access those resources. However, managing all those credentials can be time consuming. Instead, you can create one set of long-term credentials in one account. Then, you use temporary security credentials to access all the other accounts by assuming roles in those accounts. 
+
+![54_assume_role.png](./images/54_assume_role.png)
+
+* **1**:
+  ![54_assume_role_1.png](./images/54_assume_role_1.png)
+
+* **2**: This is  the ARN of the role is being assumed. In this example, the role is named *demo*
+
+* **3**: This parameter includes the ARNs of the IAM managed policies. The policies must exist in the same account as the role. You can provide up to 10 managed policy ARNs.
+
+* **4**: This parameter is an IAM policy that is used as an inline session policy. Incline policies, as opposed to managed policies, have a one-to-one relationship with the attached role session.
+
+* **5**: This is the duration of role session in seconds.
+
+* **6**: This parameter list the session tags that you want to pass with the role.
+
+* **7**:   
+  ![54_assume_role_7.png](./images/54_assume_role_7.png)
+
+* **8**:   
+  ![54_assume_role_8.png](./images/54_assume_role_8.png)
+
+The AssumeRole request allows you to add several optional parameters to help further secure the role session:
+
+* **DurationSeconds** – By default, the temporary security credentials created by AssumeRole last for 1 hour. However, you can use this parameter to specify the duration of your session and further control the session. You can provide a value from 900 seconds (15 minutes) up to 12 hours.
+
+* **Policy** – This parameter includes IAM policy that you want to use as an inline session policy. The resulting session's permissions are the intersection of the role's identity-based policy and the session policies. 
+
+* **PolicyArns.member.N** – This parameter includes the ARNs of the IAM managed policies that you want to use as managed session policies. The policies must exist in the same account as the role. You can provide up to 10 managed policy ARNs.
+
+* **Tags.member.N** – This parameter lists the session tags that you want to pass with the role. Each session tag consists of a key name and an associated value. An upcoming lesson will cover session tags in more detail.
+
+* **SerialNumber and TokenCode** – You can include MFA information when you call AssumeRole with these parameters. This is useful for cross-account scenarios to ensure that the user who assumes the role has been authenticated with an AWS MFA device. In that scenario, the trust policy of the role being assumed includes a condition that tests for MFA.
+
+### The AssumeRole response
+
+The AssumeRole call returns a set of temporary security credentials for users who have been authorized by AWS STS
+
+![55_assume_role.png](./images/55_assume_role.png)
+
+ * PackedPolicySize:   
+  ![55_assume_role_1.png](./images/55_assume_role_1.png)
 
 # Test
 
