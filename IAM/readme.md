@@ -51,6 +51,8 @@
     - [The AssumeRole response](#the-assumerole-response)
     - [Managing Role Sessions](#managing-role-sessions)
       - [Session policies for scoping down permissions](#session-policies-for-scoping-down-permissions)
+        - [Use case: Restricting admin access](#use-case-restricting-admin-access)
+      - [Naming individual sessions for more control](#naming-individual-sessions-for-more-control)
 - [Test](#test)
 - [Links](#links)
 
@@ -812,6 +814,26 @@ Session policies can be applied in the following ways:
   When a resource-based policy is being used, you can specify the ARN of the user or role as a principal. In that case, the permissions from the resource-based policy are added to the role or user's identity-based policy before the session is created. The session policy limits the total permissions granted by the resource-based policy and the identity-based policy. The resulting permissions are the intersection of the session policies and either the resource-based policy or the identity-based policy.
 
   ![57_assume_role.png](./images/57_assume_role.png)
+
+##### Use case: Restricting admin access
+
+* **Background**
+
+  A security administrator by the name of Bob has administrative privileges when he assumes the role SecurityAdminAccess in the organization’s AWS account. When Bob assumes this role, he knows the specific actions he will perform using this role. Bob is also cautious of the role permissions and follows the practice of restricting his own permissions by using a session policy when assuming the role. This way, Bob ensures that at any given point in time, his role session can perform only the specific action for which he assumed the SecurityAdminAccess role.
+
+* **Session policy**
+
+  ![58_assume_role.png](./images/58_assume_role.png)
+
+  In this scenario, Bob needs permissions to access only an Amazon S3 bucket called NewHireOrientation in the same account. He creates the session policy above to reduce his session permissions when assuming the role SecurityAdminAccess. The action and resources elements of the policy statement allow access only to the NewHireOrientation bucket and all the objects inside this bucket.
+
+* **Summary**
+
+  When Bob assumes the SecurityAdminAccess role using the previous aws sts assume-role command, his effective session permissions are the intersection of the permissions on the role and the session policy.
+
+  This means that although the SecurityAdminAccess role had administrative privileges, Bob's resulting session permissions are s3:GetBucket and s3:GetObject on the NewHireOrientation bucket. This way, Bob can ensure he has access to only the NewHireOrientation bucket for this session.
+
+#### Naming individual sessions for more control
 
 # Test
 
