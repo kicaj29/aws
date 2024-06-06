@@ -54,6 +54,7 @@
         - [Use case: Restricting admin access](#use-case-restricting-admin-access)
       - [Naming individual sessions for more control](#naming-individual-sessions-for-more-control)
         - [Use case: Enforcing pre-approved roles](#use-case-enforcing-pre-approved-roles)
+      - [Session Tagging](#session-tagging)
 - [Test](#test)
 - [Links](#links)
 
@@ -912,6 +913,30 @@ Here is an example of a CloudTrail event displaying an AssumeRole call made by a
      }
 }
 ```
+
+#### Session Tagging
+
+Session tags are attributes passed in an IAM role session when you assume a role or federate a user using the AWS CLI or AWS API. You can use session tags for access control in IAM policies and for monitoring. These tags are not stored in AWS and are valid only for the duration of the session. You define session tags just like tags in AWS, consisting of a customer-defined key and an optional value.
+
+To be able to add session tags, you must have the sts:TagSession action allowed in your IAM policy. For example, the following role trust policy allows the user Carol to assume the role to which the policy is attached. When that user assumes the role, they must use the AWS CLI or AWS API to pass the three required session tags and the required external ID. Additionally, the user can choose to set the Project and Department tags as transitive. Transitive tags are tags that persist through multiple sessions. This lesson will cover transitive tags in detail later.
+
+![62_assume_role.png](./images/62_assume_role.png)
+
+* **1**   
+  ![62_session_tags_1.png](./images/62_session_tags_1.png)
+
+* **2**   
+  ![62_session_tags_2.png](./images/62_session_tags_2.png)
+
+* **3**   
+  ![62_session_tags_3.png](./images/62_session_tags_3.png)
+
+* **4**   
+
+* **5**   
+
+* **6**   
+
 
 # Test
 
