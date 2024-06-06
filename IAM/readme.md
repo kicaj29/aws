@@ -53,6 +53,7 @@
       - [Session policies for scoping down permissions](#session-policies-for-scoping-down-permissions)
         - [Use case: Restricting admin access](#use-case-restricting-admin-access)
       - [Naming individual sessions for more control](#naming-individual-sessions-for-more-control)
+        - [Use case: Enforcing pre-approved roles](#use-case-enforcing-pre-approved-roles)
 - [Test](#test)
 - [Links](#links)
 
@@ -834,6 +835,83 @@ Session policies can be applied in the following ways:
   This means that although the SecurityAdminAccess role had administrative privileges, Bob's resulting session permissions are s3:GetBucket and s3:GetObject on the NewHireOrientation bucket. This way, Bob can ensure he has access to only the NewHireOrientation bucket for this session.
 
 #### Naming individual sessions for more control
+
+Each IAM role session is uniquely identified by a role session name. AWS STS provides a condition key called sts:RoleSessionName that controls how IAM principals and applications name their role sessions when they assume an IAM role. Administrators can rely on the role session name to track user actions when viewing AWS CloudTrail logs.
+
+For example, the following role trust policy requires that IAM users in account 111122223333 provide their IAM user name as the session name when they assume the role. This requirement is enforced using the aws:username condition variable in the condition key. This policy allows IAM users to assume the role to which the policy is attached. This policy does not allow anyone using temporary credentials to assume the role because the username variable is present for only IAM users.
+
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "RoleTrustPolicyRequireUsernameForSessionName",
+            "Effect": "Allow",
+            "Action": "sts:AssumeRole",
+            "Principal": {"AWS": "arn:aws:iam::111122223333:root"},
+            "Condition": {
+                "StringLike": {"sts:RoleSessionName": "${aws:username}"} }
+        }
+    ]
+}
+```
+
+There are different ways to name a role session, and it depends on the method used to assume the IAM role.
+
+* **AWS Service**
+  In some cases, AWS sets the role session name on your behalf. For example, for Amazon EC2 instance profiles, AWS sets the role session name to the instance profile ID. The table below provides examples of role session names provided by AWS services.
+
+  ![59_assume_role.png](./images/59_assume_role.png)
+
+* **SAML-based**
+  When you use the AssumeRolewithSAML API to assume an IAM role, AWS sets the role session name value to the attribute provided by the identity provider, which your administrator defined. For scenarios in which corporate identities outside AWS need to access AWS resources, the corporate SAML-based IdP will provide the role session name.
+
+* **User-defined**
+  In other cases, you provide the role session name when assuming the IAM role. For example, when assuming an IAM role with APIs such as AssumeRole or AssumeRoleWithWebIdentity, the role session name is a required input parameter that you set when making the API request.
+
+##### Use case: Enforcing pre-approved roles
+
+* **Background**
+  You have a new AWS account with an Amazon DynamoDB database that stores competitive analysis data. You do not want members of the marketing department to have direct access to this new AWS account, so you created a role called Analyst in your new account. The requirement is to have the marketing partners select from a pre-defined set of role session names—“marketing-campaign” or “product-development”—which will identify their reason for accessing the competitive analysis data.
+
+* **Trust policy**
+  ![60_assume_role.png](./images/60_assume_role.png)
+
+  First, you need to create a role trust policy for the analyst IAM role. In the role trust policy, you set the marketing IAM role as the principal to restrict who can access the analyst IAM role. Then you use the sts:RoleSessionName condition to define the acceptable role session names: marketing-campaign and product-development.
+
+* **Assuming the role**
+  ![61_assume_role.png](./images/61_assume_role.png)
+
+  Alice from the marketing department wants to access the competitive analysis data. For AWS to authorize the assume-role request, when she assumes the Analyst IAM role, she must set the role session name to one of the pre-defined values. The following is a sample CLI command to assume the analyst IAM role.
+
+Here is an example of a CloudTrail event displaying an AssumeRole call made by an AWS service that requested temporary security credentials. Note the session name: it's an AWS Lambda function that requested to assume the backend-logic-fn-role role, which is most likely a role created especially for that function.
+
+```json
+{
+     "eventVersion": "1.05",
+     "userIdentity": {
+               "type": "AWSService",
+               "invokedBy": "lambda.amazonaws.com"
+     },
+     "eventTime": "2019-08-26T11:15:26Z",
+     "eventSource": "sts.amazonaws.com",
+     "eventName": "AssumeRole",
+     "awsRegion": "us-west-2",
+     "sourceIPAddress": "lambda.amazonaws.com",
+     "userAgent": "lambda.amazonaws.com",
+     "requestParameters": {
+                 "roleSessionName": "backend-logic-fn",
+                 "roleArn": "arn:aws:iam::123456789012:role/backend-logic-fn-role"
+     },
+     "responseElements": {
+                 "credentials": {
+                          "sessionToken": "AgoJb3JpZ……2luX2VjEJz",
+                          "accessKeyId": "ASIAUF7B273EXAMPLE",
+                          "expiration": "Aug 26, 2019 11:15:26 PM"
+                   }
+     }
+}
+```
 
 # Test
 
