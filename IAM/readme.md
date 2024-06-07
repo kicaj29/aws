@@ -58,6 +58,7 @@
         - [Session tag considerations](#session-tag-considerations)
         - [Role chaining and session tags](#role-chaining-and-session-tags)
         - [Use case: Granting corporate employees AWS access based on job function](#use-case-granting-corporate-employees-aws-access-based-on-job-function)
+- [Federating Users in AWS](#federating-users-in-aws)
 - [Test](#test)
 - [Links](#links)
 
@@ -998,6 +999,8 @@ Role chaining is especially useful when you want to impose guardrails against yo
   ![66_session_tags.png](./images/66_session_tags.png)
 
   Once the administrator creates the role and permissions policy in AWS, they [configure the SAML IdP](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_create_saml_relying-party.html) to include the jobfunction and project attributes as session tags in the SAML assertion when engineers federate into AWS using this role. In order to pass attributes as session tags in the federated session, the SAML assertion must contain attributes. The example above shows a part of the SAML assertion generated from the IdP with two attributes (project:Automation and jobfunction:SystemsEngineer) that you want to pass as session tags.
+
+# Federating Users in AWS
 
 # Test
 
