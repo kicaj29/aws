@@ -63,7 +63,7 @@
     - [The AssumeRoleWithSAML request](#the-assumerolewithsaml-request)
     - [The AssumeRoleWithSAML response](#the-assumerolewithsaml-response)
     - [Using ABAC for identity federation](#using-abac-for-identity-federation)
-- [Web-Based Federation](#web-based-federation)
+  - [Web-Based Federation](#web-based-federation)
 - [Test](#test)
 - [Links](#links)
 
@@ -1068,7 +1068,7 @@ For example, imagine that your systems engineer configures your IdP to include "
 
 To setup the solution as displayed above, first you need to tag all project resources with their respective tags and configure the IdP to include the CostCenter tag in the session. The IAM role for this scenario would then grant access to project resources based on the CostCenter tag with the ec2:ResourceTag/CostCenter condition key. Now, whenever users federate into AWS using this role, they get access to only the resources belonging to their cost center based on the CostCenter tag included in the federated session. If a user switches cost centers or is added to a specific cost center, your system administrator will only have to update the IdP, and the permissions in AWS will automatically apply to grant access to the proper cost center's AWS resources without requiring a permissions update in AWS.
 
-# Web-Based Federation
+## Web-Based Federation
 
 # Test
 
