@@ -59,6 +59,11 @@
         - [Role chaining and session tags](#role-chaining-and-session-tags)
         - [Use case: Granting corporate employees AWS access based on job function](#use-case-granting-corporate-employees-aws-access-based-on-job-function)
 - [Federating Users in AWS](#federating-users-in-aws)
+  - [SAML-Based Federation](#saml-based-federation)
+    - [The AssumeRoleWithSAML request](#the-assumerolewithsaml-request)
+    - [The AssumeRoleWithSAML response](#the-assumerolewithsaml-response)
+    - [Using ABAC for identity federation](#using-abac-for-identity-federation)
+- [Web-Based Federation](#web-based-federation)
 - [Test](#test)
 - [Links](#links)
 
@@ -1001,6 +1006,69 @@ Role chaining is especially useful when you want to impose guardrails against yo
   Once the administrator creates the role and permissions policy in AWS, they [configure the SAML IdP](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_create_saml_relying-party.html) to include the jobfunction and project attributes as session tags in the SAML assertion when engineers federate into AWS using this role. In order to pass attributes as session tags in the federated session, the SAML assertion must contain attributes. The example above shows a part of the SAML assertion generated from the IdP with two attributes (project:Automation and jobfunction:SystemsEngineer) that you want to pass as session tags.
 
 # Federating Users in AWS
+
+You may have users who need access to your AWS accounts that are authenticated through another identity provider. Identity federation is a system of trust between two parties for the purpose of authenticating users and conveying information needed to authorize their access to resources. **In this system, an identity provider (IdP) is responsible for user authentication, and a service provider, such as a service or an application, controls access to resources.** 
+
+![67_federation.png](./images/67_federation.png)
+
+* **1**: a trust relationship is configured between the IdP and the service provider. The service provider trusts the IdP to authenticate users and relies on the information provided by the IdP about the users.
+* **2**: after authenticating a user, the IdP returns a **message called an assertion**, containing the user`s sign-in name and other attributes that the service provider needs to establish a session with the user and to determine the scope of resource access.
+* **3**: the service provider receives the assertion from the user, validates the level of access requested, and sends the user the necessary credentials to access the desired resources.
+* **4**: with the right credentials from the service provider, the user has now direct access to the requested resources via an established session.
+
+AWS offers different solutions for federating your employees, contractors, and partners (workforce) to AWS accounts and business applications, and for adding federation support to your customer-facing web and mobile applications. AWS supports commonly used open identity standards, including Security Assertion Markup Language 2.0 (SAML 2.0), Open ID Connect (OIDC), and OAuth 2.0.
+
+* AWS IAM Identity Center: sso to AWS accounts and centrally managed access to resources.
+* AWS IAM: fine-grained access to AWS
+* AWS Cognito: access to web and mobile apps
+
+## SAML-Based Federation
+
+You can enable federated access to AWS accounts using IAM and AWS STS, which allows you to enable a separate SAML 2.0-based IdP for each AWS account and use federated user attributes for access control. With IAM, you can pass user attributes, such as cost center or job role, from your IdPs to AWS, and implement fine-grained access permissions based on these attributes. IAM helps you define permissions once and then grant, revoke, or modify AWS access by simply changing the attributes in the IdP. 
+
+### The AssumeRoleWithSAML request
+
+Before your application can call AssumeRoleWithSAML, you must configure your SAML IdP to issue the claims that AWS requires. Additionally, you must use IAM to create a SAML provider entity in your AWS account that represents your identity provider. You must also create an IAM role that specifies this SAML provider in its trust policy.
+
+![68_saml.png](./images/68_saml.png)
+
+* **1**: this is the role that the federated user is assuming. In this case it is `TestSaml`
+* **2**: this is the ARN of the SAML provider configured in IAM that describes the IdP. In this case the IdP is called `SAML-test`
+* **3**: this is base64 encoded SAML authentication response that the IdP provides. The Service Provider uses this response to grant access to resources.
+
+The **AssumeRoleWithSAML** request allows you to add several optional parameters to help further secure the role session:
+
+* **DurationSeconds** – Your role session lasts for the duration that you specify in the DurationSeconds parameter or until the time specified in the SAML authentication response's SessionNotOnOrAfter value, whichever is shorter. You can provide a DurationSeconds value from 900 seconds (15 minutes) to the maximum session of 12 hours. The default value is 3,600 seconds (1 hour).
+
+* **Policy** – This parameter includes the IAM policy that you want to use as an inline session policy. The resulting session's permissions are the intersection of the role's identity-based policy and the session policies. 
+
+* **PolicyArns.member.N** – This parameter includes the ARNs of the IAM managed policies that you want to use as managed session policies. The policies must exist in the same account as the role. You can provide up to 10 managed policy ARNs.
+
+### The AssumeRoleWithSAML response
+
+The **AssumeRoleWithSAML** call returns a set of temporary security credentials for users who have been authenticated via a SAML authentication response. This operation provides a mechanism for tying an enterprise identity store or directory to role-based AWS access without user-specific credentials or configuration.
+
+![69_saml.png](./images/69_saml.png)
+
+* **1**: the issuer element refers to the entity Id of you IdP which is a URL that uniquely identifies your SAML identity provider. SAML assertions sent to the service provider must match this value exactly in the attribute of the SAML assertion.
+* **2**: the **AssumedRoleUser** section contains the ARN of the issue temporary credentials and the unique identifier of the role ID and role session name.
+* **3**: this section contains the temporary security credentials, which include an access key ID, a secret access key, a security (or session) token, and the session expiration time.
+* **4**: this field specifies the specific audience that the SAML assertion is intended for. The "audience" will be the service provider and is typically a URL.
+* **5**: the subject type provides information on the format of the name identifier of the **Subject** field. And identifier intended to be used for a single session only is called a transient identifier.
+* **6**: the **PackedPolicySize** is a percentage value that indicates the packed size of the combined session policies and session tags that were passed in the request. The request fails if the packed size is greater than 100%, which means that policies and tags exceeded the allowed space.
+* **7**: the **NameQualifier** is a hash value based on the concatenation of the Issuer response value, the AWS account ID, and the name of the SAML provider in IAM. This combination of the **NameQualifier** and **Subject** can be used to uniquely identify a federated user.
+
+### Using ABAC for identity federation
+
+Granting access to cloud resources using ABAC has several advantages. One of them is that you have fewer roles to manage. Users that are federated into AWS can also use ABAC. User attributes can be passed as session tags using standards-based SAML. You can use attributes defined in external identity systems as part of attributes-based access control decisions within AWS. Administrators of the IdP manage user attributes and define attributes to pass in during federation.
+
+For example, imagine that your systems engineer configures your IdP to include "CostCenter" as a session tag when users federate into AWS using an IAM role. All federated users assume the same role but are granted access only to AWS resources belonging to their cost center as displayed in the diagram below.
+
+![70_saml.png](./images/70_saml.png)
+
+To setup the solution as displayed above, first you need to tag all project resources with their respective tags and configure the IdP to include the CostCenter tag in the session. The IAM role for this scenario would then grant access to project resources based on the CostCenter tag with the ec2:ResourceTag/CostCenter condition key. Now, whenever users federate into AWS using this role, they get access to only the resources belonging to their cost center based on the CostCenter tag included in the federated session. If a user switches cost centers or is added to a specific cost center, your system administrator will only have to update the IdP, and the permissions in AWS will automatically apply to grant access to the proper cost center's AWS resources without requiring a permissions update in AWS.
+
+# Web-Based Federation
 
 # Test
 
