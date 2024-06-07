@@ -55,6 +55,9 @@
       - [Naming individual sessions for more control](#naming-individual-sessions-for-more-control)
         - [Use case: Enforcing pre-approved roles](#use-case-enforcing-pre-approved-roles)
       - [Session Tagging](#session-tagging)
+        - [Session tag considerations](#session-tag-considerations)
+        - [Role chaining and session tags](#role-chaining-and-session-tags)
+        - [Use case: Granting corporate employees AWS access based on job function](#use-case-granting-corporate-employees-aws-access-based-on-job-function)
 - [Test](#test)
 - [Links](#links)
 
@@ -932,11 +935,69 @@ To be able to add session tags, you must have the sts:TagSession action allowed 
   ![62_session_tags_3.png](./images/62_session_tags_3.png)
 
 * **4**   
+  ![62_session_tags_4.png](./images/62_session_tags_4.png)
 
 * **5**   
+  ![62_session_tags_5.png](./images/62_session_tags_5.png)
 
 * **6**   
+  ![62_session_tags_6.png](./images/62_session_tags_6.png)
 
+
+##### Session tag considerations
+
+Before you use session tags, you need to take several things into consideration. Review the following details about sessions and tags:
+
+* Session tags are principal tags that you specify while requesting a session. 
+
+* Session tags must follow the [rules for naming tags](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_tags.html#id_tags_rules_creating) in IAM and AWS STS. This topic includes information about case sensitivity and restricted prefixes that apply to your session tags.
+
+* New session tags override existing assumed role or federated user tags with the same tag key, regardless of case.
+
+* You cannot pass session tags using the AWS Management Console.
+
+* Session tags are valid for only the current session.
+
+* You can use session tags to control access to resources or to control the tags that can be passed into a subsequent session.
+
+* You can pass a maximum of 50 session tags.
+
+* You can view the principal tags for your session, including its session tags, in the AWS CloudTrail logs.
+
+##### Role chaining and session tags
+
+Session tags support role chaining. Role chaining occurs when you use a role to assume a second role through the AWS CLI or API. You can assume one role and then use the temporary credentials to assume another role and continue from session to session. By default, tags are not passed to subsequent role sessions. **However, you can set session tags as transitive. This ensures that those session tags pass to subsequent sessions in a role chain.** 
+
+In the role chaining scenario, you use an IAM user's access keys in the AWS CLI to assume a role named Role 1. You then use the resulting session credentials to assume a second role named Role 2. You can then use the second session credentials to assume a third role named Role 3. These requests occur as three separate operations. Each role is already tagged in IAM. During each request, you pass session tags represented by the gray tag.
+
+![63_session_tags.png](./images/63_session_tags.png)
+
+When you chain roles, you can ensure that tags from an earlier session persist to the later sessions. To do this using the assume-role CLI command, **you must pass the tag as a session tag and set the tag as transitive.**
+
+Role chaining is especially useful when you want to impose guardrails against yourself or an administrator in order to prevent something accidental. For example, maybe you assume a generic admin role on a weekly basis. Sometimes, all you need to perform are certain operations that are bounded by a more scoped-down role. You can allow the admin role to assume the other more scoped-down role when needed. This helps avoid management overhead by having roles individually assigned to single users. 
+
+##### Use case: Granting corporate employees AWS access based on job function
+
+* **Background**: Consider a scenario in which your organization deployed Amazon EC2 and Amazon Relational Database Service (Amazon RDS) instances in your AWS account for your company’s production web applications. Your systems engineers manage the EC2 instances, and database engineers manage the RDS instances. Both groups access AWS by federating into your AWS account from a SAML IdP. Your organization’s security policy requires employees to have access to manage only the resources related to their job function and projects they work on.
+
+* **Tag all project resources**: The administrator is looking to implement ABAC using the jobfunction and project attributes as session tags. First, all project resources need to be tagged with the appropriate project tag. This is important because the administrator wants to create permission rules based on this tag to implement ABAC.
+
+* **Create IAM role with permissions based on attributes**: 
+  ![64_session_tags.png](./images/64_session_tags.png)
+
+  Next, the administrator creates an IAM role called MyProjectResources using the AWS Management Console or CLI. This is the role that your systems engineers and database engineers will assume when they federate into AWS to access and manage the EC2 and RDS instances, respectively. To grant this role permissions, the administrator creates the IAM policy above and attaches it to the MyProjectResources role.
+
+  In the policy above, the administrator allows specific actions related to EC2 and RDS that the systems engineers and database engineers need to manage their project instances. In the condition element of the policy statements, the administrator adds a condition based on the jobfunction and project attributes to ensure engineers can access only the instances that belong to their jobfunction and have a matching project tag.
+
+* **Modify the role trust policy**: 
+  ![65_session_tags.png](./images/65_session_tags.png)
+
+  In order to ensure that your systems engineers and database engineers can assume this role when they federate into AWS from your IdP, the administrator modifies the role’s trust policy to trust your SAML IdP as shown in the policy statement above. Because you also want to include session tags when engineers federate in, the administrator adds the new action sts:TagSession in the policy statement as shown below. They also add a condition that requires the jobfunction and project attributes to be included as session tags when engineers assume this role.
+
+* **Configure your SAML IdP**
+  ![66_session_tags.png](./images/66_session_tags.png)
+
+  Once the administrator creates the role and permissions policy in AWS, they [configure the SAML IdP](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_create_saml_relying-party.html) to include the jobfunction and project attributes as session tags in the SAML assertion when engineers federate into AWS using this role. In order to pass attributes as session tags in the federated session, the SAML assertion must contain attributes. The example above shows a part of the SAML assertion generated from the IdP with two attributes (project:Automation and jobfunction:SystemsEngineer) that you want to pass as session tags.
 
 # Test
 
