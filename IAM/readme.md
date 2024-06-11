@@ -1175,6 +1175,11 @@ An IAM Identity Center permission set is a collection of administrator-defined p
 
 # IAM Policy Simulator
 
+With the IAM policy simulator, you can test and troubleshoot identity-based policies, IAM permissions boundaries, AWS Organizations service control policies, and resource-based policies. The policy simulator does not make an actual AWS service request, so you can safely test requests that might make unwanted changes to your live AWS environment. The only result returned is whether the requested action would be allowed or denied.
+
+Here are some common use cases for the IAM policy simulator:
+
+
 # Test
 
 ![44_test.png](./images/44_test.png)
