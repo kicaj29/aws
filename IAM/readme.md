@@ -64,6 +64,8 @@
     - [The AssumeRoleWithSAML response](#the-assumerolewithsaml-response)
     - [Using ABAC for identity federation](#using-abac-for-identity-federation)
   - [Web-Based Federation](#web-based-federation)
+    - [The AssumeRoleWithWebIdentity request](#the-assumerolewithwebidentity-request)
+    - [The AssumeRoleWithWebIdentity response](#the-assumerolewithwebidentity-response)
 - [Test](#test)
 - [Links](#links)
 
@@ -1069,6 +1071,52 @@ For example, imagine that your systems engineer configures your IdP to include "
 To setup the solution as displayed above, first you need to tag all project resources with their respective tags and configure the IdP to include the CostCenter tag in the session. The IAM role for this scenario would then grant access to project resources based on the CostCenter tag with the ec2:ResourceTag/CostCenter condition key. Now, whenever users federate into AWS using this role, they get access to only the resources belonging to their cost center based on the CostCenter tag included in the federated session. If a user switches cost centers or is added to a specific cost center, your system administrator will only have to update the IdP, and the permissions in AWS will automatically apply to grant access to the proper cost center's AWS resources without requiring a permissions update in AWS.
 
 ## Web-Based Federation
+
+Identity federation is also available for your AWS customer-facing web and mobile applications via a web identity provider. Examples of web identity providers supported by AWS include Amazon Cognito, Login with Amazon, Facebook, Google, or any OpenID Connect-compatible identity provider.
+
+### The AssumeRoleWithWebIdentity request
+
+Before your application can call AssumeRoleWithWebIdentity, you must have an identity token from a supported identity provider and create a role that the application can assume. The role that your application assumes must trust the identity provider that is associated with the identity token. **In other words, the identity provider must be specified in the role's trust policy.**
+
+Calling AssumeRoleWithWebIdentity does not require the use of AWS security credentials. Therefore, you can distribute an application (for example, on mobile devices) that requests temporary security credentials without including long-term AWS credentials in the application. You also don't need to deploy server-based proxy services that use long-term AWS credentials. Instead, the identity of the caller is validated by using a token from the web identity provider.
+
+![71_web_based_federation.png](./images/71_web_based_federation.png)
+
+* **1**: the `ProviderId` parameters identifies the web identity provider and is only required for OAuth 2.0 access tokens. Currently, www.amazon.com and graph.facebook.com are the only supported IdPs for OAuth 2.0.
+
+* **2**: this parameter identifies the assumed role session. Typically, you pass the name or identifier associated with the user who is using your application. That way, the temporary security credentials that your application will use are associated with that user.
+
+* **3**: This is the Amazon Resource Name (ARN) of the role that the caller is assuming.
+
+* **4**: The IdP provides the OAuth 2.0 access token or the OpenID Connect ID token. Your application must get this token by authenticating the user who is using your application with a web identity provider before the application makes an `AssumeRoleWithWebIdentity`.
+
+The AssumeRoleWithWebIdentity request allows you to add several optional parameters to help further secure the role session:
+
+* **DurationSeconds** – Your role session lasts for the duration that you specify in the DurationSeconds parameter. You can provide a DurationSeconds value from 900 seconds (15 minutes) up to the maximum session of 12 hours. The default value is 3,600 seconds (1 hour).
+
+* **Policy** – The IAM policy that you want to use as an inline session policy. The resulting session's permissions are the intersection of the role's identity-based policy and the session policies. 
+
+* **PolicyArns.member.N** – The ARNs of the IAM managed policies that you want to use as managed session policies. The policies must exist in the same account as the role. You can provide up to 10 managed policy ARNs.
+
+### The AssumeRoleWithWebIdentity response
+
+The temporary security credentials returned by this API consist of an access key ID, a secret access key, and a security token. Applications can use these temporary security credentials to sign calls to AWS service API operations.
+
+![72_web_based_federation.png](./images/72_web_based_federation.png)
+
+* **1**: the issuer element refers to the entity Id of your IdP which is a URL that uniquely identifies your SAML identity provider. SAML assertions sent to the service provider must match this value exactly in the attribute of the SAML assertion.
+
+* **2**: the `AssumedRoleUser` section contains the ARN of the issued temporary credentials and the unique identifier of the role ID and role session name.
+
+* **3**: this section contains the temporary security credentials, which include an access key ID, a secret access key, a security (or session) token, and the session expiration time.
+
+* **4**: this field specifies the specific audience that the SAML assertion is intended for. The "audience" will be the service provider and is typically a URL.
+
+* **5**: the `SubjectType` provides information on the format of the name identifier of the Subject field. An identifier intended to be used for a single session only is called a transient identifier.
+
+* **6**: the **PackedPolicySize** is a percentage value that indicates the packed size of the combined session policies and session tags that were passed in the request. The request fails if the packed size is greater than 100%, which means that policies and tags exceeded the allowed space.
+
+* **7**: the **NameQualifier** is a hash value based on the concatenation of the Issuer response value, the AWS account ID, and the name of the SAML provider in IAM. This combination of the **NameQualifier** and **Subject** can be used to uniquely identify a federated user.
 
 # Test
 
