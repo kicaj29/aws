@@ -66,6 +66,11 @@
   - [Web-Based Federation](#web-based-federation)
     - [The AssumeRoleWithWebIdentity request](#the-assumerolewithwebidentity-request)
     - [The AssumeRoleWithWebIdentity response](#the-assumerolewithwebidentity-response)
+  - [AWS IAM Identity Center for User Federation](#aws-iam-identity-center-for-user-federation)
+    - [IAM Identity Center rename](#iam-identity-center-rename)
+    - [Getting started with AWS IAM Identity Center](#getting-started-with-aws-iam-identity-center)
+    - [AWS access via permission sets](#aws-access-via-permission-sets)
+- [IAM Policy Simulator](#iam-policy-simulator)
 - [Test](#test)
 - [Links](#links)
 
@@ -1117,6 +1122,58 @@ The temporary security credentials returned by this API consist of an access key
 * **6**: the **PackedPolicySize** is a percentage value that indicates the packed size of the combined session policies and session tags that were passed in the request. The request fails if the packed size is greater than 100%, which means that policies and tags exceeded the allowed space.
 
 * **7**: the **NameQualifier** is a hash value based on the concatenation of the Issuer response value, the AWS account ID, and the name of the SAML provider in IAM. This combination of the **NameQualifier** and **Subject** can be used to uniquely identify a federated user.
+
+## AWS IAM Identity Center for User Federation
+
+Another AWS service and a great choice to help you define federated access permissions for your users based on their group memberships in a single centralized directory is AWS IAM Identity Center (successor to AWS Single Sign-On) . IAM Identity Center makes it easy to centrally manage federated access to multiple AWS accounts and business applications and provide users with single sign-on access to all their assigned accounts and applications from one place. You can use IAM Identity Center for identities in the Identity Center directory, your existing Microsoft Active Directory, or external IdP.
+
+IAM Identity Center provides the following benefits:
+
+* Built-in integrations with business cloud applications, such as Salesforce, Box, GitHub, and Office 365.
+* Built-in directory for user and group management to serve as an IdP to authenticate users to IAM Identity Center enabled applications, the AWS Management Console, and SAML 2.0 compatible cloud-based applications.
+* Integration with AWS services, such as AWS Organizations.
+* Log in CloudTrail of all sign-in and administrative activities for auditing. You can send these logs to SIEM solutions such as Splunk and Sumo Logic to analyze them.
+* AWS Access portal for users to sign in with their existing corporate credentials and access all of their assigned accounts and applications from one place.
+* Ability to use AWS CLI v2 to access AWS resources via IAM Identity Center. This has the benefit of providing short-term credentials to your users to more safely access your resources. You can automatically or manually configure a profile for the CLI to access resources in your AWS accounts (see demo below).
+
+**On July 26, 2022, AWS Single Sign-On was renamed to AWS IAM Identity Center (successor to AWS Single Sign-On).**
+
+### IAM Identity Center rename
+
+The following table is meant to describe some of the more common term changes that have been updated throughout this guide as a result of the rename.
+
+![73_iam_identity_center.png](./images/73_iam_identity_center.png)
+
+### Getting started with AWS IAM Identity Center
+
+![74_iam_identity_center.png](./images/74_iam_identity_center.png)
+
+* 1   
+  ![74_iam_identity_center_1.png](./images/74_iam_identity_center_1.png)
+
+* 2   
+  ![74_iam_identity_center_2.png](./images/74_iam_identity_center_2.png)
+
+* 3   
+  ![74_iam_identity_center_3.png](./images/74_iam_identity_center_3.png)
+
+* 4   
+  ![74_iam_identity_center_4.png](./images/74_iam_identity_center_4.png)
+
+* https://docs.aws.amazon.com/singlesignon/latest/userguide/getting-started.html
+* https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_terms-and-concepts.html#iam-term-service-linked-role
+* https://youtu.be/li_ISe96K9E
+* https://youtu.be/Ga8n2P8Eepc
+
+### AWS access via permission sets
+
+An IAM Identity Center permission set is a collection of administrator-defined policies that IAM Identity Center uses to determine a user's effective permissions to access a given AWS account. Permission sets can contain either AWS-managed policies or custom policies. Permission sets are provisioned to the AWS account as IAM roles and are presented to users as such. You can assign more than one permission set to a user. Users who have multiple permission sets must choose one of the roles when they sign in to the AWS access portal. 
+
+![75_iam.png](./images/75_iam.png)
+
+**It is important to note that permission sets are used for only AWS account**s. Permission sets are not used to manage access to cloud applications. Permission sets ultimately get created as IAM roles in a given AWS account, and trust policies allow users to assume the role through IAM Identity Center. 
+
+# IAM Policy Simulator
 
 # Test
 
