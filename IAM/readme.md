@@ -71,6 +71,15 @@
     - [Getting started with AWS IAM Identity Center](#getting-started-with-aws-iam-identity-center)
     - [AWS access via permission sets](#aws-access-via-permission-sets)
 - [IAM Policy Simulator](#iam-policy-simulator)
+  - [Granting permissions to use the simulator](#granting-permissions-to-use-the-simulator)
+- [IAM Access Analyzer](#iam-access-analyzer)
+  - [How does it work?](#how-does-it-work)
+  - [Granting permissions to use the tool](#granting-permissions-to-use-the-tool)
+- [Viewing Access History](#viewing-access-history)
+  - [Last accessed information types](#last-accessed-information-types)
+  - [Access Advisor tab](#access-advisor-tab)
+  - [Things to consider when using the tool](#things-to-consider-when-using-the-tool)
+  - [Use case: Reducing permissions for an IAM group](#use-case-reducing-permissions-for-an-iam-group)
 - [Test](#test)
 - [Links](#links)
 
@@ -1179,6 +1188,164 @@ With the IAM policy simulator, you can test and troubleshoot identity-based poli
 
 Here are some common use cases for the IAM policy simulator:
 
+* Test policies that are attached to IAM users, groups, or roles in your AWS account. If more than one policy is attached, you can test all the policies or select individual policies. You can test which actions are allowed or denied by the selected policies for specific resources.
+
+* Test and troubleshoot the effect of permissions boundaries on IAM entities one permissions boundary at a time.
+
+* Test policies that are attached to AWS resources, such as Amazon S3 buckets, Amazon Simple Queue Service (Amazon SQS) queues, Amazon Simple Notification Service (Amazon SNS)  topics, or Amazon S3 Glacier vaults.
+
+* Test the impact of SCPs on your IAM policies and resource policies if your AWS account is a member of an organization in AWS Organizations.
+
+* Test new policies that are not yet attached to a user, group, or role by typing or copying them into the simulator. These are used only in the simulation and are not saved.
+
+* Simulate real-world scenarios by providing context keys, such as an IP address or date, that are included in Condition elements in the policies being tested.
+
+* Identify which specific statement in a policy results in allowing or denying access to a particular resource or action.
+
+## Granting permissions to use the simulator
+
+You can allow console or API users to test policies that are attached to IAM users, groups, or roles in your AWS account. To do so, you must provide permission to retrieve those policies. Users must have permission to retrieve the resource's policy in order to test resource-based policies.
+
+# IAM Access Analyzer
+
+IAM Access Analyzer continuously monitors policies for changes where you no longer need to rely on intermittent manual checks in order to catch issues as policies are added or updated. Using IAM Access Analyzer, you can proactively address any resource policies that violate their security and governance best practices around resource sharing and protect their resources from unintended access. IAM Access Analyzer delivers comprehensive, detailed findings through the IAM, Amazon S3, and AWS Security Hub consoles and also through its APIs. Findings can also be exported as a report for auditing purposes. 
+
+IAM Access Analyzer findings provide definitive answers of who has public and cross-account access to AWS resources from outside an account.
+
+## How does it work?
+
+When you enable IAM Access Analyzer, you create an analyzer for your AWS account or your entire organization if it is using AWS Organizations. The organization or account you choose is known as the zone of trust for the analyzer. You can create only one analyzer per Region in an account.
+
+![76_iam_access_analyzer.png](./images/76_iam_access_analyzer.png)
+
+* **1**   
+  ![76_iam_access_analyzer_1.png](./images/76_iam_access_analyzer_1.png)
+
+* **2**   
+  ![76_iam_access_analyzer_2.png](./images/76_iam_access_analyzer_2.png)
+
+* **3**   
+  ![76_iam_access_analyzer_3.png](./images/76_iam_access_analyzer_3.png)
+
+
+IAM Access Analyzer supports the following resource types:
+
+* **IAM roles** – Trust policies are analyzed and findings are generated for roles within the zone of trust. These findings are accessible by an external entity that is outside your zone of trust.
+* **Amazon S3 buckets** – Findings are generated when an Amazon S3 bucket policy, ACL, or access point applied to a bucket grants access to an external entity.
+* **AWS KMS keys** – Findings are generated if a key policy or grant allows an external entity to access the key.
+* **AWS Lambda functions** – Findings are generated for policies that grant access to the function to an external entity.
+* **Amazon SQS queues** – Findings are generated for policies that allow an external entity to access a queue.
+
+## Granting permissions to use the tool
+
+To successfully configure and use Access Analyzer, the account you use must be granted the required permissions. To access and use all Access Analyzer features, you can apply the `IAMAccessAnalyzerFullAccess` managed policy to the account as displayed below. To allow read-only access to Access Analyzer, use the `IAMAccessAnalyzerReadOnlyAccess` managed policy. A custom policy for managing Access Analyzer must include the `access-analyzer: *` and `iam:CreateServiceLinkedRole` permissions.
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+              "access-analyzer:*" ],
+      "Resource": "*"},
+    {
+      "Effect": "Allow",
+      "Action": "iam:CreateServiceLinkedRole",
+      "Resource": "*",
+      "Condition": {"StringEquals": {
+              "iam:AWSServiceName": "access-analyzer.amazonaws.com"}}
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+              "organizations:DescribeAccount",
+              "organizations:DescribeOrganization",
+              "organizations:DescribeOrganizationalUnit",
+              "organizations:ListAccounts",
+              "organizations:ListAccountsForParent",
+              "organizations:ListAWSServiceAccessForOrganization",
+              "organizations:ListChildren",
+              "organizations:ListDelegatedAdministrators",
+              "organizations:ListOrganizationalUnitsForParent",
+              "organizations:ListParents",
+              "organizations:ListRoots"
+      ],
+      "Resource": "*"}
+  ]
+}
+```
+
+# Viewing Access History
+
+As an administrator, you might grant permissions to IAM users or roles beyond what they require. Because of this, IAM provides last accessed information to help you identify unused permissions, refine your policies, and allow access to only the services and actions that your IAM entities use. This information helps you to better adhere to the best practice of least privilege. You can view last accessed information for entities or policies that exist in IAM or AWS Organizations.
+
+## Last accessed information types
+
+You can view two types of last accessed information for IAM entities using the AWS Management Console, AWS CLI, or AWS API. The two types are allowed AWS service information and allowed action information. The information includes the date and time when the attempt was made. Action last accessed information is available only when Amazon S3 management actions, such as creation, deletion, and modification actions, are used.
+
+You can view information for each IAM resource below. In each case, the information includes allowed services for the given reporting period:
+
+* **User** – View the last time that the user tried to access each allowed service.
+* **Group** – View information about the last time that a group member attempted to access each allowed service. This report also includes the total number of members that attempted access.
+* **Role** – View the last time that someone used the role in an attempt to access each allowed service.
+* **Policy** – View information about the last time that a user or role attempted to access each allowed service. This report also includes the total number of entities that attempted access.
+
+## Access Advisor tab
+
+To view last accessed information using the console, navigate to the IAM dashboard, and choose the desired IAM resource on the left. Then, select the resource, and choose the Access Advisor tab to view the information. 
+
+![77_access_history.png](./images/77_access_history.png)
+
+## Things to consider when using the tool
+
+Before you view the access information for a resource in IAM, make sure you understand the reporting period, reported entities, and the evaluated policy types for your information.
+
+* **Tracking period**: Recent activity usually appears in the IAM console within 4 hours. The tracking period for **service information** is the last 400 days. The tracking period for **actions information** began on April 12, 2020. 
+
+* **PassRole**: The `iam:PassRole` action is not tracked and is not included in IAM service last accessed information.
+
+* **Report owner**: Only the principal that generates a report can view the report details. If you use the AWS CLI or AWS API to get report details, your credentials must match the credentials of the principal that generated the report. If you use temporary credentials for a role or federated user, you must generate and retrieve the report during the same session. 
+
+* **IAM entities**: The information for IAM includes IAM entities users or roles in your account. Information for Organizations includes IAM users, IAM roles, or the AWS account root user in the specified Organizations entity. **The information does not include unauthenticated attempts.**
+
+* **IAM policy types**: The information for IAM includes services that are allowed by an IAM entity's policies. These are policies either attached to a role or attached to a user directly or through a group. Access allowed by other policy types is not included in your report. **The excluded policy types include resource-based policies, access control lists, AWS Organizations SCPs, IAM permissions boundaries, and session policies.** Permissions that are provided by service-linked roles are defined by the service that they are linked to and can't be modified in IAM.
+
+* **Required permissions**: To use the IAM console to view the last accessed information for an IAM user, role, or policy, you must have a policy that includes the following actions:
+  * `iam:GenerateServiceLastAccessedDetails`
+  * `iam:Get*`
+  * `iam:List*`
+
+To use the AWS CLI or AWS API to view last accessed information for IAM, you must have permissions that match the operation you want to use:
+  * `iam:GenerateServiceLastAccessedDetails`
+  * `iam:GetServiceLastAccessedDetails`
+  * `iam:GetServiceLastAccessedDetailsWithEntities`
+  * `iam:ListPoliciesGrantingServiceAccess`
+
+## Use case: Reducing permissions for an IAM group
+
+* **Background**: Paulo Santos is the administrator in charge of defining AWS user permissions for Example Corp. His company just started using AWS, and the software development team has not yet defined what AWS services they will use. Paulo wants to give the team permission to access only the services they need, but because that is not yet defined, he temporarily gives them power-user permissions with a customer managed policy. 
+
+* **Managed policy**   
+![78_access_history.png](./images/78_access_history.png)
+
+Paulo created the managed policy above and attached it to the Development group. Then he added all of the developers to the group. This policy allows the group members full access to all services except for certain IAM and AWS Organizations actions used in managing other entities.
+
+* **Last accessed information**
+
+Once the managed policy was applied, Paulo decided to wait for 90 days before viewing the last accessed information for the Development group using the AWS Management Console. Paulo learned that the users accessed five services within the last 2 months:
+  * AWS CloudTrail
+  * Amazon CloudWatch Logs
+  * Amazon EC2
+  * AWS KMS
+  * Amazon S3
+
+They accessed a few other services when they were first evaluating AWS but not since the first few weeks
+
+* **Reducing group access**   
+  ![79_access_history.png](./images/79_access_history.png)
+
+  Based on the last access information, Paulo decided to reduce the policy permissions to include only those five services and the required IAM and Organizations actions. He edits the managed policy using the JSON text above.
 
 # Test
 
