@@ -144,3 +144,4 @@ https://github.com/kicaj29/aws/tree/main/VPC-LB-AutoScalingGroup-EC2-Route53
 
 * https://github.com/kicaj29/aws/tree/main/IAM
 * https://github.com/kicaj29/aws/tree/main/SecurityAndCompliance#aws-shared-responsibility-model
+* https://github.com/kicaj29/aws/tree/main/CloudMonitoring

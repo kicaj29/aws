@@ -80,6 +80,8 @@
   - [Access Advisor tab](#access-advisor-tab)
   - [Things to consider when using the tool](#things-to-consider-when-using-the-tool)
   - [Use case: Reducing permissions for an IAM group](#use-case-reducing-permissions-for-an-iam-group)
+- [Troubleshooting with AWS CloudTrail](#troubleshooting-with-aws-cloudtrail)
+  - [AWS CloudTrail log example](#aws-cloudtrail-log-example)
 - [Test](#test)
 - [Links](#links)
 
@@ -1346,6 +1348,30 @@ They accessed a few other services when they were first evaluating AWS but not s
   ![79_access_history.png](./images/79_access_history.png)
 
   Based on the last access information, Paulo decided to reduce the policy permissions to include only those five services and the required IAM and Organizations actions. He edits the managed policy using the JSON text above.
+
+# Troubleshooting with AWS CloudTrail
+
+IAM and AWS STS are integrated with AWS CloudTrail, a service that provides a record of actions taken by an IAM user or role. CloudTrail captures all AWS service API calls as events, including calls from the console, AWS CLI, and API tools. CloudTrail is enabled on your AWS account when you create the account. If you create a trail, you can enable continuous delivery of CloudTrail events to an Amazon S3 bucket. AWS services like Amazon Athena can then be used to query the logs directly from the S3 bucket. If you don't configure a trail, you can still view the most recent events in the CloudTrail console in Event history. 
+
+AWS CloudTrail can be used to answer the following common questions:
+
+* What actions did a user take over a given period of time?
+* For a given resource, which AWS user has taken actions on it over a given time period?
+* What is the source IP address of a given activity?
+* Which user activities failed due to inadequate permissions?
+
+## AWS CloudTrail log example
+
+* Who made the request?
+
+The log file example that you are analyzing shows that an IAM user named janedoe performed some kind of action. You can verify the user's account ID and access key ID.
+
+![80_cloud_trail.png](./images/80_cloud_trail.png)
+
+* When and from where?
+
+
+![81_cloud_trail.png](./images/81_cloud_trail.png)
 
 # Test
 
