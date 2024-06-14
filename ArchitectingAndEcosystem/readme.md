@@ -91,7 +91,7 @@ https://docs.aws.amazon.com/whitepapers/latest/aws-overview/six-advantages-of-cl
 
 * https://docs.aws.amazon.com/wellarchitected/latest/userguide/wellarchitected-ug.pdf
 * https://aws.amazon.com/blogs/aws/new-aws-well-architected-tool-review-workloads-against-best-practices/
-* https://d3nn3d4w2aqyem.cloudfront.net/mp4/Getting_started_video.mp4
+* https://d3nn3d4w2aqyem.cloudfront.net/mp4/Getting_started_video.mp4 (Good)
 * https://aws.amazon.com/architecture/well-architected/partners/
 
 
