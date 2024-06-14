@@ -82,6 +82,7 @@
   - [Use case: Reducing permissions for an IAM group](#use-case-reducing-permissions-for-an-iam-group)
 - [Troubleshooting with AWS CloudTrail](#troubleshooting-with-aws-cloudtrail)
   - [AWS CloudTrail log example](#aws-cloudtrail-log-example)
+  - [AWS CloudTrail log contents](#aws-cloudtrail-log-contents)
 - [Test](#test)
 - [Links](#links)
 
@@ -1364,15 +1365,64 @@ AWS CloudTrail can be used to answer the following common questions:
 
 * Who made the request?
 
-The log file example that you are analyzing shows that an IAM user named janedoe performed some kind of action. You can verify the user's account ID and access key ID.
+  The log file example that you are analyzing shows that an IAM user named janedoe performed some kind of action. You can verify the user's account ID and access key ID.
 
-![80_cloud_trail.png](./images/80_cloud_trail.png)
+  ![80_cloud_trail.png](./images/80_cloud_trail.png)
 
 * When and from where?
 
+  If you scroll down a bit, you can verify the date of the request and the source. The user made the request on July 15, 2020, at 9:40 PM (UTC). In this case, the request originated in the AWS Management Console, as stated by the userAgent element. Also available here is the eventName, or the action that was requested. The user made the GetUserPolicy API call. Now, check which policy was involved in this request.
 
-![81_cloud_trail.png](./images/81_cloud_trail.png)
+  ![81_cloud_trail.png](./images/81_cloud_trail.png)
 
+* What happened?
+
+  If you continue to scroll down, you can see which policy was requested. From this event information, you can determine that the request was made to get a user policy named ReadOnlyAccess-JaneDoe-201407151307 for user janedoe as specified in the requestParameters element.
+
+  ![82_cloud_trail.png](./images/82_cloud_trail.png)
+
+## AWS CloudTrail log contents
+
+There can be dozens or even hundreds of events like the one covered in the above example in one CloudTrail log file. The body of a CloudTrail log file contains multiple fields that help you determine the requested action as well as when and where the request was made. Here are the important fields you need to be aware of:
+
+* **eventTime**: The date and time of the event reported in UTC.
+
+* **eventType**: There can be three types of event:
+  * **AwsConsoleSignin**: A user in your account (root, IAM, federated, SAML, or SwitchRole) signed in to the AWS Management Console.
+  * **AwsServiceEvent**: The called service generated an event related to your trail. For example, this can occur when another account made a call with a resource that you own.
+  * **AwsApiCall**: A public API for an AWS resource was called.
+
+* **eventSource**: The service that the request was made to. This name is typically a short form of the service name without spaces plus `.amazonaws.com.` For example:
+  * AWS CloudFormation is cloudformation.amazonaws.com.
+  * Amazon EC2 is ec2.amazonaws.com.
+  * Amazon Simple Workflow Service is swf.amazonaws.com.   
+
+  This convention has some exceptions. For example, the eventSource for Amazon CloudWatch is monitoring.amazonaws.com.
+
+* **eventName**: The requested action, which is one of the actions in the API for that service.
+
+* **sourceIPAddress**: The IP address where the request came from. If one AWS service calls another service, the DNS name of the calling service is used.
+
+* **userAgent**: The tool or application through which the request was made, such as the AWS Management Console, an AWS service, the AWS SDKs, or the AWS CLI. The following are example values:
+  * signin.amazonaws.com – The request was made by an IAM user with the AWS Management Console.
+  * console.amazonaws.com – The request was made by a root user with the AWS Management Console.
+  * lambda.amazonaws.com – The request was made with AWS Lambda.
+  * aws-sdk-java – The request was made with the AWS SDK for Java.
+  * aws-cli/1.3.23 Python/2.7.6 Linux/2.6.18-164.el5 – The request was made with the AWS CLI installed on Linux.
+
+* **errorMessage**: Any error message returned by the requested service.
+
+* **requestParameters**: The parameters that were sent with the API call, which can vary depending on the type of resource or service called. For example, in an Amazon S3 API call, you could have the bucketName and location sent as parameters.
+
+* **resources**: List of AWS resources accessed in the event. This can be the resource's ARN, an AWS account number, or the resource type.
+
+* **userIdentity**: A collection of fields that describe the user or service that made the call. These fields can vary based on the type of user or service.
+  * Root - The request was made with your AWS account credentials. If the userIdentity type is Root and you set an alias for your account, the userName field contains your account alias.
+  * IAMUser - The request was made with the credentials of an IAM user.
+  * AssumedRole - The request was made with temporary security credentials that were obtained with a role via a call to the AWS STS AssumeRole API call. This can include roles for Amazon EC2 and cross-account API access.
+  * FederatedUser - The request was made with temporary security credentials that were obtained via a call to the AWS STS GetFederationToken API. The sessionIssuer element indicates if the API was called with root or IAM user credentials.
+  * AWSAccount - The request was made by another AWS account.
+  * AWSService - The request was made by an AWS account that belongs to an AWS service. For example, AWS Elastic Beanstalk assumes an IAM role in your account to call other AWS services on your behalf.
 # Test
 
 ![44_test.png](./images/44_test.png)
