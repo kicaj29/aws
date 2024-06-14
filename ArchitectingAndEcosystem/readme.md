@@ -89,6 +89,12 @@ https://docs.aws.amazon.com/whitepapers/latest/aws-overview/six-advantages-of-cl
 
 # Well architected framework 6 pillars
 
+* https://docs.aws.amazon.com/wellarchitected/latest/userguide/wellarchitected-ug.pdf
+* https://aws.amazon.com/blogs/aws/new-aws-well-architected-tool-review-workloads-against-best-practices/
+* https://d3nn3d4w2aqyem.cloudfront.net/mp4/Getting_started_video.mp4
+* https://aws.amazon.com/architecture/well-architected/partners/
+
+
 ## 1 Operational excellence
 
 * Includes the ability to run and monitor systems to deliver business value and to continually improve supporting processes and procedures
