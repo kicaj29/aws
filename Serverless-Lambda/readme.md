@@ -57,6 +57,7 @@
   - [AWS SAM Pipelines](#aws-sam-pipelines)
     - [Creating pipeline deployment resources](#creating-pipeline-deployment-resources)
     - [Deploy SAM templates with one command](#deploy-sam-templates-with-one-command)
+- [Lambda monitors](#lambda-monitors)
 - [Notes from AWS PartnerCast](#notes-from-aws-partnercast)
 
 # Introduction for Serverless
@@ -788,6 +789,16 @@ https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/s
 
 * **1**: CloudFormation stack changeset: in this section, you can preview the changes your template will make on existing resources when deployed. It will show which resources will be modified, deleted, and added.
 * **2** after viewing the modifications in the changeset, you can choose whether or not you would like to continue to deploy the SAM template.
+
+# Lambda monitors
+
+![069-lambda-monitors.png](./images/069-lambda-monitors.png)
+
+* **Throttles**: When all function instances are processing requests and no concurrency is available to scale up, Lambda rejects additional requests with a `TooManyRequestsException error`. Throttled requests and other invocation errors don't count as Invocations or Errors.
+* **IteratorAge**: For stream event sources, the age of the last item in the batch when Lambda received it and invoked the function. The age is the amount of time between when a stream receives the record and when the event source mapping sends the event to the function.
+* **Async delivery failures**: The number of times that Lambda attempted to write to a destination or dead-letter queue but fails. Dead-letter and delivery errors can occur due to permissions errors, misconfigured resources, or size limits.
+* **Concurrent executions**: The number of function instances that are processing events. If this number reaches your concurrent executions quota for the Region or the reserved concurrency limit that you configured on the function, Lambda throttles additional invocation requests.
+
 
 # Notes from AWS PartnerCast
 
