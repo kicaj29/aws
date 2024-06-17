@@ -1,3 +1,17 @@
+- [AWS CloudFront basics](#aws-cloudfront-basics)
+- [CloudFront origins](#cloudfront-origins)
+- [CloudFront architecture at a high level](#cloudfront-architecture-at-a-high-level)
+- [S3 as origin](#s3-as-origin)
+  - [CloudFront vs S3 Cross Region Replication](#cloudfront-vs-s3-cross-region-replication)
+- [HTTP headers used in CloudFront](#http-headers-used-in-cloudfront)
+  - [x-cache](#x-cache)
+  - [x-amz-cf-id](#x-amz-cf-id)
+  - [x-amz-cf-pop](#x-amz-cf-pop)
+  - [server](#server)
+- [Logs](#logs)
+  - [Standard Logs (Access Logs)](#standard-logs-access-logs)
+  - [Real-Time Logs](#real-time-logs)
+
 # AWS CloudFront basics
 
 * Content Delivery Network (CDN)
