@@ -11,7 +11,10 @@
 - [Logs](#logs)
   - [Standard Logs (Access Logs)](#standard-logs-access-logs)
   - [Real-Time Logs](#real-time-logs)
-- [Http error 403](#http-error-403)
+- [Http error codes](#http-error-codes)
+  - [Http error 403](#http-error-403)
+  - [Troubleshooting HTTP 502 – Bad Gateway](#troubleshooting-http-502--bad-gateway)
+    - [Troubleshooting with OpenSSL](#troubleshooting-with-openssl)
 
 # AWS CloudFront basics
 
@@ -125,7 +128,9 @@ CloudFront provides two ways for users to collect logs for distributions. Learn 
 
 * CloudFront charges for real-time logs, in addition to the charges you incur for using Kinesis Data Streams.
 
-# Http error 403
+# Http error codes
+
+## Http error 403
 
 When investigating HTTP 403 errors, it is critical to discern if the error is related to a **distribution issue**, an Amazon Simple Storage Service **(Amazon S3) bucket issue**, or a **signed URLs/cookies configuration** issue.
 
@@ -234,4 +239,35 @@ Sample of errors:
   Finally, if you serve private content and encounter an Access Denied error response with no Amazon S3 request ID included, this also represents an issue with your application's signing process.
   ![16-cloudFront.png](./images/16-cloudFront.png)
 
-* Troubleshooting HTTP 502 – Bad Gateway
+## Troubleshooting HTTP 502 – Bad Gateway
+
+When investigating issues with CloudFront, an HTTP 502 Bad Gateway error indicates that a particular edge location wasn't able to serve the requested object because it couldn't connect to the origin server to retrieve it. This is often due to an SSL certificate misconfiguration.
+
+### Troubleshooting with OpenSSL
+
+As HTTP 502 errors commonly stem from certificate misconfigurations, a good first step is to use OpenSSL to try to make an SSL/TLS connection to your origin server.
+
+If OpenSSL is not able to make a connection, that can indicate a problem with your origin server’s SSL/TLS configuration. If OpenSSL can make a connection, it returns information about the origin server’s certificate. This includes the certificate’s common name (Subject CN field) and subject alternative name (Subject Alternative Name field), which can be useful for further investigation.
+
+Use the following OpenSSL command to test the connection to your origin server (replace <origindomainname> with your origin server’s domain name, such as example.com):
+
+```
+openssl s_client -connect <origindomainname>:443
+```
+
+If the following are true:
+
+* Your origin server supports multiple domain names with multiple SSL/TLS certificates.
+* Your distribution is configured to forward the Host header to the origin.
+
+Then add the -servername option, as in the following example (replace <CNAME> with the CNAME that’s configured in your distribution):
+
+```
+openssl s_client -connect <origindomainname>:443 -servername <CNAME>
+```
+
+Common causes:
+
+* Is the origin responding on the expected ports?
+* Are there any DNS complications?
+* Is the SSL/TLS negotiation to your origin 
