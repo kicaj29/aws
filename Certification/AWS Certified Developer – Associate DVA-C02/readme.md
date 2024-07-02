@@ -22,6 +22,7 @@
   - [Getting Started with AWS CloudFormation](#getting-started-with-aws-cloudformation)
   - [Deploying Serverless Applications](#deploying-serverless-applications)
   - [AWS Identity and Access Management (IAM)](#aws-identity-and-access-management-iam)
+  - [Troubleshooting Amazon CloudFront](#troubleshooting-amazon-cloudfront)
 
 # Based on AWS Partner Certification Readiness - Developer - Associate
 
@@ -145,3 +146,7 @@ https://github.com/kicaj29/aws/tree/main/VPC-LB-AutoScalingGroup-EC2-Route53
 * https://github.com/kicaj29/aws/tree/main/IAM
 * https://github.com/kicaj29/aws/tree/main/SecurityAndCompliance#aws-shared-responsibility-model
 * https://github.com/kicaj29/aws/tree/main/CloudMonitoring
+
+## Troubleshooting Amazon CloudFront
+
+* https://github.com/kicaj29/aws/tree/main/CloudFront
