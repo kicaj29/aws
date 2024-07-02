@@ -13,15 +13,13 @@
     - [Standard Logs (Access Logs)](#standard-logs-access-logs)
     - [Real-Time Logs](#real-time-logs)
   - [Http error codes](#http-error-codes)
-    - [Http error 403](#http-error-403)
-      - [Sample of 403 errors](#sample-of-403-errors)
-        - [Request blocked (AWS WAF)](#request-blocked-aws-waf)
-        - [Request blocked (geo-restrictions)](#request-blocked-geo-restrictions)
-        - [HTTP method not allowed](#http-method-not-allowed)
-        - [Bad request](#bad-request)
-        - [HTTP Forbidden](#http-forbidden)
-          - [HTTP Forbidden – S3 origin](#http-forbidden--s3-origin)
-          - [HTTP Forbidden – Signed URLs or cookies](#http-forbidden--signed-urls-or-cookies)
+    - [Http error 403 (Forbidden)](#http-error-403-forbidden)
+      - [Request blocked (AWS WAF)](#request-blocked-aws-waf)
+      - [Request blocked (geo-restrictions)](#request-blocked-geo-restrictions)
+      - [HTTP method not allowed](#http-method-not-allowed)
+      - [Bad request](#bad-request)
+      - [S3 origin](#s3-origin)
+      - [Signed URLs or cookies](#signed-urls-or-cookies)
     - [HTTP 502 – Bad Gateway](#http-502--bad-gateway)
       - [Troubleshooting with OpenSSL](#troubleshooting-with-openssl)
 
@@ -141,7 +139,7 @@ CloudFront provides two ways for users to collect logs for distributions. Learn 
 
 ## Http error codes
 
-### Http error 403
+### Http error 403 (Forbidden)
 
 When investigating HTTP 403 errors, it is critical to discern if the error is related to a **distribution issue**, an Amazon Simple Storage Service **(Amazon S3) bucket issue**, or a **signed URLs/cookies configuration** issue.
 
@@ -153,24 +151,22 @@ If a web request successfully reaches your distribution but generates an HTTP 40
 
 * If the error was produced as a result of a signing error, CloudFront will generate an **XML error response** with no request IDs present.
 
-#### Sample of 403 errors
-
-##### Request blocked (AWS WAF)
+#### Request blocked (AWS WAF)
 
   The request was blocked due to an AWS WAF ACL. If the error was caused by a distribution issue at the CloudFront level, you will see an error similar to the following. Review the settings for the ACL associated with this distribution.
   ![07-cloudFront.png](./images/07-cloudFront.png)
 
-##### Request blocked (geo-restrictions)
+#### Request blocked (geo-restrictions)
 
   The request was blocked due to restrictions on the country that the requesting IP is from. If this is being reported by a user in a permitted geographic area, ask if they are using a virtual private network (VPN). Review the geographic restrictions that are configured for your distribution.
   ![08-cloudFront.png](./images/08-cloudFront.png)
 
-##### HTTP method not allowed
+#### HTTP method not allowed
 
   By default, CloudFront distributions only allow cachable HTTP requests (GET, HEAD). If a request is made using an HTTP method that is not supported by the distribution, this error response will be presented. To allow additional HTTP methods, modify the behavior configured for this distribution.
   ![09-cloudFront.png](./images/09-cloudFront.png)
 
-##### Bad request
+#### Bad request
 
   Several causes might prompt this response.
   ![10-cloudFront.png](./images/10-cloudFront.png)
@@ -179,9 +175,7 @@ If a web request successfully reaches your distribution but generates an HTTP 40
   * **Request not made through HTTPS**: Review the Viewer protocol policy in the behavior configured for this distribution, as well as the request, to determine whether HTTPS was used.
   * **Request is malformed**: Review the request itself to ensure that it is properly constructed. For example, including a Content-Length header in a GET request is prohibited. If you are unsure, you can open a case that includes the request and response headers with AWS Premium Support.
 
-##### HTTP Forbidden
-
-###### HTTP Forbidden – S3 origin
+#### S3 origin
 
 If the error shown is Access Denied and includes an S3 request ID, it means that the web request was successfully received by your distribution. However, it received an error when retrieving the requested object from Amazon S3.
 ![11-cloudFront.png](./images/11-cloudFront.png)
@@ -233,7 +227,7 @@ What causes HTTP 403 errors when using Amazon S3 as an origin?
 
   If you have elected not to configure an OAI, then you can configure your distribution to use a public S3 bucket as an origin. Verify that your chosen bucket is public by accessing the Amazon S3 console, selecting the designated bucket, and reviewing the settings in the Permissions tab.
 
-###### HTTP Forbidden – Signed URLs or cookies
+#### Signed URLs or cookies
 
 If your team is using signed URLs or cookies to serve private content to groups of viewers, HTTP 403 errors can be generated when those items are not included as expected in incoming requests. In this scenario, consider your application's signing process to discover where the problem is occurring. There may also be hints to deduce from the error responses reported by viewers. Find the heading that matches the current error responses, and review the following guidance.
 
