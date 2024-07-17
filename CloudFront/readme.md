@@ -32,6 +32,9 @@
     - [Missing Access-Control-Allow-Origin header](#missing-access-control-allow-origin-header)
       - [Adding CORS headers to responses using response headers policies](#adding-cors-headers-to-responses-using-response-headers-policies)
       - [Adding CORS headers to responses using origin headers](#adding-cors-headers-to-responses-using-origin-headers)
+        - [Does the origin's CORS policy include the Access-Control-Allow-Origin header?](#does-the-origins-cors-policy-include-the-access-control-allow-origin-header)
+        - [Does the CloudFront distribution forward the appropriate headers?](#does-the-cloudfront-distribution-forward-the-appropriate-headers)
+        - [Does the distribution behavior allow the OPTIONS method?](#does-the-distribution-behavior-allow-the-options-method)
 
 # AWS CloudFront basics
 
@@ -504,23 +507,79 @@ CloudFront provides predefined response headers policies, known as managed polic
 
 If you are having issues using origin responses to generate headers for CORS, consider these steps to begin your troubleshooting.
 
-* Does the origin's CORS policy include the Access-Control-Allow-Origin header?
+##### Does the origin's CORS policy include the Access-Control-Allow-Origin header?
 
-  As we need to investigate HTTP headers returned by the origin, a good first step is to send a request directly to it. Start by running a curl command similar to the following. Substitute your origin's domain name for <example.com>, and then replace the request path at the end with a realistic one.
+As we need to investigate HTTP headers returned by the origin, a good first step is to send a request directly to it. Start by running a curl command similar to the following. Substitute your origin's domain name for <example.com>, and then replace the request path at the end with a realistic one.
 
-  ```
-  curl -H "origin: <example.com>" -v "<https://www.anything.net/video/call/System.generateId.dwr>"
-  ```
+```
+curl -H "origin: <example.com>" -v "<https://www.anything.net/video/call/System.generateId.dwr>"
+```
 
-  If the CORS policy allows the origin to return the header, the command returns a response including the Access-Control-Allow-Origin header.
-  If the header is not returned, consider making an adjustment to your origin server's CORS policy.
+If the CORS policy allows the origin to return the header, the command returns a response including the Access-Control-Allow-Origin header.
+If the header is not returned, consider making an adjustment to your origin server's CORS policy.
 
-* Does the CloudFront distribution forward the appropriate headers?
+##### Does the CloudFront distribution forward the appropriate headers?
 
-  After you have verified the origin's CORS policy, ensure that your CloudFront distribution forwards the headers that are required by your origin. The required headers will differ, depending on your chosen origin. For more information, see [Configuring CloudFront to respect CORS settings.](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/header-caching.html#header-caching-web-cors)
+After you have verified the origin's CORS policy, ensure that your CloudFront distribution forwards the headers that are required by your origin. The required headers will differ, depending on your chosen origin. For more information, see [Configuring CloudFront to respect CORS settings.](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/header-caching.html#header-caching-web-cors)
 
-  When you have identified the necessary headers to pass to the origin, you can configure CloudFront to forward these headers. You can use a managed origin request policy, custom cache policy, or legacy cache settings.
+When you have identified the necessary headers to pass to the origin, you can configure CloudFront to forward these headers. You can use a managed origin request policy, custom cache policy, or legacy cache settings.
 
-  * Managed origin request policy
-  * Custom cache policy
-  * Legacy cache settings
+* Managed origin request policy
+
+  CloudFront has two predefined origin request policies, depending on the type of origin used: `CORS-S3Origin` and `CORS-CustomOrigin`. Applying one of these policies will cause CloudFront to forward certain headers in requests to your origin.
+  More info [here](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/using-managed-origin-request-policies.html).
+
+  To forward the headers using a managed origin request policy, follow these steps:
+  1. Open your distribution from the CloudFront console.
+  2. Choose the Behaviors tab.
+  3. Choose Create Behavior. Or, select an existing behavior, and then choose Edit.
+  4. Under `Cache key and origin requests`, choose `Cache policy and origin request policy`. Then, for `Origin request policy`, choose either `CORS-S3Origin` or `CORS-CustomOrigin` from the dropdown list.
+  5. Choose `Save Changes`. If you are creating the behavior, choose `Create Behavior`.
+
+  When using a managed origin request policy, the forwarded headers are not included in the cache key. This will cause CloudFront to cache all responses for a request together, regardless of differing header values.
+
+  If the response from your origin differs based on the presence of CORS headers, or their value, they should be included in the cache key. This will ensure consistent responses for CORS to function properly. This can be done using a custom cache policy. For more information, see [Controlling the cache key](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/controlling-the-cache-key.html).
+
+* Custom cache policy
+
+  To forward the headers using a custom cache policy, follow the steps listed in [Creating cache policies](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/controlling-the-cache-key.html#cache-key-create-cache-policy) to create and attach a custom cache policy.
+
+  However, when creating the policy, be sure to approve the headers required for CORS by your origin.
+
+  Under the `Cache key settings`, find the `Headers` dropdown. Select `Include the following headers`. From the `Add header` dropdown list, choose each header required by your origin.
+
+  Once the cache policy is created, follow the listed steps to associate the policy with your distribution.
+
+* Legacy cache settings
+
+  To instead forward the headers using legacy cache settings, follow these steps:
+
+  1. Open your distribution from the CloudFront console.
+  2. Choose the `Behaviors` tab.
+  3. Choose `Create Behavior`. Or, select an existing behavior, and then choose `Edit`.
+  4. Under `Cache key and origin requests`, select `Legacy cache settings`.
+  5. In the `Headers` dropdown list, choose the headers required by your origin. If needed, choose `Add custom` to add headers required by your origin that are not in the dropdown list.
+  6. Choose `Save Changes`. If you are creating the behavior, choose `Create Behavior`.
+  
+  Be sure to forward the header as part of your client request to CloudFront, which CloudFront forwards to the origin.
+
+##### Does the distribution behavior allow the OPTIONS method?
+
+If you are still seeing errors after you update your CORS policy and forward the appropriate headers, try allowing the OPTIONS HTTP method in your distribution's cache behavior. By default, CloudFront allows only the GET and HEAD methods, but some web browsers might issue CORS preflight requests using the OPTIONS method. For more information about this, [see Preflight request](https://developer.mozilla.org/en-US/docs/Glossary/Preflight_request) from the MDN documentation.
+
+Choose each image in the carousel for a visual demonstration of how to use the OPTIONS method for your distribution in the console. You can also select the plus icon for step-by-step text instructions.
+
+Allowing the OPTIONS method:
+
+1. Open your distribution from the CloudFront console.
+2. Choose the `Behaviors` tab.
+3. Choose `Create Behavior`. Or, select an existing behavior and then choose Edit.
+4. For `Allowed HTTP Methods`, select `GET`, `HEAD`, `OPTIONS`. If you would like to cache responses to OPTIONS requests, you can choose this as well.
+
+Then, scroll down. Select either Save changes if editing an existing behavior, or Create behavior.
+
+![18-allow-OPTIONS.png](./images/18-allow-OPTIONS.png)
+![19-allow-OPTIONS.png](./images/19-allow-OPTIONS.png)
+![20-allow-OPTIONS.png](./images/20-allow-OPTIONS.png)
+![21-allow-OPTIONS.png](./images/21-allow-OPTIONS.png)
+
