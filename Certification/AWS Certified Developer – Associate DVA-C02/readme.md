@@ -23,6 +23,7 @@
   - [Deploying Serverless Applications](#deploying-serverless-applications)
   - [AWS Identity and Access Management (IAM)](#aws-identity-and-access-management-iam)
   - [Troubleshooting Amazon CloudFront](#troubleshooting-amazon-cloudfront)
+  - [Troubleshooting: AWS CloudFormation Stacks](#troubleshooting-aws-cloudformation-stacks)
 
 # Based on AWS Partner Certification Readiness - Developer - Associate
 
@@ -150,3 +151,6 @@ https://github.com/kicaj29/aws/tree/main/VPC-LB-AutoScalingGroup-EC2-Route53
 ## Troubleshooting Amazon CloudFront
 
 * https://github.com/kicaj29/aws/tree/main/CloudFront
+
+## Troubleshooting: AWS CloudFormation Stacks
+
