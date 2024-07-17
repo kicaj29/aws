@@ -1,3 +1,11 @@
+- [Introduction](#introduction)
+- [Information about your stack](#information-about-your-stack)
+  - [Stack info](#stack-info)
+  - [Resources](#resources)
+  - [Events](#events)
+  - [Other information](#other-information)
+  - [How can I obtain information about my stack using the AWS CLI?](#how-can-i-obtain-information-about-my-stack-using-the-aws-cli)
+
 # Introduction
 
 It is declarative way of outlining your AWS Infra, for any resources (most of them are supported).
