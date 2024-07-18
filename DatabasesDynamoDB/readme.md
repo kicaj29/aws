@@ -583,12 +583,15 @@ DynamoDB sends the following sets of metrics to CloudWatch:
 https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/metrics-dimensions.html
 
 * Account metrics
+  
   ![034-troubleshooting.png](./images/034-troubleshooting.png)
 
 * Table metrics
+  
   ![035-troubleshooting.png](./images/035-troubleshooting.png)
 
 * Table operations metrics
+  
   ![036-troubleshooting.png](./images/036-troubleshooting.png)
 
 * Global secondary index name and table metrics
