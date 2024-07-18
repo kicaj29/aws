@@ -33,6 +33,20 @@
   - [Querying in Microservice Architectures](#querying-in-microservice-architectures)
   - [Time Series Data Example](#time-series-data-example)
 - [Troubleshooting: Amazon DynamoDB](#troubleshooting-amazon-dynamodb)
+  - [What are the important concepts and terminology?](#what-are-the-important-concepts-and-terminology)
+  - [Logging DynamoDB operations using CloudTrail](#logging-dynamodb-operations-using-cloudtrail)
+    - [Example CloudTail trail](#example-cloudtail-trail)
+    - [CloudTrail event history](#cloudtrail-event-history)
+    - [CloudWatch log group for DynamoDB](#cloudwatch-log-group-for-dynamodb)
+  - [Monitoring DynamoDB](#monitoring-dynamodb)
+    - [Accessing table metrics from the DynamoDB console](#accessing-table-metrics-from-the-dynamodb-console)
+    - [Accessing DynamoDB table metrics in the CloudWatch console](#accessing-dynamodb-table-metrics-in-the-cloudwatch-console)
+    - [Why are the metrics on the DynamoDB console different from the CloudWatch metrics?](#why-are-the-metrics-on-the-dynamodb-console-different-from-the-cloudwatch-metrics)
+    - [Creating CloudWatch alarms to monitor DynamoDB](#creating-cloudwatch-alarms-to-monitor-dynamodb)
+    - [Accessing custom alarms in the DynamoDB console](#accessing-custom-alarms-in-the-dynamodb-console)
+    - [What are auto scaling alarms?](#what-are-auto-scaling-alarms)
+    - [Contributor Insights for DynamoDB](#contributor-insights-for-dynamodb)
+      - [Accessing CloudWatch Contributor Insights from the CloudWatch console](#accessing-cloudwatch-contributor-insights-from-the-cloudwatch-console)
   - [Troubleshooting DynamoDB Tables That Are Throttled](#troubleshooting-dynamodb-tables-that-are-throttled)
     - [Table has enough provisioned capacity, but most requests are throttled](#table-has-enough-provisioned-capacity-but-most-requests-are-throttled)
     - [Application Auto Scaling is set up, but your table is still throttled](#application-auto-scaling-is-set-up-but-your-table-is-still-throttled)
@@ -451,6 +465,227 @@ More data points stored in each DynamoDB item
 
 # Troubleshooting: Amazon DynamoDB
 
+## What are the important concepts and terminology?
+
+* Tables
+
+  As with other database systems, DynamoDB stores data in tables. A table is a collection of data. For example, you might have a table called People that you could use to store personal contact information about solutions architects, business partners, or others. You could also have a Locations table to store information about your office buildings.
+
+  For more information, including examples, see the documentation [Working with Tables and Data in DynamoDB](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/WorkingWithTables.html).
+
+* Items
+
+  Each table contains zero or more items. An item is a group of attributes that is uniquely identifiable among all other items. In a People table, each item represents a person. For a Locations table, each item represents one building. Items in DynamoDB are similar in many ways to rows, records, or tuples in other database systems. In DynamoDB, there is no limit to the number of items you can store in a table.
+
+* Attributes
+
+  Each item is composed of one or more attributes. An attribute is a fundamental data element, something that does not need to be broken down any further. For example, an item in a People table contains attributes called PersonID, LastName, FirstName, and so on. For a Department table, an item might have attributes such as DepartmentID, Name, Manager, and so on. Attributes in DynamoDB are similar in many ways to fields or columns in other database systems.
+
+* PrimaryKey
+
+  When you create a table, in addition to the table name, you must specify the primary key of the table. The primary key uniquely identifies each item in the table so that no two items can have the same key.
+
+  DynamoDB supports two kinds of primary keys: a partition key and a partition key plus sort key.
+
+  * **Partition key**: A simple primary key, composed of one attribute known as the partition key. DynamoDB uses the partition key's value as input to an internal hash function. The output from the hash function determines the partition (physical storage internal to DynamoDB) in which the item will be stored. In a table that has only a partition key, no two items can have the same partition key value.
+
+  * **Partition key and sort key**: Referred to as a composite primary key, this type of key is composed of two attributes. The first attribute is the partition key, and the second attribute is the sort key. DynamoDB uses the partition key value as input to an internal hash function. The output from the hash function determines the partition (physical storage internal to DynamoDB) in which the item will be stored. All items with the same partition key value are stored together in sorted order by sort key value. In a table that has a partition key and a sort key, it is possible for multiple items to have the same partition key value. However, those items must have different sort key values.
+
+  For more information, see the [Primary Key](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.CoreComponents.html#HowItWorks.CoreComponents.PrimaryKey) documentation.
+
+* Secondary Indexes
+
+  You can create one or more secondary indexes on a table. Using a secondary index, you can query the data in the table using an alternate key and also against the primary key. DynamoDB doesn't require that you use indexes, but they provide more flexibility when querying data. After you create a secondary index on a table, you can read data from the index in much the same way as you do from the table.
+
+  DynamoDB supports two kinds of indexes:
+  * Global secondary index – An index with a partition key and sort key that can be different from those on the table
+  * Local secondary index – An index that has the same partition key as the table but a different sort key
+
+  Each table in DynamoDB has a quota of 20 global secondary indexes (default quota) and five local secondary indexes.
+
+  For more information, see [Improving Data Access with Secondary Indexes](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/SecondaryIndexes.html).
+
+* Amazon DynamoDB Streams
+
+  DynamoDB Streams is an optional feature that captures data modification events in DynamoDB tables. The data about these events appear in the stream in near real time, and in the order that the events occurred.
+
+  Each event is represented by a stream record. If you enable a stream on a table, DynamoDB Streams writes a stream record whenever one of the following events occurs:
+
+  * A new item is added to the table: The stream captures an image of the entire item, including all of its attributes
+  * An item is updated: The stream captures the before and after image of any attributes that were modified in the item
+  * An item is deleted from the table: The stream captures an image of the entire item before it was deleted
+
+  Each stream record also contains the name of the table, event timestamp, and other metadata. Stream records have a lifetime of 24 hours, after which they are automatically removed from the stream.
+
+  For more information, see the [DynamoDB Streams](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.CoreComponents.html#HowItWorks.CoreComponents.Streams) documentation.
+
+  For advanced features, see the [Change Data Capture for DynamoDB Streams](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Streams.html) documentation.
+
+* Read capacity units
+
+  One read capacity unit (RCU) represents one strongly consistent read per second, or two eventually consistent reads per second, for an item up to 4 KB in size. Transactional read requests require two RCUs to perform one read per second for items up to 4 KB. If you need to read an item that is larger than 4 KB, DynamoDB must consume additional RCUs. The total number of RCUs required depends on the item size and whether you want an eventually consistent or strongly consistent read. For example, if your item size is 8 KB, you require two RCUs to sustain one strongly consistent read per second, one RSU if you choose eventually consistent reads, or four RSUs for a transactional read request.
+
+  For more information about read consistency, see the [Read Consistency](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.ReadConsistency.html) documentation.
+
+  For more information about RCUs, see the [Capacity Unit Consumption for Reads](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/provisioned-capacity-mode.html#ItemSizeCalculations.Reads) documentation.
+
+* Write capacity units
+
+  One write capacity unit (WCU) represents one write per second for an item up to 1 KB in size. If you need to write an item that is larger than 1 KB, DynamoDB must consume additional WCUs. Transactional write requests require two WCUs to perform one write per second for items up to 1 KB. The total number of WCUs required depends on the item size. For example, if your item size is 2 KB, you require two WCUs to sustain one write request per second or four WCUs for a transactional write request.
+
+  For more information, see the [Capacity Unit Consumption for Writes](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/provisioned-capacity-mode.html#ItemSizeCalculations.Writes) documentation.
+
+* Throttling
+
+  Throttling is the action of limiting the number of requests that a client can submit to a given operation in a given amount of time. Throttling prevents your application from consuming too many capacity units. When a request is throttled, it fails with an HTTP 400 Bad Request error and a ProvisionedThroughputExceededException.
+
+* Read/write capacity mode
+
+  DynamoDB has two read/write capacity modes for processing read/write transactions on your tables:
+  * On demand
+  * Provisioned (default, eligible for AWS Free Tier)
+
+  The read/write capacity mode controls how you are charged for read/write throughput and how you manage capacity. You can set the read/write capacity mode when creating a table, or you can change it later.
+
+  For more information, see the [Read/Write Capacity Mode](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/capacity-mode.html) documentation.
+
+## Logging DynamoDB operations using CloudTrail 
+
+DynamoDB is integrated with CloudTrail, a service that provides a record of actions taken by a user, role, or an AWS service in DynamoDB. CloudTrail captures all API calls for DynamoDB as events. The calls captured include calls from the DynamoDB console and code calls to the DynamoDB API operations. 
+
+* If you create a trail, you can set up continuous delivery of CloudTrail events to an S3 bucket, including events for DynamoDB.
+* If you don't configure a trail, you can still view the most recent events in the CloudTrail console in Event history. 
+
+Using the information collected by CloudTrail, you can determine the request that was made to DynamoDB, the IP address from which the request was made, who made the request, when it was made, and additional details.
+
+### Example CloudTail trail
+
+The following screenshot is an example of a trail created in the CloudTrail console for DynamoDB. In this example, there is a link to the S3 bucket that you can follow to examine the DynamoDB event. There is also a CloudWatch log group name that you can examine in the CloudWatch console.
+
+![031-troubleshooting.png](./images/031-troubleshooting.png)
+
+### CloudTrail event history
+
+To examine all events, you can also select Event history in the CloudTrail console. Each event is listed with its name, time, user name, and event source. You can choose the event name to examine more details of the event.
+
+![032-troubleshooting.png](./images/032-troubleshooting.png)
+
+### CloudWatch log group for DynamoDB
+
+In this example screenshot, a particular DynamoDB event is displayed. It includes information about the request that was made to DynamoDB, the IP address from which the request was made, who made the request, when it was made, and additional details. 
+
+![033-troubleshooting.png](./images/033-troubleshooting.png)
+
+## Monitoring DynamoDB
+
+DynamoDB sends the following sets of metrics to CloudWatch:
+
+https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/metrics-dimensions.html
+
+* Account metrics
+  ![034-troubleshooting.png](./images/034-troubleshooting.png)
+
+* Table metrics
+  ![035-troubleshooting.png](./images/035-troubleshooting.png)
+
+* Table operations metrics
+  ![036-troubleshooting.png](./images/036-troubleshooting.png)
+
+* Global secondary index name and table metrics
+
+### Accessing table metrics from the DynamoDB console
+
+You can choose the Monitoring tab for any DynamoDB table in the console to display graphs of CloudWatch metrics. The following screenshot is an example. Graphs of table metrics include read usage, write usage, write throttled requests, write throttled events, and others not shown.
+
+![037-troubleshooting.png](./images/037-troubleshooting.png)
+
+### Accessing DynamoDB table metrics in the CloudWatch console
+
+You can use a quick link in the DynamoDB console to display table metrics in CloudWatch. The following screenshot is an example of a line graph over 1 hour. Note that this graph is from a different DynamoDB table than the previous example and shows relatively little activity over this period of time. There are some table reads, but they are well below the provisioned read capacity.
+
+![038-troubleshooting.png](./images/038-troubleshooting.png)
+
+### Why are the metrics on the DynamoDB console different from the CloudWatch metrics?
+
+The graphs on the Metrics tab in the Amazon DynamoDB console are different from the graphs in the CloudWatch console. The metrics in the CloudWatch console are raw and provide more statistics options than the metrics in the DynamoDB console. The metrics in the DynamoDB console are average values over 1-minute intervals. For example, ConsumedWriteCapacityUnits is the sum of the consumed units over 1 minute, divided by the number of seconds (60) in a minute.
+
+### Creating CloudWatch alarms to monitor DynamoDB 
+
+You can create a CloudWatch alarm that sends an Amazon Simple Notification Service (Amazon SNS) message when the alarm changes state. An alarm watches a single metric over a time period you specify, performing one or more actions based on the value of the metric relative to a given threshold over a number of time periods.
+
+The action is a notification sent to an Amazon SNS topic or AWS Application Auto Scaling policy. Alarms invoke actions for sustained state changes only. CloudWatch alarms do not invoke actions just because they are in a particular state. Rather, the state must have changed and been maintained for a specified number of periods.
+
+### Accessing custom alarms in the DynamoDB console
+
+* DynamoDB dashboard
+
+  The DynamoDB dashboard lists the names of each custom alarm you created and its status.
+
+  ![039-troubleshooting.png](./images/039-troubleshooting.png)
+
+* Table monitor tab
+
+  The Monitor tab for each table provides an Alarms section with more information. You can examine the name of each custom alarm that you create for the table. You can also review the alarms status and the condition that will change the state and launch an action (if one is configured).
+
+  ![040-troubleshooting.png](./images/040-troubleshooting.png)
+
+### What are auto scaling alarms?
+
+When you turn on auto scaling for a table, DynamoDB automatically creates several alarms that can launch auto scaling actions.
+
+* Table alarms - OK state
+
+  You can examine the status of your alarms in the CloudWatch console. The following example screenshot lists all alarms that are in the OK state. It also provides the conditions that launch the alarms and indicates if actions are configured.
+
+  ![041-troubleshooting.png](./images/041-troubleshooting.png)
+
+* Table alarms - In alarm state
+
+  The following example screenshot lists all alarms that are in the In alarm state. It also provides the conditions that launch the alarms and indicates if actions are configured. 
+
+  ![042-troubleshooting.png](./images/042-troubleshooting.png)
+
+### Contributor Insights for DynamoDB 
+
+CloudWatch Contributor Insights for DynamoDB is a diagnostic tool for identifying the most frequently accessed and throttled keys in your table or index at a glance.
+
+If you set up CloudWatch Contributor Insights for DynamoDB on a table or global secondary index, you can determine the most accessed and throttled items in those resources.
+
+https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/contributorinsights_tutorial.html
+
+#### Accessing CloudWatch Contributor Insights from the CloudWatch console
+
+When you configure CloudWatch Contributor Insights for a DynamoDB table, you can examine the information about all items in the table.
+
+DynamoDB creates the following rules on your behalf.
+
+* Most accessed items (partition key)
+
+  This rule identifies the partition keys of the most accessed items in your table or global secondary index.
+  CloudWatch rule name format: **DynamoDBContributorInsights-PKC-[resource_name]-[creationtimestamp]**
+
+* Most throttled keys (partition key)
+
+  This rule identifies the partition keys of the most throttled items in your table or global secondary index.
+  CloudWatch rule name format: **DynamoDBContributorInsights-PKT-[resource_name]-[creationtimestamp]**
+
+* Most accessed keys (partition and sort keys)
+
+  This rule identifies the partition and sort keys of the most accessed items in your table or global secondary index.
+  CloudWatch rule name format: **DynamoDBContributorInsights-SKC-[resource_name]-[creationtimestamp]**
+
+* Most throttled keys (partition and sort keys)
+
+  This rule identifies the partition and sort keys of the most throttled items in your table or global secondary index.
+  **CloudWatch rule name format: DynamoDBContributorInsights-SKT-[resource_name]-[creationtimestamp]**
+
+**Example of CloudWatch Contributor Insights for DynamoDB**
+
+The following screenshot is an example of CloudWatch Contributor Insights for a DynamoDB table as displayed in the CloudWatch console. For this example, the sort key rule is selected. The graph and table display the most frequently accessed items by partition and sort key over a 30-minute interval.
+
+![043-troubleshooting.png](./images/043-troubleshooting.png)
+
+https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/contributorinsights_HowItWorks.html#contributorinsights_HowItWorks.Graphs
 ## Troubleshooting DynamoDB Tables That Are Throttled
 
 Throttling is one of the most common performance issues that you might encounter with your DynamoDB tables. Throttling could be caused by either DynamoDB or the applications that read or write into your DynamoDB table.
