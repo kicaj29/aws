@@ -32,6 +32,25 @@
   - [DynamoDB Streams and AWS Lambda](#dynamodb-streams-and-aws-lambda)
   - [Querying in Microservice Architectures](#querying-in-microservice-architectures)
   - [Time Series Data Example](#time-series-data-example)
+- [Troubleshooting: Amazon DynamoDB](#troubleshooting-amazon-dynamodb)
+  - [Troubleshooting DynamoDB Tables That Are Throttled](#troubleshooting-dynamodb-tables-that-are-throttled)
+    - [Table has enough provisioned capacity, but most requests are throttled](#table-has-enough-provisioned-capacity-but-most-requests-are-throttled)
+    - [Application Auto Scaling is set up, but your table is still throttled](#application-auto-scaling-is-set-up-but-your-table-is-still-throttled)
+    - [Your table uses the on-demand capacity mode but still throttled](#your-table-uses-the-on-demand-capacity-mode-but-still-throttled)
+    - [You have a hot partition in your table](#you-have-a-hot-partition-in-your-table)
+    - [Why is my on-demand DynamoDB table being throttled?](#why-is-my-on-demand-dynamodb-table-being-throttled)
+    - [How can I troubleshoot DynamoDB table throttling?](#how-can-i-troubleshoot-dynamodb-table-throttling)
+  - [Troubleshooting Observed Latency in DynamoDB](#troubleshooting-observed-latency-in-dynamodb)
+    - [Reduce the request timeout settings](#reduce-the-request-timeout-settings)
+    - [Reduce distance between client and DynamoDB endpoint](#reduce-distance-between-client-and-dynamodb-endpoint)
+    - [Use caching](#use-caching)
+    - [Send constant traffic or reuse connections](#send-constant-traffic-or-reuse-connections)
+    - [Use eventually consistent reads](#use-eventually-consistent-reads)
+    - [Troubleshooting scenario: Observed latency in DynamoDB](#troubleshooting-scenario-observed-latency-in-dynamodb)
+    - [How do I resolve HTTP 5xx errors in DynamoDB?](#how-do-i-resolve-http-5xx-errors-in-dynamodb)
+  - [Troubleshooting Issues with DynamoDB Auto Scaling](#troubleshooting-issues-with-dynamodb-auto-scaling)
+    - [How does DynamoDB auto scaling work?](#how-does-dynamodb-auto-scaling-work)
+    - [How do I resolve issues with DynamoDB auto scaling?](#how-do-i-resolve-issues-with-dynamodb-auto-scaling)
 - [Notes from AWS PartnerCast](#notes-from-aws-partnercast)
 - [Resources](#resources)
 
@@ -429,6 +448,262 @@ Adding more events per sensor:
 
 Lambda function creates “denser” DynamoDB items   
 More data points stored in each DynamoDB item
+
+# Troubleshooting: Amazon DynamoDB
+
+## Troubleshooting DynamoDB Tables That Are Throttled
+
+Throttling is one of the most common performance issues that you might encounter with your DynamoDB tables. Throttling could be caused by either DynamoDB or the applications that read or write into your DynamoDB table.
+
+Some of the common throttling issues that you might face are the following:
+
+* Your DynamoDB table has adequate provisioned capacity, but most of the requests are being throttled.
+* You activated AWS Application Auto Scaling for DynamoDB, but your DynamoDB table is being throttled.
+* Your DynamoDB table is in on-demand capacity mode, but the table is being throttled.
+* You have a hot partition in your table.
+
+What DynamoDB metric should I examine if my tables experience throttling?
+
+The metrics associated with throttling are:
+
+* OnlineIndexThrottleEvents
+* ReadThrottleEvents
+* ThrottledPutRecordCount
+* ThrottledRequests
+* WriteThrottleEvents
+
+These metrics can help you locate the operations that are creating throttled requests and help you identify the cause for throttling.
+
+https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/metrics-dimensions.html
+
+### Table has enough provisioned capacity, but most requests are throttled
+
+DynamoDB reports minute-level metrics to CloudWatch. The metrics are calculated as the sum for a minute, and then are averaged. However, the DynamoDB rate limits are applied per second.
+
+For example, if you provisioned 60 write capacity units for your DynamoDB table, then you can perform 3600 writes in one minute. However, driving all 3600 requests in one second, with no requests for the rest of the minute, might result in throttling.
+
+The total number of read capacity units or write capacity units per minute might be lower than the provisioned throughput for the table. However, if all the workload falls within a couple of seconds, then the requests might be throttled.
+
+**Solution**: Add jitter and exponential backoff to your API calls. For more information, see the [Exponential Backoff and Jitter documentation](https://aws.amazon.com/blogs/architecture/exponential-backoff-and-jitter/).
+
+### Application Auto Scaling is set up, but your table is still throttled
+
+Application Auto Scaling is not a suitable solution to address sudden spikes in traffic with DynamoDB tables. It only initiates a scale-up when two consecutive data points for consumed capacity units exceed the configured target utilization value in a 1-minute span.
+
+Application Auto Scaling automatically scales the provisioned capacity only when the consumed capacity is higher than target utilization for 2 consistent minutes. Also, a scale-down event is initiated when 15 consecutive data points for consumed capacity in CloudWatch are lower than the target utilization. After Application Auto Scaling is initiated, an UpdateTable API call is invoked that might take a couple of minutes to update the provisioned capacity for your DynamoDB table or index.
+
+Application Auto Scaling requires consecutive data points with higher target utilization values to scale up the provisioned capacity of the DynamoDB table. During this period, any requests that exceed the provisioned capacity of the table are throttled. Therefore, it's not a best practice to use Application Auto Scaling to handle spiked workloads in DynamoDB.
+
+For more information, see the [Managing Throughput Capacity Automatically with DynamoDB Auto Scaling](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/AutoScaling.html) documentation.
+
+**Solution**: If you use DynamoDB for a service that receives requests with several peak times and abrupt workload spikes, you too can benefit from switching the capacity mode from provisioned to on demand.
+
+For more information, see the [Running Spiky Workloads and Optimizing Costs by More than 90% Using Amazon DynamoDB On-Demand Capacity Mode](https://aws.amazon.com/blogs/database/running-spiky-workloads-and-optimizing-costs-by-more-than-90-using-amazon-dynamodb-on-demand-capacity-mode/) documentation
+
+### Your table uses the on-demand capacity mode but still throttled
+
+When the table uses the on-demand capacity mode, the table doesn't throttle as long as the following conditions are true:
+
+* The access pattern is distributed evenly across partitions to avoid issues related to a hot partition. (In general, a 'hot partition' is one that is accessed more frequently than other partitions in the table.)
+* The table doesn't exceed double its previous peak traffic.
+
+For on-demand tables, DynamoDB automatically allocates more capacity as your traffic volume increases to make sure that your workload doesn't experience throttling. However, throttling can occur if the traffic volume is more than double the previous peak within a span of 30 minutes. 
+
+For more information, consult the documentation [Peak Traffic and Scaling Properties](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/capacity-mode.html#HowItWorks.PeakTraffic).
+
+**Solution**: Apply a strategy to avoid creating hot partitions such as distributing the read and write operations as evenly as possible across your table. Refer to the following topic, **You have a hot partition in your table**.
+
+### You have a hot partition in your table
+
+In DynamoDB, a partition key that doesn't have a high cardinality can result in many requests targeting only a few partitions and resulting in a hot partition. A hot partition can cause throttling if the partition limits of 3000 read capacity units (RCU) or 1000 write capacity units (WCU) (or a combination of both) per second are exceeded.
+
+To find the most accessed and throttled items in your table, use the Amazon CloudWatch Contributor Insights. Amazon CloudWatch Contributor Insights is a diagnostic tool that provides a summarized view of your DynamoDB tables traffic trends and helps you identify the most frequently accessed partition keys. With this tool, you can continuously monitor the graphs for your table’s item access patterns. 
+
+A hot partition can degrade the overall performance of your table. 
+
+**Solution**: To avoid this poor performance, distribute the read and write operations as evenly as possible across your table.
+
+For more information, consult the [Designing Partition Keys to Distribute Your Workload Evenly](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/bp-partition-key-uniform-load.html) documentation.
+
+For information on choosing the right partition key, consult the [Choosing the Right DynamoDB Partition Key](https://aws.amazon.com/blogs/database/choosing-the-right-dynamodb-partition-key/) documentation.
+
+### Why is my on-demand DynamoDB table being throttled? 
+
+DynamoDB on-demand is a flexible option capable of serving thousands of requests per second without capacity planning. DynamoDB on-demand offers pay-per-request pricing for read/write requests so you pay only for what you use. DynamoDB tables using on-demand capacity mode automatically adapt to your application’s traffic volume. However, tables using the on-demand mode might still throttle.
+
+Here are two common reasons why on-demand tables might be throttled:
+
+* The traffic is more than double the previous peak
+
+  You might experience throttling if you exceed double your previous traffic peak in 30 minutes. It's a best practice to spread your traffic growth over at least 30 minutes before exceeding double your previous traffic peak. Use the ConsumedReadCapacityUnits metric in CloudWatch to monitor traffic to the table.
+
+  For more information, see the [DynamoDB Metrics and Dimensions](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/metrics-dimensions.html) documentation.
+
+  For new on-demand tables, you can immediately drive up to 4,000 write request units or 12,000 read request units, or any linear combination of the two. For an existing table that you switched to on-demand capacity mode, the previous peak is half the previous provisioned throughput for the table—or the settings for a newly created table with on-demand capacity mode, whichever is higher.
+
+  For more information, see the [Initial Throughput for On-Demand Capacity Mode](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/capacity-mode.html#HowItWorks.InitialThroughput) documentation.
+
+* The traffic exceeds the per-partition maximum
+
+  Each partition on the table can serve up to 3,000 read request units or 1,000 write request units, or a linear combination of both. If the traffic to a partition exceeds this limit, then the partition might be throttled. To resolve this issue:
+
+  1. Use CloudWatch Contributor Insights for DynamoDB to identify the most frequently accessed and throttled keys in your table.
+  2. Randomize the requests to the table so that the requests to the hot partition keys are distributed over time. 
+
+  For more information, consult the documentation [Using Write Sharding to Distribute Workloads Evenly](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/bp-partition-key-sharding.html).
+
+### How can I troubleshoot DynamoDB table throttling?
+
+When you find symptoms that suggest a problem that is causing throttling of your DynamoDB tables, try the following steps to gather diagnostic data. Then, try to match the data to one of the common causes already discussed and apply the documented fixes. 
+
+* Symptoms
+
+  You are getting a 4xx error ProvisionedThroughputExceededException for one of your tables.
+  For example:
+  ```
+  ProvisionedThroughputExceededException: An error occurred (ProvisionedThroughputExceededException) when calling the PutItem operation (reached max retries: 9): The level of configured provisioned throughput for the table was exceeded. Consider increasing your provisioning level with the UpdateTable API.
+  ```
+  Or, you find an entry such as the following in your application logs:
+  ![026-troubleshooting.png](./images/026-troubleshooting.png)
+
+* Gather diagnostic data
+  
+  * Determine whether the table is an on-demand table or a provisioned table. Check the read/write capacity modes in the DynamoDB console or with the AWS CLI command dynamodb describe-table. 
+
+    ![027-troubleshooting.png](./images/027-troubleshooting.png)
+
+  * If the table is provisioned, determine the following:
+
+    1. Is auto scaling configured? Use the DynamoDB console to find this data.
+    2. Is the consumed capacity greater than the provisioned capacity? Use the CloudWatch console to compare the metrics. For example, in the following screenshot, observe that there is a spike in Consumed Write Capacity where it is going above Provisioned Capacity.
+   
+    ![028-troubleshooting.png](./images/028-troubleshooting.png)
+
+  * If the table is on demand:
+    1. If possible, determine the previous consumed capacity peak for the table.
+    2. If you have the previous peak data, is the current consumed capacity double the previous peak?
+    3. Is CloudWatch Contributor Insights configured for the table? If so, identify the most frequently accessed and throttled keys in your table or index.
+
+
+## Troubleshooting Observed Latency in DynamoDB
+
+**Performance issue**: You observe an increase in the response time for DynamoDB requests.
+
+When analyzing the CloudWatch metric **SuccessfulRequestLatency**, it's a best practice to check the average latency. Occasional spikes in latency aren't a cause for concern. However, if average latency is high, you may need to resolve an underlying issue.
+
+To get the latency value for all DynamoDB calls, turn on latency metric logging for the AWS SDK. These metrics can help you identify the source of the increased latency. Keep in mind that DynamoDB latency metrics measure activity only in DynamoDB or DynamoDB Streams. The latency metrics don't take network latency or client-side activity into account.
+
+Consider one or more of the following strategies to reduce latency. Try each of these strategies one at a time. Monitor the **SuccessfulRequestLatency** metric to determine whether requests are still throttled or latency is below an acceptable threshold.
+
+### Reduce the request timeout settings
+
+Tune the client AWS SDK parameters **requestTimeOut** and **clientExecutionTimeout** to timeout and fail much faster (for example, after 50 milliseconds). This causes the client to abandon high-latency requests after the specified time period and then send a second request that usually completes much faster than the first.
+
+For more information about timeout settings, see the [Tuning AWS Java SDK HTTP Request Settings for Latency-Aware Amazon DynamoDB Applications](https://aws.amazon.com/blogs/database/tuning-aws-java-sdk-http-request-settings-for-latency-aware-amazon-dynamodb-applications/) documentation.
+
+### Reduce distance between client and DynamoDB endpoint
+
+If you have globally dispersed users, consider using global tables. With global tables, you can specify the AWS Regions for which you want the table to be available. This can help to significantly reduce latency for your users.
+
+For more information about global tables, see the Global Tables: [Multi-Region Replication with DynamoDB](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/GlobalTables.html) documentation.
+
+### Use caching
+
+If your traffic is read heavy, consider using a caching service such as Amazon DynamoDB Accelerator (DAX). DAX is a fully managed, highly available in-memory cache for DynamoDB that can help improve performance from milliseconds to microseconds, even at millions of requests per second.
+
+For more information about caching, see the [In-Memory Acceleration with DynamoDB Accelerator (DAX)](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DAX.html) documentation.
+
+### Send constant traffic or reuse connections
+
+When you are not making requests, consider having the client send dummy traffic to a DynamoDB table. You can also reuse client connections or try connection pooling. All of these techniques keep internal caches warm, which can help keep latency low.
+
+### Use eventually consistent reads
+
+If your application doesn't require strongly consistent reads, consider using eventually consistent reads. Eventually consistent reads are cheaper and are less likely to experience high latency.
+
+For more information about eventually consistent reads, see the [Read Consistency](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.ReadConsistency.html) documentation.
+
+### Troubleshooting scenario: Observed latency in DynamoDB
+
+* Symptoms
+
+  You observe elevated latency in DynamoDB APIs.
+
+  For example: You might observe spikes in the **SuccessfulRequestLatency** CloudWatch metric for a particular API.
+  * To observe metrics such as which process is taking the most time or whether server or client side has the greater latency, the latency logger can be helpful.
+  * Set the **com.amazonaws.latency** logger to DEBUG to enable this logger.
+
+* Gather diagnostic data
+
+  * Determine which API is experiencing elevated latency. 
+    * To get the latency value for all DynamoDB calls, turn on latency metric logging for the AWS SDK. These metrics can help you identify the source of the increased latency. For more information, see the [Latency Metrics Logging](https://docs.aws.amazon.com/sdk-for-java/v1/developer-guide/java-dg-logging.html#sdk-latency-logging) documentation.
+    * Does the elevated latency persist over time? If yes, find a timestamp of when the issue began.
+   
+  When analyzing the CloudWatch metric **SuccessfulRequestLatency**, it's a best practice to check the average latency. Occasional spikes in latency aren't a cause for concern. However, if average latency is high, you may need to resolve an underlying issue.
+
+  For most atomic operations, such as GetItem and PutItem, you can expect an average latency in single-digit milliseconds. Latency for non-atomic operations, such as Query and Scan, depends on many factors, including the size of the result set and the complexity of the query conditions and filters.
+
+  As shown in the following screenshot, initial requests can experience higher latency because caches are cold.
+
+  ![029-troubleshooting.png](./images/029-troubleshooting.png)
+
+### How do I resolve HTTP 5xx errors in DynamoDB? 
+
+While not directly related to latency in DynamoDB, HTTP 5xx errors can affect application performance.\
+
+Sometimes when you work with items in a DynamoDB table, you could note an HTTP 5xx error similar to the following:
+
+*Internal server error (Service: AmazonDynamoDBv2; Status Code: 500; Error Code: InternalServerError)*
+
+A 5xx error indicates a problem that must be resolved by AWS. This might be a transient issue, such as a network outage or backend hardware failure. To mitigate 5xx errors, do the following:
+
+* Implement a retry strategy for requests that fail with a 5xx error code. All AWS SDKs have a built-in retry mechanism with an algorithm that uses exponential backoff. You can modify the retry parameters to suit your needs. For more information, see the [Error Retries and Exponential Backoff](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Programming.Errors.html#Programming.Errors.RetryAndBackoff) documentation.
+* Avoid strongly consistent reads. When there is a network delay or outage, strongly consistent reads are more likely to fail with a 500 error. For more information, see the [Read Consistency](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.ReadConsistency.html) documentation.
+
+If you continue to get 5xx errors, open the [AWS Health Dashboard](https://health.aws.amazon.com/health/status) to check if there are any operational issues with the service.
+
+## Troubleshooting Issues with DynamoDB Auto Scaling
+
+DynamoDB auto scaling creates CloudWatch alarms on your behalf. When an alarm is activated, the CloudWatch alarm invokes AWS Application Auto Scaling. This, in turn, notifies DynamoDB to adjust the provisioned throughput capacity for the table.
+
+DynamoDB auto scaling modifies provisioned throughput only when the workload stays depressed or elevated for several minutes. For example, assume that you set the minimum read capacity units (RCUs) to 100 and the target utilization to 70 percent:
+
+* DynamoDB auto scaling increases provisioned capacity when utilization exceeds 70 RCUs for at least 2 consecutive minutes.
+* DynamoDB auto scaling decreases provisioned capacity when utilization is 20 percent or more below the target for 15 consecutive minutes (50 RCUs).
+
+### How does DynamoDB auto scaling work?
+
+The following diagram provides a high-level overview of how DynamoDB auto scaling manages throughput capacity for a table.
+
+![030-troubleshooting.png](./images/030-troubleshooting.png)
+
+* 1: Create policy. You create an Application Auto Scaling policy for your DynamoDB table.
+* 2: Metrics published. DynamoDB publishes consumed capacity metrics to CloudWatch.
+* 3: CloudWatch activates alarms. If the consumed capacity of the table exceeds your target utilization (or falls below the target) for a specific length of time, CloudWatch activates an alarm. You can view the alarm on the console and receive notifications using SNS.
+* 4: Alarm invokes auto scaling. The CloudWatch alarm invokes Application Auto Scaling to evaluate your scaling policy
+* 5: Update table request. Application Auto Scaling issues an UpdateTable request to adjust the provisioned throughput of your table.
+
+### How do I resolve issues with DynamoDB auto scaling? 
+
+**Issue**: You turn on DynamoDB auto scaling for your table, but it's not working as expected or your read/write activity is still being throttled.
+
+* Don`t delete CloudWatch alarms
+
+  Be sure that you don't delete the CloudWatch alarms that DynamoDB creates when you turn on auto scaling for a table. If you do, DynamoDB auto scaling might not work as expected.
+
+  If you accidentally delete the CloudWatch alarms, then turn off and turn on auto scaling for the table. When you do this, CloudWatch automatically recreates the alarms.
+
+* DynamoDB might not handle short active spikes
+
+  Don't rely on DynamoDB auto scaling to handle occasional short-duration activity spikes. DynamoDB auto scaling works best when there are gradual increases or decreases in traffic. The table's built-in burst capacity handles occasional activity spikes.
+
+  For more information about burst capacity, see the [Using Burst Capacity Effectively](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/bp-partition-key-design.html#bp-partition-key-throughput-bursting) documentation.
+
+* Set the billing mode to PAY_PER_REQUEST
+
+  If the table traffic is frequently unpredictable, use an UpdateTable operation to set the billing mode to PAY_PER_REQUEST. This activates on-demand mode, which instantly adapts throughput to handle the workload.
+
+  For more information about the UpdateTable operation, see the [UpdateTable BillingMode](https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_UpdateTable.html#DDB-UpdateTable-request-BillingMode) documentation.
 
 # Notes from AWS PartnerCast
 

@@ -24,6 +24,7 @@
   - [AWS Identity and Access Management (IAM)](#aws-identity-and-access-management-iam)
   - [Troubleshooting Amazon CloudFront](#troubleshooting-amazon-cloudfront)
   - [Troubleshooting: AWS CloudFormation Stacks](#troubleshooting-aws-cloudformation-stacks)
+  - [Troubleshooting: Amazon DynamoDB](#troubleshooting-amazon-dynamodb)
 
 # Based on AWS Partner Certification Readiness - Developer - Associate
 
@@ -155,4 +156,9 @@ https://github.com/kicaj29/aws/tree/main/VPC-LB-AutoScalingGroup-EC2-Route53
 ## Troubleshooting: AWS CloudFormation Stacks
 
 * https://github.com/kicaj29/aws/tree/main/CloudFormation
+
+## Troubleshooting: Amazon DynamoDB
+
+* https://github.com/kicaj29/aws/tree/main/DatabasesDynamoDB
+
 
