@@ -58,6 +58,22 @@
     - [Creating pipeline deployment resources](#creating-pipeline-deployment-resources)
     - [Deploy SAM templates with one command](#deploy-sam-templates-with-one-command)
 - [Lambda monitors](#lambda-monitors)
+- [Security and observability for serverless applications](#security-and-observability-for-serverless-applications)
+  - [Securing serverless architectures](#securing-serverless-architectures)
+  - [Protect your data in transit and at rest](#protect-your-data-in-transit-and-at-rest)
+  - [Encryption options for AWS data stores](#encryption-options-for-aws-data-stores)
+  - [Quiz](#quiz)
+  - [Observability for Serverless Applications](#observability-for-serverless-applications)
+    - [Monitoring serverless applications](#monitoring-serverless-applications)
+    - [CloudWatch Logs](#cloudwatch-logs)
+    - [CloudWatch Logs Insights](#cloudwatch-logs-insights)
+    - [CloudWatch Lambda Insights](#cloudwatch-lambda-insights)
+    - [Lambda extensions](#lambda-extensions)
+    - [X-Ray: Tracing serverless applications](#x-ray-tracing-serverless-applications)
+  - [Auditing serverless applications](#auditing-serverless-applications)
+    - [CloudTrail and AWS Config](#cloudtrail-and-aws-config)
+    - [CloudTrail](#cloudtrail)
+    - [AWS Config](#aws-config)
 - [Notes from AWS PartnerCast](#notes-from-aws-partnercast)
 
 # Introduction for Serverless
@@ -799,6 +815,255 @@ https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/s
 * **Async delivery failures**: The number of times that Lambda attempted to write to a destination or dead-letter queue but fails. Dead-letter and delivery errors can occur due to permissions errors, misconfigured resources, or size limits.
 * **Concurrent executions**: The number of function instances that are processing events. If this number reaches your concurrent executions quota for the Region or the reserved concurrency limit that you configured on the function, Lambda throttles additional invocation requests.
 
+# Security and observability for serverless applications 
+
+## Securing serverless architectures
+
+One benefit of serverless architectures is that when you rely on AWS managed services, you shift more parts of the AWS shared responsibility model toward AWS. You have the same security issues, but AWS manages more of them on your behalf.
+
+For example, you aren’t responsible for the operating system or network configuration that underlies where your Lambda functions run. AWS manages the platform where Lambda functions reside and are run, so you are also freed from managing the runtimes, unless you develop custom runtimes.
+
+![071-security-observability.png](./images/071-security-observability.png)
+
+![070-security-observability.png](./images/070-security-observability.png)
+
+As highlighted in the diagram, you are not responsible for the operating system or network configuration that underlies where your Lambda functions run. You can find more details about how security is implemented in Lambda in the [Security Overview of AWS Lambda](https://docs.aws.amazon.com/whitepapers/latest/security-overview-aws-lambda/security-overview-aws-lambda.html) whitepaper.
+
+Three general best practices that you are responsible for:
+
+* follow the principle of least privilege
+* protect data at rest and in transit
+* audit your system for changes: unexpected access, unusual patterns, or errors
+
+Let’s look at these first two best practices in the context of the example order service. Amazon API Gateway is the front door to your application, so it’s a good place to start preventing unauthorized access to your APIs.
+
+You have three options for authorizing access to your APIs via API Gateway:
+
+* AWS Identity and Access Management (IAM)
+
+  IAM is best for clients that are within your AWS environment, or can otherwise retrieve IAM temporary credentials to access your environment. 
+
+* Amazon Cognito
+
+  If you don’t already have an IdP in place, Amazon Cognito is a good choice. Amazon Cognito gives you a managed service that can support sign-in/sign-up capabilities or act as an IdP in a federated identity scenario.
+
+* Lambda authorizers
+
+  If you want to use an existing identity provider (IdP), use an API Gateway Lambda authorizer that invokes a Lambda function to authenticate and validate a user against your IdP.
+  This is useful when you also want to perform additional logic as part of the authentication.
+  You might also leverage Lambda authorizers to centralize API access across accounts. If you have one team that needs to own a centralized authentication, you should consider Lambda authorizers.
+
+  But bear in mind, the larger the API landscape that uses this authorizer, the more concurrent invocations you have to support with that function. As noted earlier, you can use "auth caching" to reduce the number of invocations of a Lambda authorizer.
+
+
+There are a couple of other things you might need to do to stop folks at the door, depending on the scope of who you need to let in.
+
+If your Lambda function connects to a VPC or other external components, secure the network boundaries using AWS best practices like security groups or network access control lists. If you are building publicly available APIs, you might also want to implement AWS WAF in front of API Gateway.
+
+You can also use API Gateway to validate incoming requests. This can enforce the correctness of the data structure of a payload, addressing one of the more common OWASP vulnerabilities.
+
+Limit access to your APIs with API Gateway resource policies that restrict or allow access by account, IP range, or VPC endpoint. And regulate the volume of requests made by specific clients with API Gateway usage plans that throttle requests based on an API key.
+
+But it’s important not to rely only on API keys for securing your APIs. By authenticating via API Gateway, and having API Gateway act as a proxy to other AWS services, you reduce the burden of securing your APIs from unauthorized clients and can take advantage of API Gateway features to limit access.
+
+## Protect your data in transit and at rest
+
+Amazon API Gateway communicates over HTTPS. But you still want to encrypt the payload on the client side because things like request path and query strings that are part of a URL might not be encrypted.
+
+For example, if you write logs using standard output, you could accidentally expose unencrypted sensitive data. API Gateway communicates with an integration endpoint regardless of whether it uses HTTP or HTTPS. To maintain end-to-end encryption of data in transit, sensitive data should also be encrypted before any processing or data manipulation.
+
+Do not send, log, or store unencrypted sensitive data, whether it’s part of an HTTP request path or query string or standard output of an AWS Lambda function. Although you aren’t responsible for the Lambda infrastructure, you are responsible for the inputs and outputs. Encrypt what you write.
+
+Protecting access to your Lambda functions means using narrowly scoped AWS Identity and Access Management (IAM) permissions and roles. Limit permissions in the resource policy that establishes who can invoke the function. And limit the scope of the execution policy that determines what the function is allowed to do. Create smaller functions that perform scoped activities, and don’t share IAM roles between functions. Use narrowly scoped IAM roles to grant permissions between other services as well.
+
+When it comes to passing data to Lambda functions, you have three options. All three can use either Amazon Web Services (AWS) managed or customer-managed keys to protect sensitive information. 
+
+* Environment variables
+
+  Environment variables are scoped to a single function
+
+* Values in AWS Systems Manager Parameter Store
+
+  Values in Parameter Store can be shared across multiple applications
+
+* Values in AWS Secrets Manager.
+
+  Values in Secrets Manager can be shared across multiple applications. Secrets Manager has the added benefit of secrets rotation and cross-account access.
+
+## Encryption options for AWS data stores
+
+In terms of protecting data at rest, AWS data stores provide encryption at rest using configuration options that you control. Encryption options take advantage of AWS Key Management Service (AWS KMS) and keys that you or AWS manage. It’s important to understand default and configurable behaviors for encryption. 
+
+![072-security-observability.png](./images/072-security-observability.png)
+
+## Quiz
+
+![073-security-observability.png](./images/073-security-observability.png)
+
+## Observability for Serverless Applications
+
+The three pillars of observability:
+
+* Monitor
+
+  Metrics collected through monitoring provide data about the performance of your systems. You can think of a metric as a single variable that is used to monitor an aspect of your system. When you combine all these individual metrics, you are able to see how your application is performing over time.
+
+  For example, you can track the CPU utilization of a particular Amazon Elastic Compute Cloud (Amazon EC2) instance. Or you can monitor how many AWS Step Functions runs failed or the amount of delete requests that Amazon S3 received.
+
+  ![074-security-observability.png](./images/074-security-observability.png)
+
+* Trace
+
+  As you scale your application and the number of components grows, how do you identify where an error or a bottleneck might be occurring? 
+
+  To do this, you can use a trace. A trace will follow requests as they travel through the individual services and resources that make up your application, providing an end-to-end view of how it is performing. You can use this trace to follow the path of an individual request as it passes through each service or tier in your application so that you can pinpoint where issues are occurring.
+
+  ![075-security-observability.png](./images/075-security-observability.png)
+
+* Log
+
+  Where metrics help you keep track of what is happening within your system, logs help you keep track of what already happened within your application or system. This helps you audit your configuration history, configuration changes, and all other API calls to facilitate security and governance in your serverless applications.
+
+  Logs are time-stamped records of events that include failures, errors, state transformations, or even who accessed your system at a certain time.
+
+  ![076-security-observability.png](./images/076-security-observability.png)
+
+### Monitoring serverless applications
+
+CloudWatch helps you to monitor your service health and to **alarm on error cases**.
+
+* Business metrics
+
+  Business KPIs measure your application performance against business goals. It is extremely important to know when something is critically affecting your overall business (revenue wise or not).
+
+  **Examples**: Orders placed, debit and credit card operations, flights purchased
+
+* Customer experience metrics
+
+  Customer experience data indicates the overall effectiveness of the user interface/user experience (UI/UX). However, it also indicates whether changes or anomalies are affecting the customer experience in a particular section of your application. These metrics are often measured in percentiles, to prevent outliers, when trying to understand the impact over time and how widespread it is across your customer base.
+
+  **Examples**: Perceived latency, Time it takes to add an item to a basket or checkout, Page load times
+
+* System metrics
+
+  Vendor and application metrics are important to underpin root causes. System metrics also tell you if your systems are healthy, at risk, or already affecting your customers.
+
+  **Examples**: Percentage of HTTP errors/success, Memory utilization, Function duration/error/throttling, Queue length, Stream records length, Integration latency
+
+* Operational metrics
+
+  Ops metrics are important to understand sustainability and maintenance of a given system and crucial to pinpoint how stability has progressed or degraded over time.
+
+  **Examples**: Number of tickets, such as successful and unsuccessful resolutions, Number of times people on-call were paged, Availability, Continuous integration/continuous delivery (CI/CD) pipeline statistics, such as successful or failed deployments, feedback time, cycle and lead time
+
+### CloudWatch Logs
+
+Using logs helps you dig into specific issues, but you can also use log data to create business-level metrics using Amazon CloudWatch Logs metric filters. You can interact with logs using CloudWatch Logs to drill into any specific log entry or filter them based on a pattern to create your own metrics.
+
+* Lambda logs
+
+  **Lambda automatically logs all requests** handled by your function and stores them in CloudWatch Logs. This gives you access to information about each invocation of your Lambda function.
+
+  You can log almost anything to CloudWatch Logs by using print or standard out statements in your functions. When you create custom logs, use a structured format, such as a JavaScript Object Notation (JSON) event to make it easier to report from them.
+
+  ![077-security-observability.png](./images/077-security-observability.png)
+
+* API Gateway execution and access logs
+
+  API Gateway execution logs include information on errors and execution traces. Information such as parameter values, payload, Lambda authorizers used, and API keys appears in the logs. You can log just errors or errors and information. **Logging is set up per API stage.** These logs are detailed, so you want to be thoughtful about what you need. Also, log groups don’t expire by default, so make sure to set retention values suitable to your workload.
+
+  You can also create custom access logs and send them to your preferred CloudWatch group to track who is accessing your APIs and how. You can specify the access details by selecting context variables and choosing the format that you want to use.
+
+  ![078-security-observability.png](./images/078-security-observability.png)
+
+* CloudWatch EMF
+
+  Traditionally, it can be difficult to generate actionable, custom metrics from your ephemeral resources, such as Lambda functions and containers. You can use the **embedded metric format (EMF)** to instruct CloudWatch Logs to automatically extract metric values that are embedded in structured log events.
+
+  By sending your logs in EMF, CloudWatch will automatically extract the custom metrics, so you can visualize them and create alarms, without having to create or maintain separate code.
+  These detailed log events associated with the extracted metrics can be queried using CloudWatch Logs Insights to provide insights into the root causes of operational events.  
+
+### CloudWatch Logs Insights
+
+With CloudWatch Log Insights, you can use prebuilt or custom queries on your logs to provide aggregated views and reporting. If you’ve created structured custom logs, CloudWatch Logs Insights can automatically discover the fields in your logs to help you to query and group your log data.
+
+![079-security-observability.png](./images/079-security-observability.png)
+
+### CloudWatch Lambda Insights
+
+In addition to CloudWatch Logs Insights, CloudWatch provides a special monitoring and troubleshooting solution for serverless applications running on Lambda. 
+
+This feature collects, aggregates, and summarizes your metrics, including CPU time, memory, disk, and network. It can also collect, aggregate, and summarize your diagnostic information, such as cold starts and Lambda worker shutdowns. This helps you isolate issues with your Lambda functions and resolve them faster.
+
+Lambda Insights uses a CloudWatch Lambda extension, which is provided directly at the Lambda layer. When you install this extension on your Lambda function, it collects system-level metrics and emits a single performance log event for every invocation of that Lambda function.
+
+![080-security-observability.png](./images/080-security-observability.png)
+
+### Lambda extensions
+
+In addition to using the monitoring tools discussed within this section, you can use Lambda extensions to integrate Lambda functions with your favorite tools for monitoring, observability, security, and governance.
+
+![081-security-observability.png](./images/081-security-observability.png)
+
+You can use Lambda extensions for use cases such as the following:
+
+* Capturing diagnostic information before, during, and after function invocation
+* Automatically instrumenting your code without needing code changes
+* Fetching configuration settings or secrets before the function invocation
+* Detecting and alerting on function activity through security agents
+* Sending telemetry to custom destinations, such as Amazon S3, Amazon Kinesis, and Amazon OpenSearch Service directly and asynchronously from your Lambda functions.
+
+### X-Ray: Tracing serverless applications
+
+One of the challenges of microservice-based, distributed architectures is how you can get insight into all of your different integration points. When a transaction fails, or completes slower than expected, you need to have a way to determine where, in the flow of services, it failed.
+
+X-Ray helps you understand how your application and its underlying services are performing. With this information, you can identify and troubleshoot the root cause of performance issues and errors.
+
+You can add custom instrumentation to your function using the X-Ray SDK to write your own code. X-Ray integrations support both active and passive instrumentation:
+
+![082-security-observability.png](./images/082-security-observability.png)
+
+![083-security-observability.png](./images/083-security-observability.png)
+
+![084-security-observability.png](./images/084-security-observability.png)
+
+## Auditing serverless applications
+
+Logging helps you prove compliance, improve security posture, and consolidate activity records across AWS Regions and accounts. In addition, by implementing logging, you can audit your configuration history, configuration changes, and all other API calls to facilitate security and governance in your serverless applications.
+
+### CloudTrail and AWS Config
+
+These services can assist you in auditing your serverless applications by providing centralized reporting and the ability to automate responses to potential security risks.
+
+### CloudTrail
+
+You can use CloudTrail to facilitate auditing, security monitoring, and operational troubleshooting by tracking user activity and API usage. For CloudTrail, be aware of the following characteristics:
+
+* Records IAM user, IAM role, and AWS service API activity in your account
+* Is enabled when you create an account
+* Provides full details about the API action, such as the identity of the requestor, time of the API call, request parameters, and response elements returned by the service
+
+* CloudTrail events
+
+  When activity occurs in your AWS account, that activity is recorded in a CloudTrail event, and you can see recent events in the event history.
+
+  The CloudTrail event history provides a viewable, searchable, and downloadable record **of the past 90 days of CloudTrail** events. Use this history to gain visibility into actions taken in your AWS account in the AWS Management Console, AWS SDKs, AWS Command Line Interface (AWS CLI), and other AWS services.
+
+* CloudTrail trails
+
+  A trail is a configuration that enables the delivery of CloudTrail events to an Amazon Simple Storage Service (Amazon S3) bucket, Amazon CloudWatch Logs, and Amazon CloudWatch Events. If you need to maintain a longer history of events, you can create your own trail. When you create a trail, it tracks events performed on or within resources in your AWS account and writes them to an S3 bucket that you specify.
+
+  For example, a trail could capture modifications to your API Gateway APIs. You can optionally add data events to track Amazon S3 object-level API activity. Examples include when someone uploads something to the bucket or for Lambda invoke API operations on one or all future Lambda functions in the account.
+
+  You can configure **CloudTrail Insights** on your trails to help you identify and respond to unusual activity associated with write API calls. The CloudTrail Insights feature tracks your normal patterns of API call volume and generates Insights events when the volume is outside normal patterns.
+
+### AWS Config
+
+Use AWS Config rules to represent your desired configuration settings for specific AWS resources or for an entire AWS account. If a resource violates a rule, AWS Config flags the resource and the rule as noncompliant and notifies you through Amazon Simple Notification Service (Amazon SNS). AWS Config also provides the following features:
+
+* A normalized snapshot of how your resources are configured and the ability to create rules that enforce the compliant state of those resources
+
+* Customizable, predefined rules to help you get started, in addition to prebuilt remediation actions and the option to automatically remediate an issue
 
 # Notes from AWS PartnerCast
 

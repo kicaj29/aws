@@ -25,6 +25,7 @@
   - [Troubleshooting Amazon CloudFront](#troubleshooting-amazon-cloudfront)
   - [Troubleshooting: AWS CloudFormation Stacks](#troubleshooting-aws-cloudformation-stacks)
   - [Troubleshooting: Amazon DynamoDB](#troubleshooting-amazon-dynamodb)
+  - [Security and observability for serverless applications](#security-and-observability-for-serverless-applications)
 
 # Based on AWS Partner Certification Readiness - Developer - Associate
 
@@ -161,4 +162,7 @@ https://github.com/kicaj29/aws/tree/main/VPC-LB-AutoScalingGroup-EC2-Route53
 
 * https://github.com/kicaj29/aws/tree/main/DatabasesDynamoDB
 
+## Security and observability for serverless applications 
+
+* https://github.com/kicaj29/aws/tree/main/Serverless-Lambda
 
